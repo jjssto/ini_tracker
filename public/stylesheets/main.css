@@ -1,6 +1,21 @@
+body {
+    color: black;
+    font-family: Verdana, sans-serif;
+}
+
 table, th, td {
     border: 1px solid black;
 }
 table {
     border-collapse: collapse;
+}
+
+th, td {
+    padding: 15px;
+    text-align: center;
+}
+
+th {
+    background-color: maroon;
+    color: white;
 }
