@@ -1,0 +1,26 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# PageController
+
+GET /                   controllers.PageController.index
+GET /combat/:i          controllers.PageController.combat(i: Integer, req: Request)
+
+# FormController
+
+GET /combat             controllers.FormController.combat(req: Request)
+POST /combat/update     controllers.FormController.updateCombat(req: Request)
+GET /combat/roll/:i     controllers.FormController.rollInitiative(i: Integer)
+
+# JSON Controller
+
+GET /getchars           controllers.JsonController.getAllChars
+GET /getchars/:i        controllers.JsonController.getChar(i: Integer)
+GET /getcombats         controllers.JsonController.getCombats
+GET /getcombats/:i      controllers.JsonController.getCombat(i: Integer)
+GET /getrecord/:i       controllers.JsonController.getRecord(i: Integer)
+GET /ini/:i             controllers.JsonController.getIniList(i: Integer)
+
+# Assets
+GET     /assets/*file               controllers.Assets.at(path="/public", file)

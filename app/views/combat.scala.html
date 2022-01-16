@@ -1,0 +1,35 @@
+@(combatId: Integer)(implicit request: Http.Request, messages: Messages)
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title>Initiative</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <input type="hidden" id="combat_id" value="@combatId">
+        <script type="module" src="@routes.Assets.at("javascripts/combat.js")"></script>
+    </head>
+
+   <body>
+        <h1>Initiative</h1>
+        <form id="char_update_f">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Reihenfolge</th>
+                        <th>Iniativwurf</th>
+                        <th>Name</th>
+                        <th>Stun Damage</th>
+                        <th>Physical Damage</th>
+                        <th>Neuer Stun Damage</th>
+                        <th>Neuer Physical Damage</th>
+                        <th>Temp. Ini</th>
+                    </tr>
+                </thead>
+                <tbody id="char_update_tbody"></tbody>
+            </table>
+        </form>
+        <form id="char_selection_f">
+            <legend>Charakter hinzufügen.</legend>
+            <button type="submit" id="char_selection_b">Submit</button>
+        </form>
+   </body>
+</html>
