@@ -46,7 +46,9 @@ public class FormController extends Controller {
     }
 
     public Result combat( Http.Request request ) {
-        return redirect( "/combat/1" );
+        DynamicForm form = formF.form().bindFromRequest( request );
+        Integer id = Integer.valueOf( form.get("id") );
+        return redirect( "/combat/" + id.toString() );
     }
 
     public Result updateCombat( Http.Request request ) {
@@ -57,7 +59,7 @@ public class FormController extends Controller {
         Integer id = json.findPath("id").asInt(0);
         Integer sDmg = json.findPath("sDmg").asInt(-1);
         Integer pDmg = json.findPath("pDmg").asInt(-1);
-        Integer localIni = json.findPath("localIni").asInt(0);
+        Integer localIni = json.findPath("localIni").asInt(-1);
         CharRecord record;
         if ( id == null ) {
             return badRequest( "No valid Id" );
@@ -70,7 +72,9 @@ public class FormController extends Controller {
             if ( pDmg != -1 ) {
                 record.setPDmg(pDmg);
             }
-            record.setLocalIni( localIni );
+            if ( localIni != -1 ) {
+                record.setLocalIni( localIni );
+            }
             repo.update( record ).toCompletableFuture().get();
         } catch ( InterruptedException ie ) {
             return badRequest();

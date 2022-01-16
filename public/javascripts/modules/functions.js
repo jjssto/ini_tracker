@@ -50,10 +50,14 @@ function get_inner_from_id( id ) {
 }
 
 function set_inner_by_id( id, text ) {
-    let el = document.getElementById("o_sDmg_" + nbr);
-    el.innerHTML = text;
+    let el = document.getElementById(id);
+    if ( el != null ) {
+        el.innerHTML = text;
+    }
 }
 function set_value_by_id( id, text ) {
-    let el = document.getElementById("o_sDmg_" + nbr);
-    el.value = text;
+    let el = document.getElementById(id);
+    if ( el != null ) {
+        el.value = text;
+    }
 }

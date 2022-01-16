@@ -101,69 +101,39 @@ public class CharRecord {
         return localIni;
     }
 
-    public void
-    setLocalIni( Integer localIni )
+    public void setLocalIni( Integer localIni )
     {
-        if ( localIni > 0 )
-        {
-            this.localIni = localIni;
-        } else if ( chara != null )
-        {
-            this.localIni = chara.getIni();
-        } else
-        {
-            this.localIni = localIni;
-        }
+        this.localIni = localIni;
     }
 
-    public Integer
-    getIniValue()
+    public Integer getIniValue()
     {
         return iniValue;
     }
 
-    public void
-    setIniValue( Integer iniValue )
+    public void setIniValue( Integer iniValue )
     {
         this.iniValue = iniValue;
     }
 
-    public Integer
-    getSDmg()
+    public Integer getSDmg()
     {
         return sDmg;
     }
 
-    public void
-    setSDmg( Integer sDmg )
+    public void setSDmg( Integer sDmg )
     {
         this.sDmg = sDmg;
     }
 
-    public CharRecord setSDmgR( Integer sDmg ) {
-        this.sDmg = sDmg;
-        return this;
-    }
-
-    public Integer
-    getPDmg()
+    public Integer getPDmg()
     {
         return pDmg;
     }
 
-    public void
-    setPDmg( Integer pDmg )
+    public void setPDmg( Integer pDmg )
     {
         this.pDmg = pDmg;
-    }
-
-    public CharRecord setPDmgR( Integer sDmg ) {
-        this.pDmg = pDmg;
-        return this;
-    }
-    public CharRecord setLocalIniR( Integer localIni ) {
-        this.localIni = localIni;
-        return this;
     }
 
     public SR4Char

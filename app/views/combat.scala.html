@@ -5,6 +5,7 @@
         <title>Initiative</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <input type="hidden" id="combat_id" value="@combatId">
+        <input type="hidden" id="char_update_nbr_rows" value="0">
         <script type="module" src="@routes.Assets.at("javascripts/combat.js")"></script>
     </head>
 
@@ -19,14 +20,16 @@
                         <th>Name</th>
                         <th>Stun Damage</th>
                         <th>Physical Damage</th>
-                        <th>Neuer Stun Damage</th>
-                        <th>Neuer Physical Damage</th>
-                        <th>Temp. Ini</th>
+                        <th>Stun Damage</th>
+                        <th>Physical Damage</th>
+                        <th>Ini Overwrite</th>
+                        <th></th>
                     </tr>
                 </thead>
                 <tbody id="char_update_tbody"></tbody>
             </table>
         </form>
+       <h2>Charakter auswählen:</h2>
         <form id="char_selection_f">
             <legend>Charakter hinzufügen.</legend>
             <button type="submit" id="char_selection_b">Submit</button>
