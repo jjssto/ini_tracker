@@ -4,7 +4,7 @@ import {
     create_input_cell,
     create_hidden_input,
     get_value_from_id,
-    get_inner_from_id,
+    //get_inner_from_id,
     set_inner_by_id,
     set_value_by_id
 } from './modules/functions.js'
@@ -21,7 +21,7 @@ function update_rows() {
         const http = new XMLHttpRequest();
         let url = "/combat/update?csrfToken=" + get_token();
 
-        if ( pDmg != "" | sDmg != "" | localIni != "" ) {
+        if ( pDmg !== "" || sDmg !== "" || localIni !== "" ) {
             let data = '{ "id": "' + recordId + '",'
             data += ' "sDmg": "' + sDmg + '",'
             data += ' "pDmg": "' + pDmg + '",'
@@ -40,7 +40,6 @@ function update_rows() {
 }
 
 function load_combat( combatId ) {
-    let token = get_token();
     const Http = new XMLHttpRequest();
     Http.onload = function () {
         let data = JSON.parse(this.responseText);

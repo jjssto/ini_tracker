@@ -1,10 +1,42 @@
+@(implicit request: Http.Request, messages: Messages)
 <!DOCTYPE html>
 <html lang="en">
-<head>
-  <meta charset="UTF-8">
-  <title>$Title$</title>
-</head>
-<body>
-$END$
+    <head>
+        <meta charset="UTF-8">
+        <title>Charakter</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/chars.js")"></script>
+    </head>
+    <body>
+        <h1>Charakter</h1>
+        <form id="char_update_f" action="@routes.FormController.addChar">
+            <table>
+                <thead>
+                    <tr>
+                        <th>Name</th>
+                        <th>Ini</th>
+                        <th>Reaction</th>
+                        <th>Intuition</th>
+                        <th>Stun Boxes</th>
+                        <th>Physical Boxes</th>
+                        <th></th>
+                        <th></th>
+                    </tr>
+                </thead>
+                <tbody id="char_update_tbody">
+                    <tr id="tr_form">
+                        <td><input name="name" type="text"></td>
+                        <td><input name="ini" type="number"></td>
+                        <td><input name="reaction" type="number"></td>
+                        <td><input name="intuition" type="number"></td>
+                        <td><input name="sBoxes" type="number"></td>
+                        <td><input name="pBoxes" type="number"></td>
+                    </tr>
+                </tbody>
+
+            </table>
+            <button type="submit">Charakter hinzufügen</button>
+        </form>
+
 </body>
 </html>

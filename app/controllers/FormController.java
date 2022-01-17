@@ -95,4 +95,19 @@ public class FormController extends Controller {
         ).thenApplyAsync( combat -> repo.update( combat ), ec.current() );
         return ok("OK");
     }
+
+    public CompletionStage<Result> addChar( Http.Request request ) {
+        DynamicForm charForm = formF.form().bindFromRequest( request );
+        SR4Char chara = new SR4Char();
+        chara.setName( charForm.field("name").toString());
+        chara.setIni( Integer.valueOf( charForm.get("ini").toString() ) );
+        chara.setReaction( Integer.valueOf( charForm.get("reaction").toString() ) );
+        chara.setIntuition( Integer.valueOf( charForm.get("intuition").toString() ) );
+        chara.setSBoxes( Integer.valueOf( charForm.get("sBoxes").toString() ) );
+        chara.setPBoxes( Integer.valueOf( charForm.get("pBoxes").toString() ) );
+        return repo.add( chara ).thenApplyAsync(
+            cha -> ok(),
+            ec.current()
+        );
+    }
 }

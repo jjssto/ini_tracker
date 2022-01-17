@@ -6,12 +6,14 @@
 
 GET /                   controllers.PageController.index
 GET /combat/:i          controllers.PageController.combat(i: Integer, req: Request)
+GET /chars              controllers.PageController.chars(req: Request)
 
 # FormController
 
 GET /combat             controllers.FormController.combat(req: Request)
 POST /combat/update     controllers.FormController.updateCombat(req: Request)
 GET /combat/roll/:i     controllers.FormController.rollInitiative(i: Integer)
+GET /addchar            controllers.FormController.addChar(req: Request)
 
 # JSON Controller
 

@@ -41,6 +41,15 @@ public class PageController extends Controller {
     /** Displays page that contains a list of available combats */
     public Result index() {
         return ok( views.html.index.render() );
+
+    }
+
+    /** Displays page that contains a list of available combats */
+    public Result chars( Http.Request request ) {
+        return ok( views.html.chars.render(
+            request,
+            messagesApi.preferred(request)
+        ) );
     }
 
     public Result combat(
