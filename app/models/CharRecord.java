@@ -18,10 +18,10 @@ public class CharRecord {
     private SR4Char chara;
 
     @Column( name = "local_ini")
-    private Integer localIni = 0;
+    private Integer localIni = 1;
 
     @Column( name = "ini_value")
-    private Integer iniValue = 0;
+    private Integer iniValue = 1;
 
     @Column( name = "s_dmg")
     private Integer sDmg = 0;
@@ -33,13 +33,15 @@ public class CharRecord {
     @JoinColumn( name = "combat_id" )
     private Combat combat;
 
-    private static BinomialDistribution dist = new BinomialDistribution( 1, 1.0/3 );
 
     public
     CharRecord() {
-        this.combat = null;
+        this.combat = new Combat();
         this.chara = new SR4Char();
         this.localIni = 0;
+        this.iniValue = 0;
+        this.sDmg = 0;
+        this.pDmg = 0;
     }
     public CharRecord( Combat combat ) {
         this( null, combat );
@@ -52,9 +54,9 @@ public class CharRecord {
     }
 
 
-    public Integer
-    rollInitiative()
-    {
+
+
+    public Integer getNbrIniDice() {
         int initiative;
         if ( localIni != 0 && localIni > 0 ) {
             initiative = localIni;
@@ -68,14 +70,7 @@ public class CharRecord {
         } else {
             nbr_dice = 1;
         }
-        int diceRolls[] = dist.sample( nbr_dice );
-        Integer sum = 0;
-        for( Integer die : diceRolls )
-        {
-            sum += die;
-        }
-        iniValue = sum + initiative;
-        return iniValue;
+        return nbr_dice;
     }
 
 

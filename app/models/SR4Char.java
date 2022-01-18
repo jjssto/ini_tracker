@@ -27,6 +27,14 @@ public class SR4Char {
     @Column( name = "intuition")
     private Integer intuition = 0;
 
+    public SR4Char () {
+        this.ini = 1;
+        this.name = "";
+        this.sBoxes = 1;
+        this.pBoxes = 1;
+        this.reaction = 1;
+        this.intuition = 1;
+    }
 
     public Integer getId(){
         return id;

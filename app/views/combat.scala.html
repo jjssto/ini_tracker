@@ -10,29 +10,47 @@
     </head>
 
    <body>
-        <h1>Initiative</h1>
-        <form id="char_update_f">
-            <table>
-                <thead>
-                    <tr>
-                        <th>Reihenfolge</th>
-                        <th>Iniativwurf</th>
-                        <th>Name</th>
-                        <th>Stun Damage</th>
-                        <th>Physical Damage</th>
-                        <th>Stun Damage</th>
-                        <th>Physical Damage</th>
-                        <th>Ini Overwrite</th>
-                        <th></th>
-                    </tr>
-                </thead>
-                <tbody id="char_update_tbody"></tbody>
-            </table>
-        </form>
-       <h2>Charakter auswählen:</h2>
-        <form id="char_selection_f">
-            <legend>Charakter hinzufügen.</legend>
-            <button type="submit" id="char_selection_b">Submit</button>
-        </form>
+       <h1>Initiative</h1>
+       <div class="row">
+        <div class="column" id="column_l">
+
+        </div>
+        <div class="column" id="column_m">
+                <form id="char_update_f">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reihenfolge</th>
+                                <th>Iniativwurf</th>
+                                <th>Name</th>
+                                <th>Stun Damage</th>
+                                <th>Physical Damage</th>
+                                <th>Stun Damage</th>
+                                <th>Physical Damage</th>
+                                <th>Ini Overwrite</th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="char_update_tbody"></tbody>
+                    </table>
+                </form>
+                <h2>Charakter auswählen:</h2>
+                <form id="char_selection_f">
+                    <legend>Charakter hinzufügen.</legend>
+                    <button type="submit" id="char_selection_b">Submit</button>
+                </form>
+            </div>
+       </div>
+       <div class="column" id="column_r">
+           <table>
+               <thead>
+                <tr><th>Timestamp</th><th>Char.</th><th>Wurf</th></tr>
+               </thead>
+               <tbody id="rolls_table_tbody">
+
+               </tbody>
+           </table>
+       </div>
+
    </body>
 </html>

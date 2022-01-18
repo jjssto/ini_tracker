@@ -23,6 +23,7 @@ GET /getcombats         controllers.JsonController.getCombats
 GET /getcombats/:i      controllers.JsonController.getCombat(i: Integer)
 GET /getrecord/:i       controllers.JsonController.getRecord(i: Integer)
 GET /ini/:i             controllers.JsonController.getIniList(i: Integer)
+GET /rolls             controllers.JsonController.getDiceRolls(req: Request)
 
 # Assets
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

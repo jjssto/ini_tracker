@@ -10,13 +10,13 @@ import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
 
-public class JPARepository implements Repository {
+public class JPACharRepository implements CharRepository {
 
     private final JPAApi api;
     private final DatabaseExecutionContext ec;
 
     @Inject
-    public JPARepository(
+    public JPACharRepository(
         JPAApi api,
         DatabaseExecutionContext ec
     ) {

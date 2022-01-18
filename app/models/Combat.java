@@ -27,13 +27,7 @@ public class Combat extends AbstractCombat {
     }
 
 
-   public Combat
-   rollInitiative() {
-       for (CharRecord chara : charas) {
-           chara.rollInitiative();
-       }
-       return this;
-   }
+
 
    public void
    addRecord ( CharRecord record ) {

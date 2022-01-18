@@ -42,13 +42,14 @@ function update_rows() {
 function load_combat( combatId ) {
     const Http = new XMLHttpRequest();
     Http.onload = function () {
-        let data = JSON.parse(this.responseText);
-        let list = data["charas"];
+        //let data = JSON.parse(this.responseText);
+        //let list = data["charas"];
+        let list = JSON.parse(this.responseText);
         let tbody = document.getElementById("char_update_tbody");
         let input = document.createElement("input");
-        input.id = "combat_id";
-        input.type = "hidden";
-        input.value = data["id"];
+        //input.id = "combat_id";
+        //input.type = "hidden";
+        //input.value = data["id"];
         tbody.appendChild(input);
         let counter = 0;
         for (let nbr in list) {
@@ -89,7 +90,7 @@ function load_combat( combatId ) {
         }
         set_value_by_id("char_update_nbr_rows", counter);
     }
-    Http.open("GET", "/getcombats/" + combatId.toString());
+    Http.open("GET", "/ini/" + combatId.toString());
     Http.send();
 }
 
@@ -161,8 +162,58 @@ function update_combat( combatId ) {
     Http.send();
 }
 
+function get_dice_rolls( combatId ) {
+    const Http = new XMLHttpRequest();
+    let ts = Date.now();
+    Http.onload = function () {
+        let list = JSON.parse(this.responseText);
+        let tbody = document.getElementById("rolls_table_tbody");
+        for ( let i in list ) {
+           let roll = list[i];
+           let row = document.createElement('tr');
+
+           let cell = document.createElement('td');
+           cell.innerHTML = ts ;
+            row.appendChild( cell );
+
+           let chara = roll["charRecord"]["char"];
+           cell = document.createElement('td');
+           cell.innerHTML = chara["name"] ;
+           row.appendChild( cell );
+           let diceRoll = "( "
+           for ( let die in roll["roll"] ) {
+               diceRoll += roll["roll"][die].result.toString() + ", ";
+           }
+           diceRoll += ')'
+            cell = document.createElement('td');
+            cell.innerHTML = diceRoll ;
+            row.appendChild( cell );
+           tbody.appendChild( row );
+        }
+    }
+
+    let timestamp = localStorage.getItem( "last_roll" );
+
+    //let url = "/rolls?csrfToken=" + get_token()
+    let url = "/rolls?"
+    url += "&&id=" + combatId.toString();
+    if ( timestamp != null ) {
+        url += "&&timestamp=" + timestamp;
+    } else {
+        url += "&&timestamp=0";
+    }
+    Http.open("GET", url );
+    Http.setRequestHeader("combatId", combatId.toString() );
+    Http.send();
+    localStorage.setItem( "last_roll", ( Date.now() - 7 ).toString() );
+}
+
 let combat_id = parseInt( get_value_from_id( "combat_id") );
 load_combat( combat_id );
 load_chars();
 pre_select_chars( combat_id );
-window.setInterval( function() {update_combat( combat_id )}, 5000 );
+get_dice_rolls( combat_id );
+//window.setInterval( function() {
+//    update_combat( combat_id );
+//    get_dice_rolls( combat_id );
+//}, 5000 );

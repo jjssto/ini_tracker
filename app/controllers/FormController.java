@@ -7,18 +7,12 @@ import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
 import play.mvc.Controller;
-import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Http;
-import play.data.Form;
-import play.data.FormFactory;
-import play.libs.concurrent.HttpExecutionContext;
+
 import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;
-import java.util.stream.Collectors;
 import javax.inject.Inject;
-import play.api.i18n.MessagesApi;
 
 
 /**
@@ -26,7 +20,8 @@ import play.api.i18n.MessagesApi;
  */
 public class FormController extends Controller {
 
-    private final Repository repo;
+    private final CharRepository repo;
+    private final DiceRepository diceRepo;
     private final HttpExecutionContext ec;
     private final FormFactory formF;
     private final MessagesApi messagesApi;
@@ -35,12 +30,14 @@ public class FormController extends Controller {
     @Inject
     public FormController(
         FormFactory formF,
-        Repository repo,
+        CharRepository repo,
+        DiceRepository diceRepo,
         HttpExecutionContext ec,
         MessagesApi messagesApi
     ) {
         this.formF = formF;
         this.repo = repo;
+        this.diceRepo = diceRepo;
         this.ec = ec;
         this.messagesApi = messagesApi;
     }
@@ -90,8 +87,19 @@ public class FormController extends Controller {
 
     public Result rollInitiative( Integer combatId ) {
         repo.getCombat( combatId ).thenApplyAsync(
-            combat -> combat.rollInitiative(),
-            ec.current()
+            combat -> {
+                for( CharRecord charRecord : combat.getCharas() ) {
+                    DiceRoll diceRoll = new DiceRoll( 6, charRecord );
+                    int ini = charRecord.getNbrIniDice();
+                    diceRoll.roll( ini );
+                    charRecord.setIniValue( ini + diceRoll.bigger_equal( 5 ));
+                    //for ( Die die : diceRoll.getRoll()) {
+                    //    diceRepo.insert( die );
+                    //}
+                    //diceRepo.insert( diceRoll );
+                }
+                return combat;
+                }, ec.current()
         ).thenApplyAsync( combat -> repo.update( combat ), ec.current() );
         return ok("OK");
     }

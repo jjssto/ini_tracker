@@ -2,10 +2,18 @@ package controllers;
 
 import models.*;
 
+import play.data.DynamicForm;
+import play.data.FormFactory;
 import play.mvc.Controller;
+import play.mvc.Http;
 import play.mvc.Result;
 import play.libs.concurrent.HttpExecutionContext;
+
+import java.sql.Timestamp;
+import java.time.LocalTime;
+import java.util.Date;
 import java.util.concurrent.CompletionStage;
+import java.util.regex.Pattern;
 import javax.inject.Inject;
 import com.google.gson.Gson;
 
@@ -17,16 +25,22 @@ import play.libs.Json;
  */
 public class JsonController extends Controller {
 
-    private final Repository repo;
+    private final CharRepository repo;
+    private final DiceRepository diceRepo;
     private final HttpExecutionContext ec;
+    private final FormFactory formF;
 
     @Inject
     public JsonController(
-        Repository  repo,
-        HttpExecutionContext ec
+        CharRepository repo,
+        DiceRepository diceRepo,
+        HttpExecutionContext ec,
+        FormFactory formF
     ) {
         this.repo = repo;
+        this.diceRepo = diceRepo;
         this.ec = ec;
+        this.formF = formF;
     }
 
     /** Answers a Request by sending a JSON that contains
@@ -106,6 +120,20 @@ public class JsonController extends Controller {
     ) {
         return repo
             .iniList( combatId )
+            .thenApplyAsync(
+                c -> ok(
+                    Json.toJson( c )
+                ),
+                ec.current()
+            );
+    }
+    public CompletionStage<Result> getDiceRolls(
+        Http.Request request
+    ) {
+        DynamicForm form = formF.form().bindFromRequest( request );
+        int combatId = Integer.parseInt( form.get("id").toString() );
+        long timestamp = Long.parseLong( form.get("timestamp").toString() );
+        return diceRepo.getLastNDiceRolls(combatId, timestamp )
             .thenApplyAsync(
                 c -> ok(
                     Json.toJson( c )

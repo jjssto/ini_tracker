@@ -5,12 +5,9 @@ import models.*;
 import play.mvc.Controller;
 import play.mvc.Result;
 import play.mvc.Http;
-import play.data.Form;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
-import java.util.concurrent.CompletionStage;
-import java.util.concurrent.CompletableFuture;
-import java.util.stream.Collectors;
+
 import javax.inject.Inject;
 import play.api.i18n.MessagesApi;
 
@@ -19,7 +16,7 @@ import play.api.i18n.MessagesApi;
  */
 public class PageController extends Controller {
 
-    private final Repository repo;
+    private final CharRepository repo;
     private final HttpExecutionContext ec;
     private final FormFactory formF;
     private final MessagesApi messagesApi;
@@ -27,7 +24,7 @@ public class PageController extends Controller {
     @Inject
     public PageController(
         FormFactory formF,
-        Repository  repo,
+        CharRepository repo,
         HttpExecutionContext ec,
         MessagesApi messagesApi
     ) {
