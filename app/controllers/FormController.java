@@ -173,7 +173,7 @@ public class FormController extends Controller {
             for (int i = 0; i < charasJ.size(); i++) {
                 Integer charId = charasJ.get(i).asInt();
                 CharRecord record = combat.removeRecord( charId );
-                repo.remove( record );
+                repo.remove( record.getId() );
             }
          //   repo.merge(combat);
         } catch ( InterruptedException ie ) {

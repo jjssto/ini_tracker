@@ -14,17 +14,14 @@ public class JPACharRepository implements CharRepository {
 
     private final JPAApi api;
     private final DatabaseExecutionContext ec;
-    private final EntityManager em;
 
     @Inject
     public JPACharRepository(
         JPAApi api,
-        DatabaseExecutionContext ec,
-        EntityManager em
+        DatabaseExecutionContext ec
     ) {
         this.api = api;
         this.ec = ec;
-        this.em = em;
     }
 
 
@@ -165,11 +162,11 @@ public class JPACharRepository implements CharRepository {
             () -> wrap( em -> remove( em, chara ))
         );
     }
-    @Override
-    public CompletionStage<CharRecord> remove( CharRecord record ) {
-        return CompletableFuture.supplyAsync(
-            () -> wrap( em -> remove( em, record ))
+    public CompletableFuture<Object> remove(int recordId ) {
+        CompletableFuture<Object> objectCompletableFuture = CompletableFuture.supplyAsync(
+            () -> wrap(em -> remove(em, recordId))
         );
+        return objectCompletableFuture;
     }
     @Override
     public CompletionStage<Combat> remove( Combat combat ) {
@@ -216,9 +213,14 @@ public class JPACharRepository implements CharRepository {
         em.remove( chara);
         return chara;
     }
-    private CharRecord remove(EntityManager em, CharRecord record) {
-        em.remove(record);
-        return record;
+
+    private Integer remove(EntityManager em, int recordId ) {
+        em.createNativeQuery(
+            "delete from char_record " +
+                "where id = ?")
+            .setParameter( 1, recordId )
+            .executeUpdate();
+        return 1;
     }
     private Combat remove(EntityManager em, Combat combat) {
         em.remove(combat);

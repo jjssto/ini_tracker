@@ -1,6 +1,9 @@
 package models;
 
 import com.google.inject.ImplementedBy;
+
+import javax.persistence.EntityManager;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.List;
 
@@ -19,7 +22,7 @@ public interface CharRepository {
 
     /* remove */
     CompletionStage<SR4Char> remove( SR4Char chara );
-    CompletionStage<CharRecord> remove( CharRecord record );
+    CompletionStage<Object> remove( int recordId );
     CompletionStage<Combat> remove( Combat combat );
 
 
@@ -34,6 +37,7 @@ public interface CharRepository {
     CompletionStage<List<SR4Char>> allOthers( Integer combatId );
     CompletionStage<List<CombatShort>> allCombats();
     public CompletionStage<List<CharRecord>> iniList( Integer combatId ) ;
+
 }
 
 
