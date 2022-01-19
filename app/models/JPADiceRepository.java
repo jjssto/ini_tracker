@@ -1,8 +1,11 @@
 package models;
 
+import akka.http.javadsl.model.DateTime;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
+import java.time.LocalDateTime;
+import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import javax.persistence.EntityManager;
@@ -50,9 +53,9 @@ public class JPADiceRepository implements DiceRepository {
     }
 
     @Override
-    public CompletionStage<List<DiceRoll>> getLastNDiceRolls(int combatId, long unixTime) {
+    public CompletionStage<List<DiceRoll>> getLastNDiceRolls(int combatId, LocalDateTime zeit ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap( em -> get( em, combatId, unixTime ) ),
+            () -> wrap( em -> get( em, combatId, zeit ) ),
             ec
         );
     }
@@ -86,9 +89,9 @@ public class JPADiceRepository implements DiceRepository {
         return null;
     }
 
-    private List<DiceRoll> get( EntityManager em, int combatId, long unixTime ) {
-        return em.createQuery( "from DiceRoll d where d.unixTime > :ts", DiceRoll.class)
-            .setParameter("ts", unixTime ).getResultList();
+    private List<DiceRoll> get( EntityManager em, int combatId, LocalDateTime timestamp ) {
+        return em.createQuery( "from DiceRoll d where d.zeit > :ts", DiceRoll.class)
+            .setParameter("ts", timestamp ).getResultList();
     }
 
     private List<DiceRoll> get( EntityManager em, int combatId, int n, int recordId ) {

@@ -34,10 +34,19 @@
                         <tbody id="char_update_tbody"></tbody>
                     </table>
                 </form>
-                <h2>Charakter auswählen:</h2>
-                <form id="char_selection_f">
+
+            <div class="column">
+            <h2>Charakter hinzufügen:</h2>
+            <form id="char_selection_f" action="@routes.FormController.addCharsToCombat">
+                <legend>Charakter hinzufügen.</legend>
+                <input type="button" id="char_selection_b" value="Hinzufügen">
+            </form>
+            </div>
+            <div class="column">
+                <h2>Charakter entfernen:</h2>
+                <form id="remove_char_f" action="@routes.FormController.addCharsToCombat">
                     <legend>Charakter hinzufügen.</legend>
-                    <button type="submit" id="char_selection_b">Submit</button>
+                    <input type="button" id="remove_char_b" value="Entfernen">
                 </form>
             </div>
        </div>

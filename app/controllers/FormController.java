@@ -72,7 +72,7 @@ public class FormController extends Controller {
             if ( localIni != -1 ) {
                 record.setLocalIni( localIni );
             }
-            repo.update( record ).toCompletableFuture().get();
+            repo.merge( record ).toCompletableFuture().get();
         } catch ( InterruptedException ie ) {
             return badRequest();
         } catch ( ExecutionException ee ) {
@@ -96,26 +96,91 @@ public class FormController extends Controller {
                     //for ( Die die : diceRoll.getRoll()) {
                     //    diceRepo.insert( die );
                     //}
-                    //diceRepo.insert( diceRoll );
+                    diceRepo.insert( diceRoll );
                 }
                 return combat;
                 }, ec.current()
-        ).thenApplyAsync( combat -> repo.update( combat ), ec.current() );
+        ).thenApplyAsync( combat -> repo.merge( combat ), ec.current() );
         return ok("OK");
     }
 
     public CompletionStage<Result> addChar( Http.Request request ) {
         DynamicForm charForm = formF.form().bindFromRequest( request );
         SR4Char chara = new SR4Char();
-        chara.setName( charForm.field("name").toString());
-        chara.setIni( Integer.valueOf( charForm.get("ini").toString() ) );
-        chara.setReaction( Integer.valueOf( charForm.get("reaction").toString() ) );
-        chara.setIntuition( Integer.valueOf( charForm.get("intuition").toString() ) );
-        chara.setSBoxes( Integer.valueOf( charForm.get("sBoxes").toString() ) );
-        chara.setPBoxes( Integer.valueOf( charForm.get("pBoxes").toString() ) );
-        return repo.add( chara ).thenApplyAsync(
+        chara.setName( charForm.get("name"));
+        try {
+            chara.setIni(Integer.valueOf(charForm.get("ini")));
+        } catch( NumberFormatException e1 ) {
+            chara.setIni( 0 );
+        }
+        try {
+            chara.setReaction( Integer.valueOf( charForm.get("reaction")) );
+        } catch( NumberFormatException e1 ) {
+            chara.setReaction( 0 );
+        }
+        try {
+            chara.setIntuition( Integer.valueOf( charForm.get("intuition")) );
+        } catch( NumberFormatException e1 ) {
+            chara.setIntuition( 0 );
+        }
+        try {
+            chara.setSBoxes( Integer.valueOf( charForm.get("sBoxes")) );
+        } catch( NumberFormatException e1 ) {
+            chara.setSBoxes( 0 );
+        }
+        try {
+            chara.setPBoxes( Integer.valueOf( charForm.get("pBoxes")) );
+        } catch( NumberFormatException e1 ) {
+            chara.setPBoxes( 0 );
+        }
+        return repo.persist( chara ).thenApplyAsync(
             cha -> ok(),
             ec.current()
         );
+    }
+
+    public Result addCharsToCombat( Http.Request request ) {
+        JsonNode json = request.body().asJson();
+        if ( json == null ) {
+        }
+        Integer combatId = json.findPath("combatId").asInt(0);
+        JsonNode charasJ = json.findPath("chars");
+        try {
+            Combat combat = repo.getCombat(combatId).toCompletableFuture().get();
+            for (int i = 0; i < charasJ.size(); i++) {
+                SR4Char chara = repo.getChar(charasJ.get(i).asInt()).toCompletableFuture().get();
+                CharRecord record = new CharRecord( chara, combat);
+                repo.persist(record);
+                combat.addRecord(record);
+            }
+            repo.merge(combat);
+        } catch ( InterruptedException ie ) {
+            return badRequest();
+        } catch ( ExecutionException ee ) {
+            return badRequest();
+        }
+        return ok() ;
+    }
+
+    public Result removeCharsFromCombat( Http.Request request ) {
+        JsonNode json = request.body().asJson();
+        if ( json == null ) {
+        }
+        Integer combatId = json.findPath("combatId").asInt(0);
+        JsonNode charasJ = json.findPath("chars");
+        try {
+            Combat combat = repo.getCombat(combatId).toCompletableFuture().get();
+            for (int i = 0; i < charasJ.size(); i++) {
+                Integer charId = charasJ.get(i).asInt();
+                CharRecord record = combat.removeRecord( charId );
+                repo.remove( record );
+            }
+         //   repo.merge(combat);
+        } catch ( InterruptedException ie ) {
+            return badRequest();
+        } catch ( ExecutionException ee ) {
+            return badRequest();
+        }
+        return ok() ;
     }
 }

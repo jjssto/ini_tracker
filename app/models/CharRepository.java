@@ -8,14 +8,21 @@ import java.util.List;
 public interface CharRepository {
 
     /* add new instance to DB */
-    CompletionStage<SR4Char> add( SR4Char chara );
-    CompletionStage<CharRecord> add( CharRecord record );
-    CompletionStage<Combat> add( Combat combat );
+    CompletionStage<SR4Char> persist(SR4Char chara );
+    CompletionStage<CharRecord> persist(CharRecord record );
+    CompletionStage<Combat> persist(Combat combat );
 
     /* update */
-    CompletionStage<SR4Char> update( SR4Char chara );
-    CompletionStage<CharRecord> update( CharRecord record );
-    CompletionStage<Combat> update( Combat combat );
+    CompletionStage<SR4Char> merge(SR4Char chara );
+    CompletionStage<CharRecord> merge(CharRecord record );
+    CompletionStage<Combat> merge(Combat combat );
+
+    /* remove */
+    CompletionStage<SR4Char> remove( SR4Char chara );
+    CompletionStage<CharRecord> remove( CharRecord record );
+    CompletionStage<Combat> remove( Combat combat );
+
+
 
     /* Auswahl über ID */
     CompletionStage<SR4Char> getChar( Integer charId );
@@ -24,6 +31,7 @@ public interface CharRepository {
 
     /* Listen */
     CompletionStage<List<SR4Char>> allChars();
+    CompletionStage<List<SR4Char>> allOthers( Integer combatId );
     CompletionStage<List<CombatShort>> allCombats();
     public CompletionStage<List<CharRecord>> iniList( Integer combatId ) ;
 }

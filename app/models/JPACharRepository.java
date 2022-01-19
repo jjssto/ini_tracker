@@ -14,58 +14,63 @@ public class JPACharRepository implements CharRepository {
 
     private final JPAApi api;
     private final DatabaseExecutionContext ec;
+    private final EntityManager em;
 
     @Inject
     public JPACharRepository(
         JPAApi api,
-        DatabaseExecutionContext ec
+        DatabaseExecutionContext ec,
+        EntityManager em
     ) {
         this.api = api;
         this.ec = ec;
+        this.em = em;
     }
+
+
 
     /** add new instance of class `SR4Char` to DB */
     @Override
-    public CompletionStage<SR4Char> add( SR4Char chara ) {
+    public CompletionStage<SR4Char> persist(SR4Char chara ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap(em -> insert(em, chara)), ec);
+            () -> wrap(em -> persist(em, chara)), ec);
     }
 
     /** add new instance of class `CharRecord` to DB */
     @Override
-    public CompletionStage<CharRecord> add( CharRecord record ) {
+    public CompletionStage<CharRecord> persist(CharRecord record ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap(em -> insert(em, record)), ec);
+            () -> wrap(em -> persist(em, record)), ec);
     }
 
     /** add new instance of class `Combat` to DB */
     @Override
-    public CompletionStage<Combat> add( Combat combat ) {
+    public CompletionStage<Combat> persist(Combat combat ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap(em -> insert(em, combat)), ec);
+            () -> wrap(em -> persist(em, combat)), ec);
     }
 
 
     /* update */
     /** update an instance of class `SR4Char` in the DB */
     @Override
-    public CompletionStage<SR4Char> update( SR4Char chara ) {
+    public CompletionStage<SR4Char> merge(SR4Char chara ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap(em -> update(em, chara)), ec);
+            () -> wrap(em -> merge(em, chara)), ec);
     }
 
     /** update an instance of class `CharRecord` in the DB */
     @Override
-    public CompletionStage<CharRecord> update( CharRecord record ) {
+    public CompletionStage<CharRecord> merge(CharRecord record ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap(em -> update(em, record)), ec);
+            () -> wrap(em -> merge(em, record)), ec);
     }
 
     /** update an instance of class `Combat` in the DB */
     @Override
-    public CompletionStage<Combat> update( Combat combat ) {
+    public CompletionStage<Combat> merge(Combat combat ) {
         return CompletableFuture.supplyAsync(
-            () -> wrap(em -> update(em, combat)), ec);
+            () -> wrap(em -> merge(em, combat)), ec);
     }
 
 
@@ -121,6 +126,13 @@ public class JPACharRepository implements CharRepository {
             },
             ec);
     }
+    @Override
+    public CompletionStage<List<SR4Char>> allOthers( Integer combatId ) {
+        return CompletableFuture.supplyAsync(
+            () -> wrap( em -> listOtherChars( em, combatId ) ),
+            ec
+        );
+    }
 
 
     /** Stream of the ids and description of all combats in the  DB */
@@ -147,6 +159,24 @@ public class JPACharRepository implements CharRepository {
             ec);
     }
 
+    @Override
+    public CompletionStage<SR4Char> remove( SR4Char chara ) {
+        return CompletableFuture.supplyAsync(
+            () -> wrap( em -> remove( em, chara ))
+        );
+    }
+    @Override
+    public CompletionStage<CharRecord> remove( CharRecord record ) {
+        return CompletableFuture.supplyAsync(
+            () -> wrap( em -> remove( em, record ))
+        );
+    }
+    @Override
+    public CompletionStage<Combat> remove( Combat combat ) {
+        return CompletableFuture.supplyAsync(
+            () -> wrap( em -> remove( em, combat ))
+        );
+    }
 
 
     /* Private helper functions */
@@ -155,35 +185,53 @@ public class JPACharRepository implements CharRepository {
         return api.withTransaction(function);
     }
 
-    private SR4Char insert(EntityManager em, SR4Char chara) {
+    private SR4Char persist(EntityManager em, SR4Char chara) {
         em.persist(chara);
         return chara;
     }
-    private CharRecord insert(EntityManager em, CharRecord record) {
+    private CharRecord persist(EntityManager em, CharRecord record) {
         em.persist(record);
         return record;
     }
-    private Combat insert(EntityManager em, Combat combat) {
+    private Combat persist(EntityManager em, Combat combat) {
         em.persist(combat);
         return combat;
     }
 
-    private SR4Char update(EntityManager em, SR4Char chara) {
+    private SR4Char merge(EntityManager em, SR4Char chara) {
         em.merge(chara);
         return chara;
     }
-    private CharRecord update(EntityManager em, CharRecord record) {
+    private CharRecord merge(EntityManager em, CharRecord record) {
         em.merge(record);
         return record;
     }
-    private Combat update(EntityManager em, Combat combat) {
+    private Combat merge(EntityManager em, Combat combat) {
         em.merge(combat);
+        return combat;
+    }
+
+
+    private SR4Char remove(EntityManager em, SR4Char chara) {
+        em.remove( chara);
+        return chara;
+    }
+    private CharRecord remove(EntityManager em, CharRecord record) {
+        em.remove(record);
+        return record;
+    }
+    private Combat remove(EntityManager em, Combat combat) {
+        em.remove(combat);
         return combat;
     }
 
 
     private List<SR4Char> listAllChars(EntityManager em) {
         return em.createQuery("select s from SR4Char s", SR4Char.class ).getResultList();
+    }
+    private List<SR4Char> listOtherChars(EntityManager em, int combatId) {
+        return em.createQuery("select s from Combat c join c.charas r join r.chara s where c.id <> :id", SR4Char.class )
+            .setParameter( "id", combatId ).getResultList();
     }
 
     private List<CombatShort> listAllCombats(EntityManager em) {

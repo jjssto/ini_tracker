@@ -14,10 +14,13 @@ GET /combat             controllers.FormController.combat(req: Request)
 POST /combat/update     controllers.FormController.updateCombat(req: Request)
 GET /combat/roll/:i     controllers.FormController.rollInitiative(i: Integer)
 GET /addchar            controllers.FormController.addChar(req: Request)
+POST /combat/addchars   controllers.FormController.addCharsToCombat(req: Request)
+POST /combat/removechars   controllers.FormController.removeCharsFromCombat(req: Request)
 
 # JSON Controller
 
 GET /getchars           controllers.JsonController.getAllChars
+GET /getotherchars/:i   controllers.JsonController.getOtherChars(i: Integer)
 GET /getchars/:i        controllers.JsonController.getChar(i: Integer)
 GET /getcombats         controllers.JsonController.getCombats
 GET /getcombats/:i      controllers.JsonController.getCombat(i: Integer)

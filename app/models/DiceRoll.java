@@ -3,7 +3,8 @@ package models;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
 
 import javax.persistence.*;
-import java.time.Instant;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.*;
 
 @Entity
@@ -14,7 +15,7 @@ public class DiceRoll {
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
 
-    @ElementCollection
+    @ElementCollection( fetch = FetchType.EAGER )
     @CollectionTable( name = "dice" )
     private List<Integer> roll;
 
@@ -25,7 +26,7 @@ public class DiceRoll {
     @ManyToOne
     private CharRecord charRecord;
 
-    private long unixTime;
+    private LocalDateTime zeit;
 
     @Transient
     private final UniformIntegerDistribution dist;
@@ -41,7 +42,7 @@ public class DiceRoll {
 
     public DiceRoll( int eyes ) {
         this.dist = new UniformIntegerDistribution( 1, eyes );
-        this.unixTime = Instant.now().getEpochSecond();
+        this.zeit = null;
     }
 
     public DiceRoll( int eyes, CharRecord charRecord ) {
@@ -49,19 +50,27 @@ public class DiceRoll {
         this.charRecord = charRecord;
     }
 
-    //public void roll( int nbr  ) {
-    //    int[] result = dist.sample( nbr );
-    //    this.roll = new ArrayList<Die>();
-    //    for( int r : result ) {
-    //        Die newDie = new Die( r );
-    //        roll.add( newDie );
-    //    }
-    //}
+    public String toJson() {
+        String ret = "{";
+        ret += "\"zeit\": \"" + zeit.toString() + "\""
+            + ",\"char\": \"" + charRecord.getChar().getName() + "\""
+            + ",\"roll\": [";
+        for ( Integer i = 0; i < roll.size(); i++  ) {
+           ret += "\"" + roll.get(i).toString() + "\"";
+            if ( i != roll.size() - 1 ) {
+                ret += ",";
+            }
+        }
+        return ret + "]}";
+    }
+
     public void roll( int nbr  ) {
+        this.roll = new ArrayList<Integer>();
         int[] result = dist.sample( nbr );
         for ( Integer r : result ) {
             this.roll.add( r );
         }
+        this.zeit = LocalDateTime.now();
     }
 
     public void roll( int nbr, CharRecord charRecord  ) {

@@ -131,6 +131,10 @@ public class CharRecord {
         this.pDmg = pDmg;
     }
 
+    public void setChara ( SR4Char chara ) {
+        this.chara = chara;
+    }
+
     public SR4Char
     getChar()
     {
