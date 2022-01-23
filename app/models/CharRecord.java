@@ -2,8 +2,6 @@ package models;
 
 import models.SR4Char;
 import javax.persistence.*;
-import java.util.ArrayList;
-import org.apache.commons.math3.distribution.BinomialDistribution;
 
 @Entity
 @Table( name = "char_record")
@@ -63,7 +61,7 @@ public class CharRecord {
         } else {
             initiative = chara.getIni();
         }
-        int penalty = (int) Math.max( getPDmg(), getSDmg() ) / 3;
+        int penalty = Math.max( getPDmg(), getSDmg() ) / 3;
         int nbr_dice;
         if ( initiative > penalty ) {
             nbr_dice = initiative - penalty ;

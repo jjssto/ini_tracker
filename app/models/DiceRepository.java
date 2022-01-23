@@ -3,7 +3,6 @@ package models;
 import com.google.inject.ImplementedBy;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.concurrent.CompletionStage;
 import java.util.List;
 

@@ -90,44 +90,91 @@ function load_combat( combatId ) {
     Http.send();
 }
 
-function load_chars() {
+//function load_chars() {
+//    const Http = new XMLHttpRequest();
+//    Http.onload = function () {
+//        let data = JSON.parse(this.responseText);
+//        let form = document.getElementById("char_selection_f");
+//        let form2 = document.getElementById("remove_char_f");
+//        let button = document.getElementById("char_selection_b");
+//        let button2 = document.getElementById("remove_char_b");
+//        for (let i in data) {
+//            let chara = data[i]
+//            let div = document.createElement("div");
+//            let div2 = document.createElement("div");
+//            let input = document.createElement("input");
+//            let input2 = document.createElement("input");
+//            input.id = "char_" + chara["id"];
+//            input2.id = "char_" + chara["id"];
+//            input.name = "id";
+//            input2.name = "id";
+//            input.type = "checkbox";
+//            input2.type = "checkbox";
+//            input.value = chara["id"];
+//            input2.value = chara["id"];
+//            div.appendChild(input);
+//            div2.appendChild(input2);
+//            let label = document.createElement("label");
+//            let label2 = document.createElement("label");
+//            label.for = "char_" + chara["id"];
+//            label2.for = "char_" + chara["id"];
+//            label.innerHTML = chara["name"];
+//            label2.innerHTML = chara["name"];
+//            div.appendChild(label);
+//            div2.appendChild(label2);
+//            form.insertBefore(div,button);
+//            form2.insertBefore(div2,button2);
+//        }
+//        create_hidden_input(form, "csrfToken", get_token());
+//    }
+//    Http.open("GET", "/getchars" );
+//    Http.send();
+//}
+function load_chars_1( combatId ) {
     const Http = new XMLHttpRequest();
     Http.onload = function () {
         let data = JSON.parse(this.responseText);
         let form = document.getElementById("char_selection_f");
-        let form2 = document.getElementById("remove_char_f");
         let button = document.getElementById("char_selection_b");
-        let button2 = document.getElementById("remove_char_b");
+        let select = document.createElement( "select");
+        select.id = "char_selection_s";
         for (let i in data) {
             let chara = data[i]
-            let div = document.createElement("div");
-            let div2 = document.createElement("div");
-            let input = document.createElement("input");
-            let input2 = document.createElement("input");
-            input.id = "char_" + chara["id"];
-            input2.id = "char_" + chara["id"];
-            input.name = "id";
-            input2.name = "id";
-            input.type = "checkbox";
-            input2.type = "checkbox";
+            let input = document.createElement("option");
+            input.value = chara["id"];
+            input.innerHTML = chara["name"];
+            select.appendChild(input);
+        }
+        form.insertBefore( select, button )
+        //create_hidden_input(form, "csrfToken", get_token());
+    }
+    Http.open("GET", "/getotherchars/" + combatId );
+    Http.send();
+}
+function load_chars_2( combatId ) {
+    const Http = new XMLHttpRequest();
+    Http.onload = function () {
+        let data = JSON.parse(this.responseText);
+        let form2 = document.getElementById("remove_char_f");
+        let button2 = document.getElementById("remove_char_b");
+        let select = document.createElement( "select");
+        let select2 = document.getElementById( "dice_roller_s");
+        select.id = "remove_char_s";
+        for (let i in data) {
+            let chara = data[i];
+            let input = document.createElement("option");
+            let input2 = document.createElement("option");
             input.value = chara["id"];
             input2.value = chara["id"];
-            div.appendChild(input);
-            div2.appendChild(input2);
-            let label = document.createElement("label");
-            let label2 = document.createElement("label");
-            label.for = "char_" + chara["id"];
-            label2.for = "char_" + chara["id"];
-            label.innerHTML = chara["name"];
-            label2.innerHTML = chara["name"];
-            div.appendChild(label);
-            div2.appendChild(label2);
-            form.insertBefore(div,button);
-            form2.insertBefore(div2,button2);
+            input.innerHTML = chara["name"];
+            input2.innerHTML = chara["name"];
+            select.appendChild( input );
+            select2.appendChild( input2 );
         }
-        create_hidden_input(form, "csrfToken", get_token());
+        form2.insertBefore( select, button2 );
+        //create_hidden_input(form, "csrfToken", get_token());
     }
-    Http.open("GET", "/getchars" );
+    Http.open("GET", "/getcombatchars/" + combatId );
     Http.send();
 }
 
@@ -200,18 +247,8 @@ function get_dice_rolls( combatId ) {
 function addCharsToCombat() {
 
     let ret = ""
-    let form = document.getElementById("char_selection_f");
-    let elements = form.elements;
-    for ( let el in elements ) {
-        if ( elements[el].localName !== "input" ) {
-            break;
-        } else if ( elements[el].checked === true ) {
-            if ( ret.length  > 0 ) {
-               ret += ',';
-            }
-            ret += '"' + elements[el].value + '"';
-       }
-    }
+    let select = document.getElementById("char_selection_s");
+    ret = '"' + select.value + '"';
     let combatId = localStorage.getItem( 'combat_id');
     let payload = '{"chars": [' + ret + '], "combatId": "' + combatId.toString() + '"}';
     let url = "/combat/addchars?csrfToken=" + get_token();
@@ -225,18 +262,8 @@ function addCharsToCombat() {
 function removeCharsFromCombat() {
 
     let ret = ""
-    let form = document.getElementById("remove_char_f");
-    let elements = form.elements;
-    for ( let el in elements ) {
-        if ( elements[el].localName !== "input" ) {
-            break;
-        } else if ( elements[el].checked === true ) {
-            if ( ret.length  > 0 ) {
-                ret += ',';
-            }
-            ret += '"' + elements[el].value + '"';
-        }
-    }
+    let select = document.getElementById("remove_char_s");
+    ret = '"' + select.value + '"';
     let combatId = localStorage.getItem( 'combat_id');
     let payload = '{"chars": [' + ret + '], "combatId": "' + combatId.toString() + '"}';
     let url = "/combat/removechars?csrfToken=" + get_token();
@@ -250,7 +277,8 @@ function removeCharsFromCombat() {
 
 let combat_id = parseInt( get_value_from_id( "combat_id") );
 load_combat( combat_id );
-load_chars();
+load_chars_1( combat_id );
+load_chars_2( combat_id );
 get_dice_rolls( combat_id );
 
 let input = document.getElementById("char_selection_b");

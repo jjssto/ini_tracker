@@ -14,6 +14,7 @@ GET /combat             controllers.FormController.combat(req: Request)
 POST /combat/update     controllers.FormController.updateCombat(req: Request)
 GET /combat/roll/:i     controllers.FormController.rollInitiative(i: Integer)
 GET /addchar            controllers.FormController.addChar(req: Request)
+POST /addcombat         controllers.FormController.addCombat(req: Request)
 POST /combat/addchars   controllers.FormController.addCharsToCombat(req: Request)
 POST /combat/removechars   controllers.FormController.removeCharsFromCombat(req: Request)
 
@@ -21,12 +22,13 @@ POST /combat/removechars   controllers.FormController.removeCharsFromCombat(req:
 
 GET /getchars           controllers.JsonController.getAllChars
 GET /getotherchars/:i   controllers.JsonController.getOtherChars(i: Integer)
+GET /getcombatchars/:i  controllers.JsonController.getCombatChars(i: Integer)
 GET /getchars/:i        controllers.JsonController.getChar(i: Integer)
 GET /getcombats         controllers.JsonController.getCombats
 GET /getcombats/:i      controllers.JsonController.getCombat(i: Integer)
 GET /getrecord/:i       controllers.JsonController.getRecord(i: Integer)
 GET /ini/:i             controllers.JsonController.getIniList(i: Integer)
-GET /rolls             controllers.JsonController.getDiceRolls(req: Request)
+GET /rolls              controllers.JsonController.getDiceRolls(req: Request)
 
 # Assets
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

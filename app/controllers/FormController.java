@@ -20,23 +20,25 @@ import javax.inject.Inject;
  */
 public class FormController extends Controller {
 
-    private final CharRepository repo;
+    private final CharRepository charRepo;
+    private final CombatRepository combatRepo;
     private final DiceRepository diceRepo;
     private final HttpExecutionContext ec;
     private final FormFactory formF;
     private final MessagesApi messagesApi;
-    private Http.Request request;
 
     @Inject
     public FormController(
         FormFactory formF,
-        CharRepository repo,
+        CharRepository charRepo,
+        CombatRepository combatRepo,
         DiceRepository diceRepo,
         HttpExecutionContext ec,
         MessagesApi messagesApi
     ) {
         this.formF = formF;
-        this.repo = repo;
+        this.charRepo = charRepo;
+        this.combatRepo = combatRepo;
         this.diceRepo = diceRepo;
         this.ec = ec;
         this.messagesApi = messagesApi;
@@ -44,8 +46,8 @@ public class FormController extends Controller {
 
     public Result combat( Http.Request request ) {
         DynamicForm form = formF.form().bindFromRequest( request );
-        Integer id = Integer.valueOf( form.get("id") );
-        return redirect( "/combat/" + id.toString() );
+        int id = Integer.parseInt(form.get("id"));
+        return redirect( "/combat/" + id);
     }
 
     public Result updateCombat( Http.Request request ) {
@@ -53,16 +55,13 @@ public class FormController extends Controller {
         if ( json == null ) {
             return badRequest( "Expecting Json data" );
         }
-        Integer id = json.findPath("id").asInt(0);
-        Integer sDmg = json.findPath("sDmg").asInt(-1);
-        Integer pDmg = json.findPath("pDmg").asInt(-1);
-        Integer localIni = json.findPath("localIni").asInt(-1);
+        int id = json.findPath("id").asInt(0);
+        int sDmg = json.findPath("sDmg").asInt(-1);
+        int pDmg = json.findPath("pDmg").asInt(-1);
+        int localIni = json.findPath("localIni").asInt(-1);
         CharRecord record;
-        if ( id == null ) {
-            return badRequest( "No valid Id" );
-        }
         try {
-            record = repo.getRecord(id).toCompletableFuture().get();
+            record = combatRepo.getRecord(id).toCompletableFuture().get();
             if ( sDmg != -1 ) {
                 record.setSDmg(sDmg);
             }
@@ -72,10 +71,8 @@ public class FormController extends Controller {
             if ( localIni != -1 ) {
                 record.setLocalIni( localIni );
             }
-            repo.merge( record ).toCompletableFuture().get();
-        } catch ( InterruptedException ie ) {
-            return badRequest();
-        } catch ( ExecutionException ee ) {
+            combatRepo.merge( record ).toCompletableFuture().get();
+        } catch ( InterruptedException | ExecutionException ie ) {
             return badRequest();
         }
         return ok( views.html.combat.render(
@@ -86,21 +83,18 @@ public class FormController extends Controller {
     }
 
     public Result rollInitiative( Integer combatId ) {
-        repo.getCombat( combatId ).thenApplyAsync(
+        combatRepo.getCombat( combatId ).thenApplyAsync(
             combat -> {
                 for( CharRecord charRecord : combat.getCharas() ) {
                     DiceRoll diceRoll = new DiceRoll( 6, charRecord );
                     int ini = charRecord.getNbrIniDice();
                     diceRoll.roll( ini );
                     charRecord.setIniValue( ini + diceRoll.bigger_equal( 5 ));
-                    //for ( Die die : diceRoll.getRoll()) {
-                    //    diceRepo.insert( die );
-                    //}
                     diceRepo.insert( diceRoll );
                 }
                 return combat;
                 }, ec.current()
-        ).thenApplyAsync( combat -> repo.merge( combat ), ec.current() );
+        ).thenApplyAsync(combatRepo::merge, ec.current() );
         return ok("OK");
     }
 
@@ -133,7 +127,7 @@ public class FormController extends Controller {
         } catch( NumberFormatException e1 ) {
             chara.setPBoxes( 0 );
         }
-        return repo.persist( chara ).thenApplyAsync(
+        return charRepo.persist( chara ).thenApplyAsync(
             cha -> ok(),
             ec.current()
         );
@@ -141,22 +135,18 @@ public class FormController extends Controller {
 
     public Result addCharsToCombat( Http.Request request ) {
         JsonNode json = request.body().asJson();
-        if ( json == null ) {
-        }
         Integer combatId = json.findPath("combatId").asInt(0);
         JsonNode charasJ = json.findPath("chars");
         try {
-            Combat combat = repo.getCombat(combatId).toCompletableFuture().get();
+            Combat combat = combatRepo.getCombat(combatId).toCompletableFuture().get();
             for (int i = 0; i < charasJ.size(); i++) {
-                SR4Char chara = repo.getChar(charasJ.get(i).asInt()).toCompletableFuture().get();
+                SR4Char chara = charRepo.getChar(charasJ.get(i).asInt()).toCompletableFuture().get();
                 CharRecord record = new CharRecord( chara, combat);
-                repo.persist(record);
+                combatRepo.persist(record);
                 combat.addRecord(record);
             }
-            repo.merge(combat);
-        } catch ( InterruptedException ie ) {
-            return badRequest();
-        } catch ( ExecutionException ee ) {
+            combatRepo.merge(combat);
+        } catch ( InterruptedException | ExecutionException ie ) {
             return badRequest();
         }
         return ok() ;
@@ -164,23 +154,27 @@ public class FormController extends Controller {
 
     public Result removeCharsFromCombat( Http.Request request ) {
         JsonNode json = request.body().asJson();
-        if ( json == null ) {
-        }
         Integer combatId = json.findPath("combatId").asInt(0);
         JsonNode charasJ = json.findPath("chars");
         try {
-            Combat combat = repo.getCombat(combatId).toCompletableFuture().get();
+            Combat combat = combatRepo.getCombat(combatId).toCompletableFuture().get();
             for (int i = 0; i < charasJ.size(); i++) {
                 Integer charId = charasJ.get(i).asInt();
                 CharRecord record = combat.removeRecord( charId );
-                repo.remove( record.getId() );
+                combatRepo.remove( record.getId() );
             }
          //   repo.merge(combat);
-        } catch ( InterruptedException ie ) {
-            return badRequest();
-        } catch ( ExecutionException ee ) {
+        } catch ( InterruptedException | ExecutionException ie ) {
             return badRequest();
         }
         return ok() ;
+    }
+
+    public Result addCombat( Http.Request request ) {
+        JsonNode json = request.body().asJson();
+        String combat_desc = json.get(0).asText();
+        Combat combat = new Combat( combat_desc );
+        combatRepo.persist( combat );
+        return ok();
     }
 }

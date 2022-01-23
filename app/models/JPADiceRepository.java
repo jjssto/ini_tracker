@@ -1,11 +1,9 @@
 package models;
 
-import akka.http.javadsl.model.DateTime;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
 import java.time.LocalDateTime;
-import java.util.Date;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 import javax.persistence.EntityManager;

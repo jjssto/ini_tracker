@@ -1,10 +1,11 @@
 package models;
 
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.*;
 
 @Entity
@@ -24,6 +25,7 @@ public class DiceRoll {
     private String comment;
 
     @ManyToOne
+    @OnDelete(action = OnDeleteAction.CASCADE)
     private CharRecord charRecord;
 
     private LocalDateTime zeit;
@@ -51,14 +53,12 @@ public class DiceRoll {
     }
 
     public String toJson() {
-        String ret = "{";
-        ret += "\"zeit\": \"" + zeit.toString() + "\""
-            + ",\"char\": \"" + charRecord.getChar().getName() + "\""
-            + ",\"roll\": [";
-        for ( Integer i = 0; i < roll.size(); i++  ) {
-           ret += "\"" + roll.get(i).toString() + "\"";
+        StringBuilder ret = new StringBuilder("{");
+        ret.append("\"zeit\": \"").append(zeit.toString()).append("\"").append(",\"char\": \"").append(charRecord.getChar().getName()).append("\"").append(",\"roll\": [");
+        for (int i = 0; i < roll.size(); i++  ) {
+           ret.append("\"").append(roll.get(i).toString()).append("\"");
             if ( i != roll.size() - 1 ) {
-                ret += ",";
+                ret.append(",");
             }
         }
         return ret + "]}";
@@ -78,14 +78,6 @@ public class DiceRoll {
         this.charRecord = charRecord;
     }
 
-
-    //public String toString() {
-    //    String ret = "( ";
-    //    for( int i = 0; i < roll.size(); i++ ) {
-    //       ret += roll.get(i).toString() + ", ";
-    //    }
-    //    return ret + ")";
-    //}
 
     public int bigger_equal( int target ) {
         int ret = 0;

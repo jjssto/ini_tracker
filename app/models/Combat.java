@@ -19,13 +19,20 @@ public class Combat extends AbstractCombat {
 
     public Combat( Integer combatId ) {
         id = combatId;
-        charas = new ArrayList<CharRecord>();
+        charas = new ArrayList<>();
         description = "";
     }
     public Combat() {
-        this( null );
+        id = null;
+        charas = new ArrayList<>();
+        description = "";
     }
 
+    public Combat( String description ) {
+        this.id = null;
+        this.charas = new ArrayList<>();
+        this.description = description;
+    }
 
 
 
@@ -36,7 +43,7 @@ public class Combat extends AbstractCombat {
 
    public CharRecord removeRecord( Integer charId ) {
         for ( int i = 0; i < charas.size(); i++ ) {
-            if ( charas.get(i).getCharId() == charId ) {
+            if ( charas.get(i).getCharId().equals( charId ) ) {
                 CharRecord record = charas.get(i);
                 charas.remove( i );
                 return record;
