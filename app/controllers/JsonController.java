@@ -10,8 +10,10 @@ import play.mvc.Result;
 import play.libs.concurrent.HttpExecutionContext;
 
 import java.time.LocalDateTime;
+import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.CompletionException;
 import java.util.concurrent.CompletionStage;
 import javax.inject.Inject;
 
@@ -156,22 +158,24 @@ public class JsonController extends Controller {
         int combatId = Integer.parseInt( form.get("id") );
         String timeString = form.get("timestamp");
         LocalDateTime timestamp;
-        if ( timeString.equals( "" ) ) {
+        try {
+            timestamp = LocalDateTime.parse(timeString);
+        } catch ( NullPointerException | DateTimeParseException e ) {
             timestamp = LocalDateTime.now().minus( 15, ChronoUnit.MINUTES );
-        } else {
-            timestamp = LocalDateTime.parse( timeString );
         }
+        String time = LocalDateTime.now().minus( 30, ChronoUnit.SECONDS ).toString();
         return diceRepo.getLastNDiceRolls(combatId, timestamp )
             .thenApplyAsync(
                 c -> ok(
-                    myToJason( c )
+                    myToJason( c, time )
                 ),
                 ec.current()
             );
     }
 
-    private String myToJason (List<DiceRoll> list ) {
-        StringBuilder ret = new StringBuilder("{");
+    private String myToJason (List<DiceRoll> list, String time ) {
+        StringBuilder ret = new StringBuilder("{ \"time\":");
+        ret.append("\"").append( time ).append("\",\"rolls\": {");
         for( int i = 0; i < list.size(); i++ ) {
             ret.append("\"").append(i).append("\":");
             ret.append( list.get(i).toJson() );
@@ -179,6 +183,6 @@ public class JsonController extends Controller {
                 ret.append(",");
             }
         }
-        return ret + "}";
+        return ret + "}}";
     }
 }

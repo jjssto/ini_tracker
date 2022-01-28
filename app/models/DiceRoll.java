@@ -53,15 +53,23 @@ public class DiceRoll {
     }
 
     public String toJson() {
+        String charName;
         StringBuilder ret = new StringBuilder("{");
-        ret.append("\"zeit\": \"").append(zeit.toString()).append("\"").append(",\"char\": \"").append(charRecord.getChar().getName()).append("\"").append(",\"roll\": [");
+        try {
+            charName = charRecord.getChar().getName();
+        } catch ( NullPointerException e) {
+            charName = "";
+        }
+        ret.append("\"zeit\": \"").append(zeit.toString()).append("\"").append(",\"char\": \"").append( charName ).append("\"").append(",\"roll\": [");
         for (int i = 0; i < roll.size(); i++  ) {
            ret.append("\"").append(roll.get(i).toString()).append("\"");
             if ( i != roll.size() - 1 ) {
                 ret.append(",");
             }
         }
-        return ret + "]}";
+        ret.append("],").append("\"result\":\"");
+        ret.append( bigger_equal( 5 ) ).append("\"}");
+        return ret.toString();
     }
 
     public void roll( int nbr  ) {

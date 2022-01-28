@@ -21,6 +21,7 @@ public interface CharRepository {
 
     /* Auswahl über ID */
     CompletionStage<SR4Char> getChar( Integer charId );
+    CompletionStage<Integer> getRecordId( Integer charId, Integer combatId );
 
     /* Listen */
     CompletionStage<List<SR4Char>> allChars();

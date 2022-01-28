@@ -7,7 +7,7 @@ import {
     //get_inner_from_id,
     set_inner_by_id,
     set_value_by_id
-} from './modules/functions.js'
+} from './functions.js'
 
 function update_rows() {
     let nbr_rows = get_value_from_id("char_update_nbr_rows");
@@ -36,16 +36,16 @@ function update_rows() {
             document.getElementById("localIni_" + row).value = "";
         }
     }
-    update_combat( parseInt( get_value_from_id( "combat_id")) );
+    update_combat( parseInt( localStorage.getItem( "combatId")) );
 }
 
 function load_combat( combatId ) {
+    localStorage.setItem( "combatId", combatId.toString() );
     const Http = new XMLHttpRequest();
     Http.onload = function () {
         let list = JSON.parse(this.responseText);
         let tbody = document.getElementById("char_update_tbody");
         let input = document.createElement("input");
-        localStorage.setItem( "combat_id", combatId.toString() );
         tbody.appendChild(input);
         let counter = 0;
         for (let nbr in list) {
@@ -90,46 +90,7 @@ function load_combat( combatId ) {
     Http.send();
 }
 
-//function load_chars() {
-//    const Http = new XMLHttpRequest();
-//    Http.onload = function () {
-//        let data = JSON.parse(this.responseText);
-//        let form = document.getElementById("char_selection_f");
-//        let form2 = document.getElementById("remove_char_f");
-//        let button = document.getElementById("char_selection_b");
-//        let button2 = document.getElementById("remove_char_b");
-//        for (let i in data) {
-//            let chara = data[i]
-//            let div = document.createElement("div");
-//            let div2 = document.createElement("div");
-//            let input = document.createElement("input");
-//            let input2 = document.createElement("input");
-//            input.id = "char_" + chara["id"];
-//            input2.id = "char_" + chara["id"];
-//            input.name = "id";
-//            input2.name = "id";
-//            input.type = "checkbox";
-//            input2.type = "checkbox";
-//            input.value = chara["id"];
-//            input2.value = chara["id"];
-//            div.appendChild(input);
-//            div2.appendChild(input2);
-//            let label = document.createElement("label");
-//            let label2 = document.createElement("label");
-//            label.for = "char_" + chara["id"];
-//            label2.for = "char_" + chara["id"];
-//            label.innerHTML = chara["name"];
-//            label2.innerHTML = chara["name"];
-//            div.appendChild(label);
-//            div2.appendChild(label2);
-//            form.insertBefore(div,button);
-//            form2.insertBefore(div2,button2);
-//        }
-//        create_hidden_input(form, "csrfToken", get_token());
-//    }
-//    Http.open("GET", "/getchars" );
-//    Http.send();
-//}
+
 function load_chars_1( combatId ) {
     const Http = new XMLHttpRequest();
     Http.onload = function () {
@@ -166,6 +127,7 @@ function load_chars_2( combatId ) {
             let input2 = document.createElement("option");
             input.value = chara["id"];
             input2.value = chara["id"];
+            input2.name = "charId";
             input.innerHTML = chara["name"];
             input2.innerHTML = chara["name"];
             select.appendChild( input );
@@ -206,16 +168,27 @@ function update_combat( combatId ) {
 }
 
 function get_dice_rolls( combatId ) {
+
     const Http = new XMLHttpRequest();
     Http.onload = function () {
-        let list = JSON.parse(this.responseText);
+        let resp = JSON.parse(this.responseText);
+        let list = resp["rolls"];
+        let lastRoll = localStorage.getItem( "last_roll" )
+        if ( lastRoll == "" ) {
+            localStorage.setItem( "last_roll", resp["time"] );
+        }
         let tbody = document.getElementById("rolls_table_tbody");
         for ( let i in list ) {
            let roll = list[i];
+            if ( Date.parse(lastRoll ) >= Date.parse( roll["zeit"] )  ) {
+                continue;
+            }
            let row = document.createElement('tr');
 
            let cell = document.createElement('td');
-           cell.innerHTML = roll["zeit"] ;
+           let time = new Date( roll.zeit );
+           let options = { hour: "2-digit", minute: "2-digit", second: "2-digit" };
+           cell.innerHTML = time.toLocaleDateString( 'de', options );
             row.appendChild( cell );
 
            cell = document.createElement('td');
@@ -229,6 +202,10 @@ function get_dice_rolls( combatId ) {
            cell = document.createElement('td');
            cell.innerHTML = diceRoll ;
            row.appendChild( cell );
+
+            cell = document.createElement('td');
+            cell.innerHTML = roll["result"] ;
+            row.appendChild( cell );
            tbody.appendChild( row );
            localStorage.setItem( "last_roll", roll["zeit"] );
         }
@@ -244,51 +221,13 @@ function get_dice_rolls( combatId ) {
     Http.send();
 }
 
-function addCharsToCombat() {
 
-    let ret = ""
-    let select = document.getElementById("char_selection_s");
-    ret = '"' + select.value + '"';
-    let combatId = localStorage.getItem( 'combat_id');
-    let payload = '{"chars": [' + ret + '], "combatId": "' + combatId.toString() + '"}';
-    let url = "/combat/addchars?csrfToken=" + get_token();
-
-    const Http = new XMLHttpRequest();
-    Http.open( "POST", url );
-    Http.setRequestHeader(  "Content-Type", "application/json" );
-    Http.send( payload );
-}
-
-function removeCharsFromCombat() {
-
-    let ret = ""
-    let select = document.getElementById("remove_char_s");
-    ret = '"' + select.value + '"';
-    let combatId = localStorage.getItem( 'combat_id');
-    let payload = '{"chars": [' + ret + '], "combatId": "' + combatId.toString() + '"}';
-    let url = "/combat/removechars?csrfToken=" + get_token();
-
-    const Http = new XMLHttpRequest();
-    Http.open( "POST", url );
-    Http.setRequestHeader(  "Content-Type", "application/json" );
-    Http.send( payload );
-}
-
-
-let combat_id = parseInt( get_value_from_id( "combat_id") );
+localStorage.setItem( "last_roll", "");
+let combat_id = parseInt( localStorage.getItem( "combatId") );
 load_combat( combat_id );
 load_chars_1( combat_id );
 load_chars_2( combat_id );
 get_dice_rolls( combat_id );
-
-let input = document.getElementById("char_selection_b");
-input.addEventListener( "click", function () {
-    addCharsToCombat();
-} );
-input = document.getElementById("remove_char_b");
-input.addEventListener( "click", function () {
-    removeCharsFromCombat();
-} );
 
 
 window.setInterval( function() {

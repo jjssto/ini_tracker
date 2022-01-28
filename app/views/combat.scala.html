@@ -4,12 +4,17 @@
     <head>
         <title>Initiative</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <input type="hidden" id="combat_id" value="@combatId">
-        <input type="hidden" id="char_update_nbr_rows" value="0">
-        <script type="module" src="@routes.Assets.at("javascripts/combat.js")"></script>
+        <script type="text/javascript">
+                localStorage.setItem("combatId", @combatId);
+        </script>
+        <script type="module" src="@routes.Assets.at("javascripts/combat.js")" charset="UTF-8"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" charset="UTF-8"></script>
+        <script type="module" src="@routes.Assets.at("javascripts/roll.js")" charset="UTF-8"></script>
     </head>
 
    <body>
+       <input type="hidden" id="combat_id" value="@combatId">
+       <input type="hidden" id="char_update_nbr_rows" value="0">
        <h1>Initiative</h1>
        <div class="row">
         <div class="column" id="column_l">
@@ -40,36 +45,42 @@
                 </div>
             <div class="column">
             <h2>Charakter hinzufügen:</h2>
-            <form id="char_selection_f" action="@routes.FormController.addCharsToCombat">
+            <form id="char_selection_f" action="@routes.FormController.addCharsToCombat()">
                 <input type="button" id="char_selection_b" value="Hinzufügen">
             </form>
             </div>
             <div class="column">
                 <h2>Charakter entfernen:</h2>
-                <form id="remove_char_f" action="@routes.FormController.addCharsToCombat">
+                <form id="remove_char_f" action="@routes.FormController.addCharsToCombat()">
                     <input type="button" id="remove_char_b" value="Entfernen">
                 </form>
             </div>
             </div>
        </div>
+
            <div class="column" >
                <h2>Dice Roller</h2>
-           <form id="dice_roller_f">
-              <select id="dice_roller_s">
+           <form id="dice_roller_f" >
+              <select id="dice_roller_s" name="recordId" form="dice_roller_f">
 
               </select>
-               <label for="dice_roller_n">Anz. Würfel:</label><input type="number" id="dice_roller_n">
-               <button>Würfeln</button>
+               <label for="dice_roller_n">Anz. Würfel:</label><input type="number" id="dice_roller_n" name="nbrOfDice">
+               <input type="hidden" id="dice_roller_token" name="csrfToken">
+               <input type="hidden" id="dice_roller_combat_id" name="combatId", value="@combatId">
+               @helper.CSRF.formField
+               <input type="submit" id="dice_roller_b" value="Würfeln">
            </form>
                <h2>Würfelergebnisse</h2>
+               <div style="height: 500px; overflow-y: scroll;">
            <table>
                <thead>
-                   <tr><th>Timestamp</th><th>Char.</th><th>Wurf</th></tr>
+                   <tr><th>Timestamp</th><th>Char.</th><th>Wurf</th><th>Resultat</th></tr>
                </thead>
                <tbody id="rolls_table_tbody">
 
                </tbody>
            </table>
+               </div>
            </div>
        </div>
    </body>

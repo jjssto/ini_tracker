@@ -14,7 +14,6 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 import javax.inject.Inject;
 
-
 /**
  * Contains methods for user input
  */
@@ -98,6 +97,24 @@ public class FormController extends Controller {
         return ok("OK");
     }
 
+    public Result roll( Http.Request request ) {
+        DynamicForm recordForm = formF.form().bindFromRequest( request );
+        int charId = Integer.parseInt( recordForm.get( "charId" ) );
+        int combatId = Integer.parseInt( recordForm.get( "combatId" ) );
+        int nbrOfDice = Integer.parseInt( recordForm.get( "nbrOfDice" ) );
+        CharRecord charRecord;
+        try {
+            int recordId = charRepo.getRecordId( charId, combatId ).toCompletableFuture().get();
+            charRecord = combatRepo.getRecord(recordId).toCompletableFuture().get();
+        } catch ( InterruptedException | ExecutionException ie ) {
+            return badRequest();
+        }
+        DiceRoll diceRoll = new DiceRoll(6, charRecord );
+        diceRoll.roll( nbrOfDice );
+        diceRepo.insert( diceRoll );
+        return ok();
+    }
+
     public CompletionStage<Result> addChar( Http.Request request ) {
         DynamicForm charForm = formF.form().bindFromRequest( request );
         SR4Char chara = new SR4Char();
@@ -160,10 +177,8 @@ public class FormController extends Controller {
             Combat combat = combatRepo.getCombat(combatId).toCompletableFuture().get();
             for (int i = 0; i < charasJ.size(); i++) {
                 Integer charId = charasJ.get(i).asInt();
-                CharRecord record = combat.removeRecord( charId );
-                combatRepo.remove( record.getId() );
+                combat.removeRecord( charId );
             }
-         //   repo.merge(combat);
         } catch ( InterruptedException | ExecutionException ie ) {
             return badRequest();
         }

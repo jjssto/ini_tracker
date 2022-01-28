@@ -47,6 +47,15 @@ public class JPACharRepository implements CharRepository {
         );
     }
 
+
+    @Override
+    public CompletionStage<Integer> getRecordId( Integer charId, Integer combatId ) {
+        return CompletableFuture.supplyAsync(
+            () -> wrap( em -> getRecordId( em, charId, combatId )),
+            ec
+        );
+    }
+
     /* Listen */
     /** Stream of all instances of class `SR4Char` in the DB */
     @Override
@@ -98,6 +107,16 @@ public class JPACharRepository implements CharRepository {
     private SR4Char remove(EntityManager em, SR4Char chara) {
         em.remove( chara);
         return chara;
+    }
+
+    private Integer getRecordId(EntityManager em, int charId, int combatId ) {
+        return em.createQuery( "select r.id from CharRecord r " +
+            "join r.chara ch " +
+            "join r.combat co " +
+            "where ch.id = :charId and co.id = :combatId", Integer.class )
+            .setParameter("charId", charId )
+            .setParameter( "combatId", combatId )
+            .getSingleResult();
     }
 
     private List<SR4Char> listAllChars(EntityManager em) {
