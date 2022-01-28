@@ -41,15 +41,13 @@ public class Combat extends AbstractCombat {
        charas.add( record );
    }
 
-   public CharRecord removeRecord( Integer charId ) {
+   public void removeRecord( Integer charId ) {
         for ( int i = 0; i < charas.size(); i++ ) {
             if ( charas.get(i).getCharId().equals( charId ) ) {
                 CharRecord record = charas.get(i);
                 charas.remove( i );
-                return record;
             }
         }
-        return null;
    }
 
 
