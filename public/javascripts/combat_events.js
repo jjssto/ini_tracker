@@ -7,6 +7,12 @@ button.addEventListener(
     function( ) {
         let url = '/combat';
         let token =  $('input[name="csrfToken"]').attr('value')
+        let exploding;
+        if ( document.getElementById( "dice_roller_ex").checked ) {
+            exploding = 'y';
+        } else {
+            exploding = 'n';
+        }
         $.ajax({
             type: "post",
             url: "/combat",
@@ -17,7 +23,15 @@ button.addEventListener(
             data: {
                 nbrOfDice: $('#dice_roller_n').val(),
                 combatId: $('#dice_roller_combat_id').val(),
-                charId: $('#dice_roller_s').val()
+                charId: $('#dice_roller_s').val(),
+                exploding: exploding
+            },
+            complete: function() {
+                document.getElementById( "dice_roller_ex").checked  = false;
+                setTimeout( function() {
+                    let div = document.getElementById("results");
+                    div.scrollTop = div.scrollHeight;
+                }, 1000 );
             }
         });
     }
@@ -26,6 +40,19 @@ button.addEventListener(
 $( "#dice_roller_f").submit( function( event ) {
     event.preventDefault();
 });
+
+$( "#roll_ini_b").click( function( event ) {
+    $.ajax({
+        type: "post",
+        url: "/combat/ini",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            combatId: localStorage.getItem( "combatId" )
+        }
+    });
+})
 
 
 button = document.getElementById( 'char_selection_b' );

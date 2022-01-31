@@ -72,18 +72,44 @@ public class DiceRoll {
         return ret.toString();
     }
 
-    public void roll( int nbr  ) {
-        this.roll = new ArrayList<Integer>();
-        int[] result = dist.sample( nbr );
+    public void roll( int nbr, List<Integer> roll ) {
+        this.roll = roll;
+        int[] result;
+        try {
+            result = dist.sample(nbr);
+        } catch( NullPointerException e ) {
+            result = new int[]{};
+        }
         for ( Integer r : result ) {
             this.roll.add( r );
         }
         this.zeit = LocalDateTime.now();
     }
 
+    public void roll( int nbr ) {
+        List<Integer> roll = new ArrayList<>();
+        roll( nbr, roll );
+    }
+
     public void roll( int nbr, CharRecord charRecord  ) {
         roll( nbr );
         this.charRecord = charRecord;
+    }
+
+    public void explode( int nbr ) {
+        int firstIndex = 0;
+        int count = nbr;
+        this.roll = new ArrayList<Integer>();
+        while ( count > 0 ) {
+            roll( count, this.roll );
+            count = 0;
+            for ( int i = firstIndex; i < this.roll.size(); i++ ) {
+                if ( this.roll.get( i ).equals( 6 ) ) {
+                    count++;
+                }
+            }
+            firstIndex = this.roll.size();
+        }
     }
 
 

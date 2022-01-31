@@ -27,6 +27,9 @@ public class SR4Char {
     @Column( name = "intuition")
     private Integer intuition = 0;
 
+    @Column( name = "pc" )
+    private boolean pc;
+
     public SR4Char () {
         this.ini = 1;
         this.name = "";
@@ -34,6 +37,7 @@ public class SR4Char {
         this.pBoxes = 1;
         this.reaction = 1;
         this.intuition = 1;
+        this.pc = false;
     }
 
     public Integer getId(){
@@ -63,6 +67,12 @@ public class SR4Char {
         this.pBoxes = pBoxes;
     }
 
+    public void setPc( boolean pc ) {
+        this.pc = pc;
+    }
+    public boolean getPc() {
+        return pc;
+    }
     public Integer getIni() {
         return ini;
     }

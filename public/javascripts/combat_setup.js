@@ -57,16 +57,45 @@ function load_combat( combatId ) {
 
             create_cell(row, "row_nbr_" + row_counter, (parseInt(nbr) + 1).toString());
             if (parseInt(record["localIni"]) > 0) {
-                create_cell(row, "iniValue_" + row_counter, record["iniValue"] + "(*)");
+                create_cell(row, "iniValue_" + row_counter, record["iniValue"] + "(" + record["localIni"]  + ")");
             } else {
                 create_cell(row, "iniValue_" + row_counter, record["iniValue"]);
             }
+
+            let col = document.createElement( "td");
+            let input = document.createElement( "input");
+            input.id = "localIni_" + row_counter;
+            input.size = 3;
+            input.max = 30;
+            input.min = 0;
+            input.type = "number";
+            col.appendChild( input );
+            row.appendChild( col );
+
+
             create_cell(row, "name_" + row_counter, chara["name"]);
-            create_cell(row, "o_sDmg_" + row_counter, record["sDmg"]);
-            create_cell(row, "o_pDmg_" + row_counter, record["pDmg"]);
-            create_input_cell(row, "sDmg_" + row_counter, "", "number");
-            create_input_cell(row, "pDmg_" + row_counter, "", "number");
-            create_input_cell(row, "localIni_" + row_counter, "", "number");
+            create_cell(row, "o_sDmg_" + row_counter, record["sdmg"]);
+            col = document.createElement( "td");
+            input = document.createElement( "input");
+            input.id = "sDmg_" + row_counter;
+            input.size = 3;
+            input.max = 20;
+            input.min = 0;
+            input.type = "number";
+            col.appendChild( input );
+            row.appendChild( col );
+            create_cell(row, "o_pDmg_" + row_counter, record["pdmg"]);
+
+            col = document.createElement( "td");
+            input = document.createElement( "input");
+            input.id = "pDmg_" + row_counter;
+            input.size = 3;
+            input.max = 20;
+            input.min = 0;
+            input.type = "number";
+            col.appendChild( input );
+            row.appendChild( col );
+
 
             let cell = document.createElement("td");
             input = document.createElement("input");
@@ -86,8 +115,10 @@ function load_combat( combatId ) {
         }
         set_value_by_id("char_update_nbr_rows", counter);
     }
-    Http.open("GET", "/ini/" + combatId.toString());
-    Http.send();
+
+    Http.open("GET", "/ini?combatId=" + combatId.toString()  );
+    Http.setRequestHeader( "Csrf-Token", get_token() );
+    Http.send( );
 }
 
 
@@ -155,7 +186,7 @@ function update_combat( combatId ) {
             set_inner_by_id( "o_pDmg_" + row, record["pdmg"]);
             let el = document.getElementById("iniValue_" + row);
             if (parseInt(record["localIni"]) > 0) {
-                el.innerHTML = record["iniValue"] + "(*)";
+                el.innerHTML = record["iniValue"] + "(" + record["localIni"]  + ")";
             } else {
                 el.innerHTML = record["iniValue"];
             }
@@ -163,8 +194,10 @@ function update_combat( combatId ) {
             document.getElementById( "record_id_" + row).value = record["id"];
         }
     }
-    Http.open("GET", "/ini/" + combatId.toString());
-    Http.send();
+
+    Http.open("GET", "/ini?combatId=" + combatId.toString()  );
+    Http.setRequestHeader( "Csrf-Token", get_token() );
+    Http.send( );
 }
 
 function get_dice_rolls( combatId ) {

@@ -5,7 +5,8 @@
         <meta charset="UTF-8">
         <title>Charakter</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <script type="text/javascript" src="@routes.Assets.at("javascripts/chars.js")"></script>
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" charset="UTF-8"></script>
+        <script type="module" src="@routes.Assets.at("javascripts/chars.js")"></script>
     </head>
     <body>
         <h1>Charakter</h1>
@@ -15,7 +16,7 @@
             @menu()
         </div>
         <div class="column">
-        <form id="char_update_f" action="@routes.FormController.addChar()">
+        <form id="char_update_f">
             <table>
                 <thead>
                     <tr>
@@ -25,18 +26,20 @@
                         <th>Intuition</th>
                         <th>Stun Boxes</th>
                         <th>Physical Boxes</th>
+                        <th>PC</th>
                         <th></th>
                         <th></th>
                     </tr>
                 </thead>
                 <tbody id="char_update_tbody">
                     <tr id="tr_form">
-                        <td><input name="name" type="text"></td>
-                        <td><input name="ini" type="number"></td>
-                        <td><input name="reaction" type="number"></td>
-                        <td><input name="intuition" type="number"></td>
-                        <td><input name="sBoxes" type="number"></td>
-                        <td><input name="pBoxes" type="number"></td>
+                        <td><input id="name" name="name" type="text"></td>
+                        <td><input id="ini" name="ini" type="number"></td>
+                        <td><input id="reaction" name="reaction" type="number"></td>
+                        <td><input id="intuition" name="intuition" type="number"></td>
+                        <td><input id="sBoxes" name="sBoxes" type="number"></td>
+                        <td><input id="pBoxes" name="pBoxes" type="number"></td>
+                        <td><input id="pc" name="pc" type="checkbox"></td>
                     </tr>
                 </tbody>
 

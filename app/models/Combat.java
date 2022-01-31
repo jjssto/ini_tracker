@@ -45,7 +45,7 @@ public class Combat extends AbstractCombat {
         for ( int i = 0; i < charas.size(); i++ ) {
             if ( charas.get(i).getCharId().equals( charId ) ) {
                 CharRecord record = charas.get(i);
-                charas.remove( i );
+                charas.remove( record );
             }
         }
    }

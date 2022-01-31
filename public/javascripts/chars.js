@@ -1,3 +1,5 @@
+import {get_token} from "./functions.js";
+
 function load_chars() {
     const Http = new XMLHttpRequest();
     Http.onload = function () {
@@ -38,5 +40,30 @@ function load_chars() {
     Http.open("GET", "/getchars");
     Http.send();
 }
+
+$("#char_update_f").submit( function( event ) {
+    event.preventDefault();
+    let pc = 'n';
+    if ( document.getElementById( "pc" ).checked ) {
+        pc = 'y';
+    }
+    $.ajax({
+        type: "post",
+        url: "/addchar",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            name: $('#name').val(),
+            ini: $('#ini') .val(),
+            reaction: $('#reaction').val(),
+            intuition: $('#intuition').val(),
+            sBoxes: $('#sBoxes').val(),
+            pBoxes: $('#pBoxes').val(),
+            pc: pc
+        }
+    });
+
+});
 
 load_chars()

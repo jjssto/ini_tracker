@@ -2,34 +2,40 @@
 # This file defines all application routes (Higher priority routes first)
 # ~~~~
 
-# PageController
+
+# Pages
+#########
 
 GET /                   controllers.PageController.index
-GET /combat/:i          controllers.PageController.combat(i: Integer, req: Request)
-GET /chars              controllers.PageController.chars(req: Request)
+GET /combat/:i          controllers.CombatController.combat(i: Integer, req: Request)
+GET /chars              controllers.CharController.chars(req: Request)
 
-# FormController
+# Forms
+###########
 
-GET /combat             controllers.FormController.combat(req: Request)
-POST /combat/update     controllers.FormController.updateCombat(req: Request)
-GET /combat/roll/:i     controllers.FormController.rollInitiative(i: Integer)
-POST /combat           controllers.FormController.roll(req: Request)
-GET /addchar            controllers.FormController.addChar(req: Request)
-POST /addcombat         controllers.FormController.addCombat(req: Request)
-POST /combat/addchars   controllers.FormController.addCharsToCombat(req: Request)
-POST /combat/removechars   controllers.FormController.removeCharsFromCombat(req: Request)
+POST /combat/update     controllers.CombatController.updateCombat(req: Request)
+POST /combat/ini        controllers.CombatController.rollInitiative(req: Request)
+POST /combat           controllers.CombatController.roll(req: Request)
+POST /addcombat         controllers.CombatController.addCombat(req: Request)
+POST /combat/addchars   controllers.CombatController.addCharsToCombat(req: Request)
+POST /combat/removechars   controllers.CombatController.removeCharsFromCombat(req: Request)
 
+POST /addchar            controllers.CharController.addChar(req: Request)
 # JSON Controller
 
-GET /getchars           controllers.JsonController.getAllChars
-GET /getotherchars/:i   controllers.JsonController.getOtherChars(i: Integer)
-GET /getcombatchars/:i  controllers.JsonController.getCombatChars(i: Integer)
-GET /getchars/:i        controllers.JsonController.getChar(i: Integer)
-GET /getcombats         controllers.JsonController.getCombats
-GET /getcombats/:i      controllers.JsonController.getCombat(i: Integer)
-GET /getrecord/:i       controllers.JsonController.getRecord(i: Integer)
-GET /ini/:i             controllers.JsonController.getIniList(i: Integer)
-GET /rolls              controllers.JsonController.getDiceRolls(req: Request)
+# JSON
+###########
+
+GET /getchars           controllers.CharController.getAllChars
+GET /getotherchars/:i   controllers.CharController.getOtherChars(i: Integer)
+GET /getcombatchars/:i  controllers.CharController.getCombatChars(i: Integer)
+GET /getchars/:i        controllers.CombatController.getChar(i: Integer)
+GET /getcombats         controllers.CombatController.getCombats
+GET /getcombats/:i      controllers.CombatController.getCombat(i: Integer)
+GET /getrecord/:i       controllers.CombatController.getRecord(i: Integer)
+GET /ini               controllers.CombatController.getIniList(req: Request)
+GET /rolls              controllers.CombatController.getDiceRolls(req: Request)
+
 
 # Assets
 GET     /assets/*file               controllers.Assets.at(path="/public", file)
