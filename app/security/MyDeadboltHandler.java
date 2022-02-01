@@ -18,7 +18,6 @@ package security;
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
 import be.objectify.deadbolt.java.DynamicResourceHandler;
 import be.objectify.deadbolt.java.models.Subject;
-import models.AuthorisedUser;
 import play.mvc.Http;
 import play.mvc.Result;
 
