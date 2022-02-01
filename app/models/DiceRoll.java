@@ -1,6 +1,7 @@
 package models;
 
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
+import org.hibernate.annotations.CollectionId;
 import org.hibernate.annotations.OnDelete;
 import org.hibernate.annotations.OnDeleteAction;
 
@@ -17,7 +18,11 @@ public class DiceRoll {
     private long id;
 
     @ElementCollection( fetch = FetchType.EAGER )
-    @CollectionTable( name = "dice" )
+    @CollectionTable(
+        name = "dice",
+        joinColumns=@JoinColumn( name = "dice_roll_id", referencedColumnName ="id" )
+    )
+    @Column( name = "roll" )
     private List<Integer> roll;
 
     private int eyes;
@@ -25,6 +30,7 @@ public class DiceRoll {
     private String comment;
 
     @ManyToOne
+    @JoinColumn( name = "char_record_id" )
     @OnDelete(action = OnDeleteAction.CASCADE)
     private CharRecord charRecord;
 

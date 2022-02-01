@@ -3,6 +3,7 @@ package models;
 import javax.persistence.*;
 
 @Entity
+@Table( name = "sr4_char" )
 public class SR4Char {
 
     @Id
