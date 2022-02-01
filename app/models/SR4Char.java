@@ -3,10 +3,12 @@ package models;
 import javax.persistence.*;
 
 @Entity
+@Table( name="sr4_char" )
 public class SR4Char {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @Column( name = "id" )
     private Integer id;
 
     @Column( name = "char_name")

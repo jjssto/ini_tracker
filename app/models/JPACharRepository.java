@@ -125,7 +125,7 @@ public class JPACharRepository implements CharRepository {
     private List listOtherChars(EntityManager em, int combatId) {
         return em.createNativeQuery(
             "select c.id, c.ini, c.intuition, c.char_name, c.p_boxes, c.reaction, c.s_boxes, c.pc " +
-                "from sr4char c " +
+                "from sr4_char c " +
                 "left outer join char_record r on " +
                 "c.id = r.char_id and r.combat_id = ? " +
                 "where r.id is null;"

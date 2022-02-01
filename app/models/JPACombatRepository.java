@@ -129,8 +129,8 @@ public class JPACombatRepository implements CombatRepository {
     private Integer remove(EntityManager em, int recordId ) {
         em.createNativeQuery(
                 "delete dice " +
-                    "from dice inner join dice_roll on dice.DiceRoll_id = dice_roll.id " +
-                    "where dice_roll.charRecord_id = ?")
+                    "from dice inner join dice_roll on dice.dice_roll_id = dice_roll.id " +
+                    "where dice_roll.char_record_id = ?")
             .setParameter( 1, recordId )
             .executeUpdate();
         em.createNativeQuery(

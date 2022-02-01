@@ -17,7 +17,9 @@ public class DiceRoll {
     private long id;
 
     @ElementCollection( fetch = FetchType.EAGER )
-    @CollectionTable( name = "dice" )
+    @CollectionTable(
+        name = "dice",
+        joinColumns = @JoinColumn( name = "dice_roll_id", referencedColumnName = "id" ))
     private List<Integer> roll;
 
     private int eyes;
