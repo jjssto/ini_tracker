@@ -1,0 +1,15 @@
+@()
+
+<left>
+    <h2>Menü</h2>
+    <ul>
+        <li><a href="@routes.PageController.loginPage()">Login</a></li>
+        <li><a href="@routes.GEN_Controller.index">Dice Roller</a></li>
+        <li><a href="@routes.SR4_CombatController.index()">Shadowrun 4</a></li>
+        <ul>
+            <li><a href="@routes.SR4_CombatController.index()">Übersicht</a></li>
+            <li><a href="@routes.SR4_CharController.chars()">(NP-) Charakter bearbeiten</a></li>
+            <li><a href="">Charakter-Blatt</a></li>
+        </ul>
+    </ul>
+</left>

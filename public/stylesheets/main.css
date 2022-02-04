@@ -1,3 +1,9 @@
+h1 {
+    margin: 0;
+    padding: 20px 50px;
+    color: white;
+    background: maroon;
+}
 body {
     color: black;
     font-family: Verdana, sans-serif;
@@ -20,24 +26,135 @@ th {
     color: white;
 
 
-}.column {
-     float: left;
-    padding: 5px;
- }
-
-/* Left and right column */
-.left {
-    width: 70%;
 }
 
-/* Right column */
-.right {
-    width: 30%;
+
+main-lower-left table {
+    line-break: anywhere;
+}
+main-lower-left tbody, main-lower-left thead tr {
+    display: block;
+}
+main-lower-left thead {
+    display: block;
+}
+main-lower-left tbody {
+    overflow-y: auto;
+    overflow-x: hidden;
 }
 
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .column.side, .column.middle {
-        width: 100%;
-    }
+main-lower-left td, main-lower-left th {
+    width: 150px;
+    max-width: 150px;
+}
+
+main-lower-left tbody {
+    height: 400px;
+}
+
+right table {
+    line-break: anywhere;
+}
+right tbody, right thead tr {
+    display: block;
+}
+right thead {
+    display: block;
+}
+right tbody {
+    overflow-y: auto;
+    overflow-x: hidden;
+}
+
+right td, right th {
+    width: 150px;
+    max-width: 150px;
+}
+
+right tbody {
+    height: 400px;
+}
+
+
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(18,auto);
+    grid-template-rows: repeat(12, auto);
+    width: 100vw;
+    height: 100vh;
+}
+
+header {
+    grid-column: 1 / 19;
+    grid-row: 1 / 2;
+    background-color: maroon;
+}
+
+main {
+    padding: 2.5%;
+    grid-column: 2 / 19;
+    grid-row: 2 / 12;
+}
+
+main-left {
+    padding: 2.5%;
+    grid-column: 2 / 16;
+    grid-row: 2 / 12;
+}
+
+main-upper-left {
+    padding: 2.5%;
+    grid-column: 2 / 16;
+    grid-row:   2 / 10;
+}
+
+main-lower-left {
+    padding: 2.5%;
+    grid-column: 2 / 16;
+    grid-row: 10 / 12;
+}
+
+main-lower-left-1 {
+    padding: 2.5%;
+    grid-column: 2 / 8;
+    grid-row: 10 / 12;
+}
+main-lower-left-2 {
+    padding: 2.5%;
+    grid-column: 8 / 16;
+    grid-row: 10 / 12;
+}
+
+main-right {
+    padding: 2.5%;
+    grid-column: 16 / 19;
+    grid-row: 2 / 12;
+}
+
+
+
+left {
+    padding: 5%;
+    grid-column: 1 / 2;
+    grid-row: 2 / 14 ;
+    background-color: maroon;
+    color: white;
+}
+
+footer {
+    grid-column: 2 / 19;
+    grid-row: 13 / 13;
+    background-color: maroon;
+    color: white;
+}
+
+left a {
+    outline: none;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 0.625%;
+    text-align: center;
+    line-height: 3;
+    color: white;
 }

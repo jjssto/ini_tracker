@@ -1,15 +1,16 @@
 package models;
 
+import jdk.jfr.Timestamp;
 import org.apache.commons.math3.distribution.UniformIntegerDistribution;
-import org.hibernate.annotations.OnDelete;
-import org.hibernate.annotations.OnDeleteAction;
 
 import javax.persistence.*;
 import java.time.LocalDateTime;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.List;
 
 @Entity
-@Table( name = "dice_roll")
+@Inheritance( strategy = InheritanceType.JOINED )
+@Table( name = "dice_roll" )
 public class DiceRoll {
 
     @Id
@@ -22,14 +23,14 @@ public class DiceRoll {
         joinColumns = @JoinColumn( name = "dice_roll_id", referencedColumnName = "id" ))
     private List<Integer> roll;
 
+    @Column( name = "eyes" )
     private int eyes;
 
+    @Column( name="comment" )
     private String comment;
 
-    @ManyToOne
-    @OnDelete(action = OnDeleteAction.CASCADE)
-    private CharRecord charRecord;
-
+    @Column( name = "zeit")
+    @Timestamp
     private LocalDateTime zeit;
 
     @Transient
@@ -37,7 +38,7 @@ public class DiceRoll {
 
     public DiceRoll( ArrayList<Integer> roll ) {
         this.roll = roll;
-        dist = null;
+        this.dist = null;
     }
 
     public DiceRoll() {
@@ -46,31 +47,20 @@ public class DiceRoll {
 
     public DiceRoll( int eyes ) {
         this.dist = new UniformIntegerDistribution( 1, eyes );
+        this.eyes = eyes;
         this.zeit = null;
     }
-
-    public DiceRoll( int eyes, CharRecord charRecord ) {
-        this( eyes );
-        this.charRecord = charRecord;
-    }
-
     public String toJson() {
-        String charName;
+
         StringBuilder ret = new StringBuilder("{");
-        try {
-            charName = charRecord.getChar().getName();
-        } catch ( NullPointerException e) {
-            charName = "";
-        }
-        ret.append("\"zeit\": \"").append(zeit.toString()).append("\"").append(",\"char\": \"").append( charName ).append("\"").append(",\"roll\": [");
+        ret.append("\"zeit\": \"").append(getZeit().toString()).append("\"").append(",\"comment\": \"").append( comment ).append("\"").append(",\"roll\": [");
         for (int i = 0; i < roll.size(); i++  ) {
-           ret.append("\"").append(roll.get(i).toString()).append("\"");
+            ret.append("\"").append(roll.get(i).toString()).append("\"");
             if ( i != roll.size() - 1 ) {
                 ret.append(",");
             }
         }
-        ret.append("],").append("\"result\":\"");
-        ret.append( bigger_equal( 5 ) ).append("\"}");
+        ret.append("]}");
         return ret.toString();
     }
 
@@ -93,10 +83,11 @@ public class DiceRoll {
         roll( nbr, roll );
     }
 
-    public void roll( int nbr, CharRecord charRecord  ) {
+    public void roll( int nbr, String comment ) {
         roll( nbr );
-        this.charRecord = charRecord;
+        this.comment = comment;
     }
+
 
     public void explode( int nbr ) {
         int firstIndex = 0;
@@ -133,6 +124,25 @@ public class DiceRoll {
         return ret;
     }
 
+    public void setId( long id ) {
+        this.id = id;
+    }
+
+    public void setRoll( List<Integer> roll ) {
+        this.roll = roll;
+    }
+
+    public LocalDateTime getZeit() {
+        return zeit;
+    }
+
+    public void setZeit( LocalDateTime zeit ) {
+        this.zeit = zeit;
+    }
+
+    public UniformIntegerDistribution getDist() {
+        return dist;
+    }
 
     public long getId() {
         return id;
@@ -159,11 +169,4 @@ public class DiceRoll {
         this.comment = comment;
     }
 
-    public CharRecord getCharRecord() {
-        return charRecord;
-    }
-
-    public void setCharRecord(CharRecord chara) {
-        this.charRecord = chara;
-    }
 }

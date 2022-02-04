@@ -1,31 +1,20 @@
-@()
 <!DOCTYPE html>
-<html lang="en" xmlns="http://www.w3.org/1999/html">
+<html lang="en">
     <head>
         <meta charset="UTF-8">
-        <title>Kampf auswählen</title>
+        <title>Iniativ-Tracker</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
-        <script src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" type="module"></script>
-        <script src="@routes.Assets.at("javascripts/index.js")" type="module"></script>
     </head>
     <body>
-        <div class="row">
-            <div class="column">
-               @menu()
-            </div>
-            <div class="column">
-                <h2>Kampf auswählen</h2>
+        <div class="container">
 
-                <ol id = "combat_list">
+            @el_header( "Initiativ-Tracker" )
+            @el_menu()
 
-                </ol>
-
-                <h2>Kampf hinzufügen</h2>
-                <form id="new_combat_f">
-                    <label for="bez"><input type="text" id="bez" name="bez"></label>
-                    <button type="submit">Hinzufügen</button>
-                </form>
-            </div>
+            <main>
+            </main>
+            <footer>
+            </footer>
         </div>
-    </body>
+</body>
 </html>

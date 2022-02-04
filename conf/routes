@@ -6,35 +6,44 @@
 # Pages
 #########
 
-GET /                   controllers.PageController.index
-GET /combat/:i          controllers.CombatController.combat(i: Integer, req: Request)
-GET /chars              controllers.CharController.chars(req: Request)
+GET /                   controllers.PageController.index(req: Request)
+GET /combat/:i          controllers.SR4_CombatController.combat(i: Integer, req: Request)
+GET /chars              controllers.SR4_CharController.chars(req: Request)
+GET /login              controllers.PageController.loginPage(req: Request)
+GET /createuser         controllers.PageController.createUserPage(req: Request)
+GET /combats            controllers.SR4_CombatController.index(req: Request)
+
+GET /diceroller         controllers.GEN_Controller.index(req: Request)
 
 # Forms
 ###########
 
-POST /combat/update     controllers.CombatController.updateCombat(req: Request)
-POST /combat/ini        controllers.CombatController.rollInitiative(req: Request)
-POST /combat           controllers.CombatController.roll(req: Request)
-POST /addcombat         controllers.CombatController.addCombat(req: Request)
-POST /combat/addchars   controllers.CombatController.addCharsToCombat(req: Request)
-POST /combat/removechars   controllers.CombatController.removeCharsFromCombat(req: Request)
+POST /combat/update     controllers.SR4_CombatController.updateCombat(req: Request)
+POST /combat/ini        controllers.SR4_CombatController.rollInitiative(req: Request)
+POST /combat           controllers.SR4_CombatController.roll(req: Request)
+POST /addcombat         controllers.SR4_CombatController.addCombat(req: Request)
+POST /combat/addchars   controllers.SR4_CombatController.addCharsToCombat(req: Request)
+POST /combat/removechars   controllers.SR4_CombatController.removeCharsFromCombat(req: Request)
 
-POST /addchar            controllers.CharController.addChar(req: Request)
+POST /addchar            controllers.SR4_CharController.addChar(req: Request)
+POST /login             controllers.PageController.login(req: Request)
+POST /createuser         controllers.PageController.createUser(req: Request)
+
+POST /diceroller        controllers.GEN_Controller.roll(req: Request)
 # JSON Controller
 
 # JSON
 ###########
 
-GET /getchars           controllers.CharController.getAllChars
-GET /getotherchars/:i   controllers.CharController.getOtherChars(i: Integer)
-GET /getcombatchars/:i  controllers.CharController.getCombatChars(i: Integer)
-GET /getchars/:i        controllers.CombatController.getChar(i: Integer)
-GET /getcombats         controllers.CombatController.getCombats
-GET /getcombats/:i      controllers.CombatController.getCombat(i: Integer)
-GET /getrecord/:i       controllers.CombatController.getRecord(i: Integer)
-GET /ini               controllers.CombatController.getIniList(req: Request)
-GET /rolls              controllers.CombatController.getDiceRolls(req: Request)
+GET /getchars           controllers.SR4_CharController.getAllChars
+GET /getotherchars/:i   controllers.SR4_CharController.getOtherChars(i: Integer)
+GET /getcombatchars/:i  controllers.SR4_CharController.getCombatChars(i: Integer)
+GET /getchars/:i        controllers.SR4_CombatController.getChar(i: Integer)
+GET /getcombats         controllers.SR4_CombatController.getCombats
+GET /getcombats/:i      controllers.SR4_CombatController.getCombat(i: Integer)
+GET /getrecord/:i       controllers.SR4_CombatController.getRecord(i: Integer)
+GET /ini               controllers.SR4_CombatController.getIniList(req: Request)
+GET /rolls              controllers.SR4_CombatController.getDiceRolls(req: Request)
 
 
 # Assets

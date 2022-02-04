@@ -29,7 +29,7 @@ button.addEventListener(
             complete: function() {
                 document.getElementById( "dice_roller_ex").checked  = false;
                 setTimeout( function() {
-                    let div = document.getElementById("results");
+                    let div = document.getElementById("rolls_table_tbody");
                     div.scrollTop = div.scrollHeight;
                 }, 1000 );
             }
