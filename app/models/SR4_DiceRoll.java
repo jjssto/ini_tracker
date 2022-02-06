@@ -1,5 +1,7 @@
 package models;
 
+import org.hibernate.annotations.Cascade;
+
 import javax.persistence.*;
 import java.util.List;
 
@@ -24,12 +26,13 @@ public class SR4_DiceRoll extends DiceRoll {
         this.roll = roll;
     }
 
-    @ManyToOne
+    @ManyToOne( cascade = CascadeType.ALL )
     @JoinColumn( name = "sr4_record_id")
     private SR4_CharRecord charRecord;
 
     @ElementCollection( fetch = FetchType.EAGER )
     @CollectionTable( name = "sr4_dice", joinColumns = @JoinColumn( name = "dice_roll_id") )
+    @Cascade( org.hibernate.annotations.CascadeType.ALL )
     private List<Integer> roll;
 
 

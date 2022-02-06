@@ -56,6 +56,10 @@ public class SR4_Combat extends SR4_AbstractCombat {
         }
    }
 
+   public void removeRecord( SR4_CharRecord record ) {
+        charas.remove( record );
+    }
+
    public void sort() {
         RecordComparator comparator = new RecordComparator();
         charas.sort( comparator );

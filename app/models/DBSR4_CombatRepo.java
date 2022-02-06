@@ -8,7 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-@ImplementedBy( DBSR4_JPACombatRepo.class )
+@ImplementedBy( DBSR4_CombatRepoJPA.class )
 public interface DBSR4_CombatRepo {
 
     CompletionStage<SR4_Combat> getIniList(
@@ -19,6 +19,8 @@ public interface DBSR4_CombatRepo {
     CompletionStage<SR4_Combat> getCombat( int combatId );
 
     CompletionStage<List<SR4_CombatShort>> getAllCombats();
+
+    void removeChar( int charRecordId, int combatId );
 
     void persist( SR4_Combat combat ) throws EntityExistsException, IllegalArgumentException;
 

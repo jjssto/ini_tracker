@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DBSR4_JPACombatRepo implements DBSR4_CombatRepo {
+public class DBSR4_CombatRepoJPA implements DBSR4_CombatRepo {
 
     private JPAApi jpaApi;
     private DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DBSR4_JPACombatRepo (
+    public DBSR4_CombatRepoJPA(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {
@@ -78,6 +78,19 @@ public class DBSR4_JPACombatRepo implements DBSR4_CombatRepo {
                     } );
             },
             ec
+        );
+    }
+
+    @Override
+    public void removeChar( int charRecordId, int combatId ) {
+        jpaApi.withTransaction(
+            em -> {
+                SR4_Combat combat = em.find( SR4_Combat.class, combatId );
+                SR4_CharRecord record = em.find( SR4_CharRecord.class, charRecordId );
+                combat.removeRecord( record );
+                combat.setLastChanged();
+                em.merge( combat );
+            }
         );
     }
 

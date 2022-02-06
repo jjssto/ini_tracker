@@ -64,6 +64,17 @@ public class DBSR4_CharRecordRepoJPA implements DBSR4_CharRecordRepo {
     }
 
     @Override
+    public void remove( int recordId ) {
+                jpaApi.withTransaction(
+                    entityManager -> {
+                        SR4_CharRecord record = entityManager.find( SR4_CharRecord.class, recordId );
+                        entityManager.remove( record );
+                        entityManager.flush();
+                        entityManager.clear();
+                    } );
+    }
+
+    @Override
     public void persist( SR4_CharRecord record ) throws EntityExistsException, IllegalArgumentException {
         jpaApi.withTransaction(
             em -> {

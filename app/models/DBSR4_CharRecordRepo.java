@@ -12,6 +12,8 @@ public interface DBSR4_CharRecordRepo {
 
     CompletionStage<SR4_CharRecord> getCharRecord( int charId, int combatId );
 
+    void remove( int recordId );
+
     void persist( SR4_CharRecord record ) throws EntityExistsException, IllegalArgumentException;
 
     void merge( SR4_CharRecord record ) throws EntityExistsException, IllegalArgumentException;

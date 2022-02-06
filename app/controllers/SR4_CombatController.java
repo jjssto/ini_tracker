@@ -188,7 +188,11 @@ public class SR4_CombatController extends Controller {
     }
 
     public Result removeCharFromCombat(Http.Request request) {
-        return null;
+        DynamicForm form = formF.form().bindFromRequest( request );
+        int combatId = Integer.parseInt( form.get( "combatId" ) );
+        int charRecordId = Integer.parseInt( form.get( "recordId" ) );
+        recordRepo.remove( charRecordId );
+        return ok();
     }
 
     public Result addCombat(Http.Request request) {

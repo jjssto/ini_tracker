@@ -49,6 +49,9 @@ $( "#dice_roller_f").submit( function( event ) {
     });
 })
 
+/* ****************************************
+ * Roll initiative
+ * **************************************/
 $("#roll_ini_b").click( function() {
     let combatId = localStorage.getItem( "combat_id" )
     $.ajax({
@@ -65,6 +68,10 @@ $("#roll_ini_b").click( function() {
         }
     })
 });
+
+/* **********************************************
+ * Werte in Tabellenzeile aktualisieren
+ * *********************************************/
 $("#char_update_tbody").find("button").click( function( ) {
     let row = $(this).parent().parent();
     let index = row.index();
@@ -87,6 +94,9 @@ $("#char_update_f").submit(function( event ) {
     event.preventDefault();
 })
 
+/* *******************************************
+ * Add Char to combat
+ * ******************************************/
 $("#char_selection_f").submit( function( event ){
     event.preventDefault();
     let combatId = localStorage.getItem( "combat_id")
@@ -99,6 +109,29 @@ $("#char_selection_f").submit( function( event ){
         data: {
             charId: $("#char_selection_s").val(),
             combatId: combatId
+        }
+    });
+})
+
+
+/* ***********************************
+ * Remove Char from combat
+ * *******************************/
+$("#remove_char_f").submit( function( event ){
+    event.preventDefault();
+    let combatId = localStorage.getItem( "combat_id")
+    $.ajax({
+        type: "post",
+        url: "/sr4/combat/removechar",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            recordId: $("#remove_char_s").val(),
+            combatId: combatId
+        },
+        success: function() {
+            getIniList( combatId );
         }
     });
 })
