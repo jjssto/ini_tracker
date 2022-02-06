@@ -68,7 +68,10 @@ public class DBSR4_CharRecordRepoJPA implements DBSR4_CharRecordRepo {
                 jpaApi.withTransaction(
                     entityManager -> {
                         SR4_CharRecord record = entityManager.find( SR4_CharRecord.class, recordId );
+                        SR4_Combat combat = entityManager.find( SR4_Combat.class, record.getCombatId() );
+                        combat.removeRecord( record );
                         entityManager.remove( record );
+                        entityManager.merge( combat );
                         entityManager.flush();
                         entityManager.clear();
                     } );

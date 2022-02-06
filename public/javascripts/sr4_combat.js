@@ -15,7 +15,7 @@ window.setInterval( function() {
     let combatId = localStorage.getItem( "combat_id" )
     getIniList( combatId );
     getDiceRolls( combatId, null )
-}, 10000 );
+}, 2000 );
 
 
 /* **********************************
@@ -72,28 +72,27 @@ $("#roll_ini_b").click( function() {
 /* **********************************************
  * Werte in Tabellenzeile aktualisieren
  * *********************************************/
-$("#char_update_tbody").find("button").click( function( ) {
-    let row = $(this).parent().parent();
-    let index = row.index();
-    $.ajax({
-        type: "post",
-        url: "/sr4/combat/update",
-        data: {
-            id: $("#record_id_" + index ).val(),
-            pDmg: $("#p_dmg_new_" + index).val(),
-            sDmg: $("#s_dmg_new_" + index).val(),
-            localIni: $("#local_ini_" + index).val()
-        },
-        success: function() {
-            getIniList( localStorage.getItem( "combat_id") )
-        }
-    })
-})
-
-$("#char_update_f").submit(function( event ) {
+function saveChanges( index ) {
+        $.ajax({
+            type: "post",
+            url: "/sr4/combat/update",
+            headers: {
+                "Csrf-Token": get_token()
+            },
+            data: {
+                id: $("#record_id_" + index).val(),
+                pDmg: $("#p_dmg_new_" + index).val(),
+                sDmg: $("#s_dmg_new_" + index).val(),
+                localIni: $("#local_ini_" + index).val()
+            },
+            success: function () {
+                getIniList(localStorage.getItem("combat_id"))
+            }
+        })
+};
+$("#char_update_f").submit(function (event) {
     event.preventDefault();
 })
-
 /* *******************************************
  * Add Char to combat
  * ******************************************/
@@ -193,9 +192,11 @@ function addRow( tbody, index ) {
     input = document.createElement( 'button' );
     input.type = "submit";
     input.id = 'button' + index;
+    input.className = 'update_button';
     input.innerHTML = "Speichern"
-    input.min = 0;
-    input.max = 50;
+    input.onclick = function( ) {
+        saveChanges( index );
+    }
     col.appendChild( input );
 
     input = document.createElement( 'input' );

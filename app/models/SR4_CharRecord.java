@@ -26,7 +26,7 @@ public class SR4_CharRecord implements Comparable<SR4_CharRecord> {
     @Column( name = "p_dmg")
     private Integer pDmg = 0;
 
-    @ManyToOne( cascade = CascadeType.ALL )
+    @ManyToOne()
     @JoinColumn( name = "combat_id" )
     private SR4_Combat combat;
 

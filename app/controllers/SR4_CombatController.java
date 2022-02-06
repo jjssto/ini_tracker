@@ -1,7 +1,6 @@
 package controllers;
 
 import be.objectify.deadbolt.java.actions.SubjectPresent;
-import com.fasterxml.jackson.databind.JsonNode;
 import models.*;
 import play.api.i18n.MessagesApi;
 import play.data.DynamicForm;
@@ -73,14 +72,31 @@ public class SR4_CombatController extends Controller {
 
 
     public Result updateCombat(Http.Request request) {
-        JsonNode json = request.body().asJson();
-        if (json == null) {
-            return badRequest("Expecting Json data");
+        DynamicForm form = formF.form().bindFromRequest( request );
+        int id;
+        try {
+            id = Integer.parseInt( form.get( "id" ) );
+        } catch( NumberFormatException e ) {
+            return badRequest();
         }
-        int id = json.findPath("id").asInt(0);
-        int sDmg = json.findPath("sDmg").asInt(-1);
-        int pDmg = json.findPath("pDmg").asInt(-1);
-        int localIni = json.findPath("localIni").asInt(-1);
+        int sDmg;
+        try {
+            sDmg = Integer.parseInt( form.get( "sDmg" ) );
+        } catch ( NumberFormatException e ) {
+            sDmg = -1;
+        }
+        int pDmg;
+        try {
+            pDmg = Integer.parseInt( form.get( "pDmg" ) );
+        } catch ( NumberFormatException e ) {
+            pDmg = -1;
+        }
+        int localIni;
+        try {
+            localIni = Integer.parseInt( form.get( "localIni" ) );
+        } catch ( NumberFormatException e ) {
+            localIni = -1;
+        }
         SR4_CharRecord record;
         try {
             record = recordRepo.getCharRecord(id).toCompletableFuture().get();
@@ -93,10 +109,18 @@ public class SR4_CombatController extends Controller {
             if (localIni != -1) {
                 record.setLocalIni(localIni);
             }
-            recordRepo.flush();
+            recordRepo.merge( record );
         } catch (InterruptedException | ExecutionException | PersistenceException ie) {
             return badRequest();
         }
+        combatRepo.getCombat( record.getCombatId() ).thenApplyAsync(
+            combat -> {
+                combat.setLastChanged();
+                combatRepo.merge( combat );
+                return 1;
+            },
+            ec.current()
+        );
         return ok(views.html.sr4_combat.render(
             record.getCombatId(),
             request,
@@ -190,10 +214,13 @@ public class SR4_CombatController extends Controller {
         combatRepo.getCombat( combatId ).thenApplyAsync(
             c -> {
                 c.setLastChanged();
-                combatRepo.merge( c );
-                return 1;
+                return c;
             },
             ec.current()
+        ).thenApplyAsync(
+            c -> {
+                return combatRepo.merge( c );
+            }
         );
         return ok();
     }
@@ -202,15 +229,18 @@ public class SR4_CombatController extends Controller {
         DynamicForm form = formF.form().bindFromRequest( request );
         int combatId = Integer.parseInt( form.get( "combatId" ) );
         int charRecordId = Integer.parseInt( form.get( "recordId" ) );
-        recordRepo.remove( charRecordId );
         combatRepo.getCombat( combatId ).thenApplyAsync(
-            combat -> {
-                combat.setLastChanged();
-                combatRepo.merge( combat );
-                return 1;
-                },
+            c -> {
+                c.setLastChanged();
+                return c;
+            },
             ec.current()
+        ).thenApplyAsync(
+            c -> {
+                return combatRepo.merge( c );
+            }
         );
+        recordRepo.remove( charRecordId );
         return ok();
     }
 
