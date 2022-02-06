@@ -4,10 +4,6 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "gen_dice_rolls" )
-@AssociationOverride( name = "roll",  joinTable = @JoinTable(
-    name = "gen_dice",
-    joinColumns = @JoinColumn( name = "dice_roll_id", referencedColumnName = "id" ))
-)
 public class GEN_DiceRolls {
 
     @Id
@@ -138,7 +134,6 @@ public class GEN_DiceRolls {
             if ( commaNeeded ) sb.append(",");
             sb.append("\"d20\":");
             sb.append( d20.toJson() );
-            commaNeeded = true;
         }
         return sb.append("}").toString();
     }
