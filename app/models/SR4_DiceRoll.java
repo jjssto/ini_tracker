@@ -1,34 +1,37 @@
 package models;
 
 import javax.persistence.*;
-import java.util.ArrayList;
+import java.util.List;
 
 @Entity
 @Table( name = "sr4_dice_roll")
-@PrimaryKeyJoinColumn( name = "dice_roll_id" )
 public class SR4_DiceRoll extends DiceRoll {
 
+    public SR4_DiceRoll () {
+        this( 6 );
+    }
+
+    public SR4_DiceRoll ( int eyes ) {
+        super( 6 );
+    }
+
+    public SR4_DiceRoll ( int eyes, SR4_CharRecord record ) {
+        super( 6 );
+        this.charRecord = record;
+    }
+
+    public SR4_DiceRoll( List<Integer> roll ) {
+        this.roll = roll;
+    }
+
     @ManyToOne
-    @JoinColumn( name = "char_record_id" )
+    @JoinColumn( name = "sr4_record_id")
     private SR4_CharRecord charRecord;
 
+    @ElementCollection( fetch = FetchType.EAGER )
+    @CollectionTable( name = "sr4_dice", joinColumns = @JoinColumn( name = "dice_roll_id") )
+    private List<Integer> roll;
 
-    public SR4_DiceRoll( ArrayList<Integer> roll ) {
-        super( roll );
-    }
-
-    public SR4_DiceRoll() {
-        this(6);
-    }
-
-    public SR4_DiceRoll( int eyes ) {
-       super( eyes );
-    }
-
-    public SR4_DiceRoll( int eyes, SR4_CharRecord charRecord ) {
-        this( eyes );
-        this.charRecord = charRecord;
-    }
 
     @Override
     public String toJson() {
@@ -49,6 +52,31 @@ public class SR4_DiceRoll extends DiceRoll {
         ret.append("],").append("\"result\":\"");
         ret.append( bigger_equal( 5 ) ).append("\"}");
         return ret.toString();
+    }
+
+    @Override
+    public void roll( int nbr, List<Integer> roll ) {
+        this.roll = rollRet( nbr, roll );
+    }
+
+    @Override
+    public void roll( int nbr ) {
+        this.roll = rollRet( nbr );
+    }
+
+    @Override
+    public void roll() {
+        roll( 1 );
+    }
+
+    @Override
+    public void setRoll( List<Integer> roll ) {
+        this.roll = roll;
+    }
+
+    @Override
+    public List<Integer> getRoll() {
+        return this.roll;
     }
 
     public void roll( int nbr, SR4_CharRecord charRecord  ) {

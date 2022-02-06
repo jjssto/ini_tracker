@@ -1,8 +1,10 @@
 package models;
 
 import javax.persistence.*;
-import java.util.List;
+import java.time.LocalDateTime;
 import java.util.ArrayList;
+import java.util.Comparator;
+import java.util.List;
 
 @Entity
 @Table( name = "sr4_combat")
@@ -16,6 +18,9 @@ public class SR4_Combat extends SR4_AbstractCombat {
 
     @Column( name ="combat_desc" )
     private String description;
+
+    @Column( name = "last_changed" )
+    private LocalDateTime lastChanged;
 
     public SR4_Combat( Integer combatId ) {
         id = combatId;
@@ -36,8 +41,8 @@ public class SR4_Combat extends SR4_AbstractCombat {
 
 
 
-   public void
-   addRecord ( SR4_CharRecord record ) {
+   public void addRecord ( SR4_CharRecord record ) {
+       setLastChanged();
        charas.add( record );
    }
 
@@ -46,13 +51,19 @@ public class SR4_Combat extends SR4_AbstractCombat {
             if ( charas.get(i).getCharId().equals( charId ) ) {
                 SR4_CharRecord record = charas.get(i);
                 charas.remove( record );
+                setLastChanged();
             }
         }
    }
 
+   public void sort() {
+        RecordComparator comparator = new RecordComparator();
+        charas.sort( comparator );
+   }
 
     public void setDescription( String description ) {
         this.description = description;
+        setLastChanged();
     }
     public String getDescription() {
         return description;
@@ -67,5 +78,25 @@ public class SR4_Combat extends SR4_AbstractCombat {
 
     public Integer getId() {
         return id;
+    }
+
+    public void setCharas( List<SR4_CharRecord> charas ) {
+        this.charas = charas;
+        setLastChanged();
+    }
+
+    public LocalDateTime getLastChanged() {
+        return lastChanged;
+    }
+
+    public void setLastChanged() {
+        this.lastChanged = LocalDateTime.now();
+    }
+
+    private class RecordComparator implements Comparator<SR4_CharRecord> {
+        @Override
+        public int compare( SR4_CharRecord record1, SR4_CharRecord record2 ) {
+            return -1 * record1.compareTo( record2 );
+        }
     }
 }

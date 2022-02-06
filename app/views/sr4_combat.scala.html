@@ -41,13 +41,15 @@
 
        <main-lower-left-1>
             <h2>Charakter hinzufügen:</h2>
-            <form id="char_selection_f" action="@routes.SR4_CombatController.addCharsToCombat()">
-                <input type="button" id="char_selection_b" value="Hinzufügen">
+            <form id="char_selection_f" method="post" action="/sr4/combat/1">
+                <select id="char_selection_s"></select>
+                <button type="submit" id="char_selection_b">Hinzufügen</button>
             </form>
            </main-lower-left-1>
            <main-lower-left-2>
                 <h2>Charakter entfernen:</h2>
-                <form id="remove_char_f" action="@routes.SR4_CombatController.addCharsToCombat()">
+                <form id="remove_char_f">
+                    <select id="remove_char_s"></select>
                     <input type="button" id="remove_char_b" value="Entfernen">
                 </form>
         </main-lower-left-2>
@@ -67,7 +69,7 @@
 
                <h2>Würfelergebnisse</h2>
                <div id="results">
-           <table>
+           <table class="dice_results" id="dice_results_sr4">
                <thead>
                    <tr><th>Timestamp</th><th>Char.</th><th>Wurf</th><th>Resultat</th></tr>
                </thead>

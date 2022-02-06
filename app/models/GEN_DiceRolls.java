@@ -4,6 +4,10 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "gen_dice_rolls" )
+@AssociationOverride( name = "roll",  joinTable = @JoinTable(
+    name = "gen_dice",
+    joinColumns = @JoinColumn( name = "dice_roll_id", referencedColumnName = "id" ))
+)
 public class GEN_DiceRolls {
 
     @Id
@@ -16,27 +20,27 @@ public class GEN_DiceRolls {
 
     @OneToOne
     @JoinColumn( name = "d4_id")
-    private final DiceRoll d4;
+    private final GEN_DiceRoll d4;
 
     @OneToOne
     @JoinColumn( name = "d6_id" )
-    private final DiceRoll d6;
+    private final GEN_DiceRoll d6;
 
     @OneToOne
     @JoinColumn( name = "d8_id" )
-    private final DiceRoll d8;
+    private final GEN_DiceRoll d8;
 
     @OneToOne
     @JoinColumn( name = "d10_id" )
-    private final DiceRoll d10;
+    private final GEN_DiceRoll d10;
 
     @OneToOne
     @JoinColumn( name = "d12_id" )
-    private final DiceRoll d12;
+    private final GEN_DiceRoll d12;
 
     @OneToOne
     @JoinColumn( name = "d20_id" )
-    private final DiceRoll d20;
+    private final GEN_DiceRoll d20;
 
     @Transient
     private int nbrD4 = 0;
@@ -63,17 +67,18 @@ public class GEN_DiceRolls {
         GEN_Combat combat
     ) {
         this.combat = combat;
-        d4 = new DiceRoll( 4  );
-        d6 = new DiceRoll( 6  );
-        d8 = new DiceRoll( 8  );
-        d10 = new DiceRoll( 10  );
-        d12 = new DiceRoll( 12  );
-        d20 = new DiceRoll( 20  );
+        d4 = new GEN_DiceRoll( 4  );
+        d6 = new GEN_DiceRoll( 6  );
+        d8 = new GEN_DiceRoll( 8  );
+        d10 = new GEN_DiceRoll( 10  );
+        d12 = new GEN_DiceRoll( 12  );
+        d20 = new GEN_DiceRoll( 20  );
     }
 
     public GEN_DiceRolls() {
         this( null );
     }
+
 
     public void roll() {
         if ( nbrD4 > 0 ) {
@@ -151,27 +156,27 @@ public class GEN_DiceRolls {
         return combat;
     }
 
-    public DiceRoll getD4() {
+    public GEN_DiceRoll getD4() {
         return d4;
     }
 
-    public DiceRoll getD6() {
+    public GEN_DiceRoll getD6() {
         return d6;
     }
 
-    public DiceRoll getD8() {
+    public GEN_DiceRoll getD8() {
         return d8;
     }
 
-    public DiceRoll getD10() {
+    public GEN_DiceRoll getD10() {
         return d10;
     }
 
-    public DiceRoll getD12() {
+    public GEN_DiceRoll getD12() {
         return d12;
     }
 
-    public DiceRoll getD20() {
+    public GEN_DiceRoll getD20() {
         return d20;
     }
 

@@ -13,10 +13,12 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
+import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
@@ -24,8 +26,9 @@ import java.util.concurrent.ExecutionException;
 public class SR4_CombatController extends Controller {
 
     private final DB_CharRepository charRepo;
-    private final DB_CombatRepository combatRepo;
-    private final DB_DiceRepository diceRepo;
+    private final DBSR4_CharRecordRepo recordRepo;
+    private final DBSR4_CombatRepo combatRepo;
+    private final DBSR4_DiceRepository diceRepo;
     private final HttpExecutionContext ec;
     private final FormFactory formF;
     private final MessagesApi messagesApi;
@@ -34,13 +37,15 @@ public class SR4_CombatController extends Controller {
     public SR4_CombatController(
         FormFactory formF,
         DB_CharRepository charRepo,
-        DB_CombatRepository combatRepo,
-        DB_DiceRepository diceRepo,
+        DBSR4_CharRecordRepo recordRepo,
+        DBSR4_CombatRepo combatRepo,
+        DBSR4_DiceRepository diceRepo,
         HttpExecutionContext ec,
         MessagesApi messagesApi
     ) {
         this.formF = formF;
         this.charRepo = charRepo;
+        this.recordRepo = recordRepo;
         this.combatRepo = combatRepo;
         this.diceRepo = diceRepo;
         this.ec = ec;
@@ -73,7 +78,7 @@ public class SR4_CombatController extends Controller {
         int localIni = json.findPath("localIni").asInt(-1);
         SR4_CharRecord record;
         try {
-            record = combatRepo.getRecord(id).toCompletableFuture().get();
+            record = recordRepo.getCharRecord(id).toCompletableFuture().get();
             if (sDmg != -1) {
                 record.setSDmg(sDmg);
             }
@@ -83,8 +88,8 @@ public class SR4_CombatController extends Controller {
             if (localIni != -1) {
                 record.setLocalIni(localIni);
             }
-            combatRepo.merge(record).toCompletableFuture().get();
-        } catch (InterruptedException | ExecutionException ie) {
+            recordRepo.flush();
+        } catch (InterruptedException | ExecutionException | PersistenceException ie) {
             return badRequest();
         }
         return ok(views.html.sr4_combat.render(
@@ -107,16 +112,28 @@ public class SR4_CombatController extends Controller {
                     charRecord.setIniValue(ini + diceRoll.bigger_equal(5));
                     diceRepo.insert(diceRoll);
                 }
+                combat.setLastChanged();
                 return combat;
             }, ec.current()
-        ).thenApplyAsync(combatRepo::merge, ec.current());
+        ).thenApplyAsync(
+            combat -> {
+                combat.setLastChanged();
+                return combat;
+            },
+            ec.current()
+        ).thenApplyAsync(
+            combat -> {
+                return combatRepo.merge( combat );
+            }
+        );
+        combatRepo.flush();
+        diceRepo.flush();
         return ok("OK");
     }
 
     public Result roll(Http.Request request) {
         DynamicForm recordForm = formF.form().bindFromRequest(request);
-        int charId = Integer.parseInt(recordForm.get("charId"));
-        int combatId = Integer.parseInt(recordForm.get("combatId"));
+        int recordId = Integer.parseInt(recordForm.get("recordId"));
         int nbrOfDice = Integer.parseInt(recordForm.get("nbrOfDice"));
         boolean exploding;
         if ( recordForm.get( "exploding" ).equals("y") ) {
@@ -129,8 +146,7 @@ public class SR4_CombatController extends Controller {
         }
         SR4_CharRecord charRecord;
         try {
-            int recordId = charRepo.getRecordId(charId, combatId).toCompletableFuture().get();
-            charRecord = combatRepo.getRecord(recordId).toCompletableFuture().get();
+            charRecord = recordRepo.getCharRecord( recordId ).toCompletableFuture().get();
         } catch (InterruptedException | ExecutionException ie) {
             return badRequest();
         }
@@ -140,51 +156,46 @@ public class SR4_CombatController extends Controller {
         } else {
             diceRoll.roll(nbrOfDice);
         }
-        diceRepo.insert(diceRoll);
+        diceRepo.merge( diceRoll );
+        return ok( diceRoll.toJson() );
+    }
+
+    public Result addCharToCombat(Http.Request request) {
+        DynamicForm form = formF.form().bindFromRequest( request );
+        int charId = Integer.parseInt( form.get( "charId" ) );
+        int combatId = Integer.parseInt( form.get( "combatId" ) );
+        SR4_Combat combat;
+        try {
+            combat = combatRepo.getCombat( combatId ).toCompletableFuture().get();
+        } catch ( ExecutionException | InterruptedException e) {
+            return badRequest();
+        }
+        SR4_Char chara;
+        try {
+           chara = charRepo.getChar( charId ).toCompletableFuture().get();
+        } catch ( ExecutionException | InterruptedException e) {
+            return badRequest();
+        }
+        SR4_CharRecord record = new SR4_CharRecord( chara, combat );
+        try {
+            recordRepo.merge( record );
+        } catch ( PersistenceException e ) {
+            return badRequest();
+        }
+        combat.setLastChanged();
+        combatRepo.flush();
         return ok();
     }
 
-    public Result addCharsToCombat(Http.Request request) {
-        JsonNode json = request.body().asJson();
-        Integer combatId = json.findPath("combatId").asInt(0);
-        JsonNode charasJ = json.findPath("chars");
-        try {
-            SR4_Combat combat = combatRepo.getCombat(combatId).toCompletableFuture().get();
-            for (int i = 0; i < charasJ.size(); i++) {
-                SR4_Char chara = charRepo.getChar(charasJ.get(i).asInt()).toCompletableFuture().get();
-                SR4_CharRecord record = new SR4_CharRecord(chara, combat);
-                combatRepo.persist(record);
-                combat.addRecord(record);
-            }
-            combatRepo.merge(combat);
-        } catch (InterruptedException | ExecutionException ie) {
-            return badRequest();
-        }
-        return ok();
-    }
-
-    public Result removeCharsFromCombat(Http.Request request) {
-        JsonNode json = request.body().asJson();
-        Integer combatId = json.findPath("combatId").asInt(0);
-        JsonNode charasJ = json.findPath("sr4_chars");
-        try {
-            SR4_Combat combat = combatRepo.getCombat(combatId).toCompletableFuture().get();
-            for (int i = 0; i < charasJ.size(); i++) {
-                int charId = charasJ.get(i).asInt();
-                int recordId = charRepo.getRecordId( charId, combatId ).toCompletableFuture().get();
-                combatRepo.remove( recordId );
-            }
-        } catch (InterruptedException | ExecutionException ie) {
-            return badRequest();
-        }
-        return ok();
+    public Result removeCharFromCombat(Http.Request request) {
+        return null;
     }
 
     public Result addCombat(Http.Request request) {
         JsonNode json = request.body().asJson();
         String combat_desc = json.get("0").asText();
         SR4_Combat combat = new SR4_Combat(combat_desc);
-        combatRepo.persist(combat);
+        combatRepo.persist( combat );
         return ok();
     }
 
@@ -194,7 +205,7 @@ public class SR4_CombatController extends Controller {
      */
     public CompletionStage<Result> getCombats() {
         return combatRepo
-            .allCombats()
+            .getAllCombats()
             .thenApplyAsync(
                 c -> ok(
                     Json.toJson(c)
@@ -223,8 +234,8 @@ public class SR4_CombatController extends Controller {
     public CompletionStage<Result> getRecord(
         Integer recordId
     ) {
-        return combatRepo
-            .getRecord( recordId )
+        return recordRepo
+            .getCharRecord( recordId )
             .thenApplyAsync(
                 c -> ok(
                     Json.toJson( c )
@@ -252,14 +263,27 @@ public class SR4_CombatController extends Controller {
     ) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int combatId = Integer.parseInt( form.get( "combatId" ) );
+        LocalDateTime timestamp;
         try {
-            List<SR4_CharRecord> list = combatRepo.iniList(combatId).toCompletableFuture().get();
-            return ok( Json.toJson( list ));
-        } catch( IllegalArgumentException | ExecutionException | InterruptedException e) {
+            timestamp = LocalDateTime.parse( form.get( "timestamp" ) );
+        } catch ( DateTimeParseException | NullPointerException e ) {
+            timestamp = LocalDateTime.now().minusYears( 100 );
+        }
+        SR4_Combat combat;
+        try {
+            combat = combatRepo.getCombat( combatId )
+                .toCompletableFuture().get();
+        } catch( CancellationException | ExecutionException | InterruptedException e) {
             return badRequest();
         }
+        if ( combat.getLastChanged().compareTo(  timestamp ) > 0 ){
+            combat.sort();
+            return ok( Json.toJson( combat ) );
+        } else {
+            return ok();
+        }
     }
-    public CompletionStage<Result> getDiceRolls(
+    public Result getDiceRolls(
         Http.Request request
     ) {
         DynamicForm form = formF.form().bindFromRequest( request );
@@ -272,23 +296,24 @@ public class SR4_CombatController extends Controller {
             timestamp = LocalDateTime.now().minus( 15, ChronoUnit.MINUTES );
         }
         String time = LocalDateTime.now().minus( 30, ChronoUnit.SECONDS ).toString();
-        return diceRepo.getLastNDiceRolls(combatId, timestamp )
-            .thenApplyAsync(
-                c -> ok(
-                    myToJason( c, time )
-                ),
-                ec.current()
-            );
+        List<SR4_DiceRoll> list = null;
+        try {
+            list = diceRepo.getDiceRollsSince( combatId, timestamp );
+            return ok( myToJason( list, time ) );
+        } catch ( NullPointerException e ) {
+            return ok();
+        }
+
     }
 
     private String myToJason ( List<SR4_DiceRoll> list, String time ) {
         StringBuilder ret = new StringBuilder("{ \"time\":");
         ret.append("\"").append( time ).append("\",\"rolls\": {");
-        for( int i = 0; i < list.size(); i++ ) {
-            ret.append("\"").append(i).append("\":");
-            ret.append( list.get(i).toJson() );
+        for ( int i = 0; i < list.size(); i++ ) {
+            ret.append( "\"" ).append( i ).append( "\":" );
+            ret.append( list.get( i ).toJson() );
             if ( i != list.size() - 1 ) {
-                ret.append(",");
+                ret.append( "," );
             }
         }
         return ret + "}}";

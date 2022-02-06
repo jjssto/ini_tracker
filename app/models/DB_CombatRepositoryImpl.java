@@ -8,13 +8,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
-public class DB_JPACombatRepository implements DB_CombatRepository {
+public class DB_CombatRepositoryImpl implements DB_CombatRepository {
 
     private final JPAApi api;
     private final DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DB_JPACombatRepository(
+    public DB_CombatRepositoryImpl(
         JPAApi api,
         DB_DatabaseExecutionContext ec
     ) {

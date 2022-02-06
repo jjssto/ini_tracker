@@ -4,7 +4,7 @@ import com.google.inject.ImplementedBy;
 import java.util.concurrent.CompletionStage;
 import java.util.List;
 
-@ImplementedBy( DB_JPACombatRepository.class )
+@ImplementedBy( DB_CombatRepositoryImpl.class )
 public interface DB_CombatRepository {
 
 

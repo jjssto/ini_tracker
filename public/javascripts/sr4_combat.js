@@ -1,11 +1,13 @@
 import {get_token, createColumn } from './functions.js';
 
 $( document ).ready( function() {
-    let combatId = window.location.href.match( '/(?<=\.ch\/combat\/)[0-9]+/').toString();
+    let combatId = window.location.pathname.match( /[0-9]+$/ )[0];
     localStorage.setItem( "combat_id", combatId );
-    localStorage.setItem( "last_roll", '' )
-    localStorage.setItem( "last_ini_update", '' )
+    localStorage.removeItem( "last_roll" )
+    localStorage.removeItem( "last_ini_update" )
     getIniList( combatId );
+    loadCharList_1( combatId );
+    loadCharList_2( combatId );
     getDiceRolls( combatId, '' );
 })
 
@@ -13,8 +15,12 @@ window.setInterval( function() {
     let combatId = localStorage.getItem( "combat_id" )
     getIniList( combatId );
     getDiceRolls( combatId, null )
-}, 2000 );
+}, 10000 );
 
+
+/* **********************************
+ * Roll a dice
+ * **********************************/
 $( "#dice_roller_f").submit( function( event ) {
     event.preventDefault();
 
@@ -31,19 +37,34 @@ $( "#dice_roller_f").submit( function( event ) {
         headers: {
             "Csrf-Token": get_token()
         },
+        dataType: "json",
         data: {
             nbrOfDice: $('#dice_roller_n').val(),
-            combatId: $('#dice_roller_combat_id').val(),
-            charId: $('#dice_roller_s').val(),
+            recordId: $('#dice_roller_s').val(),
             exploding: exploding
         },
         success: function( data ) {
-            let json = JSON.parse( data );
-            displayDiceRoll( json );
+            displayDiceRoll( data );
         }
     });
 })
 
+$("#roll_ini_b").click( function() {
+    let combatId = localStorage.getItem( "combat_id" )
+    $.ajax({
+        type: "post",
+        url: "/sr4/combat/ini",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            combatId: combatId
+        },
+        success: function() {
+            getIniList( combatId );
+        }
+    })
+});
 $("#char_update_tbody").find("button").click( function( ) {
     let row = $(this).parent().parent();
     let index = row.index();
@@ -66,13 +87,29 @@ $("#char_update_f").submit(function( event ) {
     event.preventDefault();
 })
 
+$("#char_selection_f").submit( function( event ){
+    event.preventDefault();
+    let combatId = localStorage.getItem( "combat_id")
+    $.ajax({
+        type: "post",
+        url: "/sr4/combat/addchar",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            charId: $("#char_selection_s").val(),
+            combatId: combatId
+        }
+    });
+})
+
 
 function addRow( tbody, index ) {
     let row = document.createElement( 'tr');
 
     let col = document.createElement( 'td');
     col.id = "pos_" + index;
-    col.innerHTML = index;
+    col.innerHTML = ( parseInt( index ) + 1 ).toString();
     row.appendChild( col  );
 
     col = document.createElement( 'td');
@@ -123,6 +160,7 @@ function addRow( tbody, index ) {
     input = document.createElement( 'button' );
     input.type = "submit";
     input.id = 'button' + index;
+    input.innerHTML = "Speichern"
     input.min = 0;
     input.max = 50;
     col.appendChild( input );
@@ -143,65 +181,56 @@ function addRow( tbody, index ) {
 function refreshIni( data ){
 
     let row = 0;
-    let tBody = $("#tbody_result")
-    let tRow = tBody.find("tr")
-
+    let tBody = document.getElementById("char_update_tbody")
+    let tRow = tBody.firstChild;
     for ( let i in data ) {
         if ( tRow == null ) {
-            tRow = addRow( tBody, row )
+            tRow = addRow( tBody, row );
         }
-        updateRow( tRow, data[i], row );
-        tRow = tRow.next();
-        row++
+        updateRow( data[i], row );
+        tRow = tRow.nextSibling;
+        row++;
     }
     while ( tRow != null ) {
-        let nextRow = tRow.next();
+        let nextRow = tRow.nextSibling;
         tRow.remove();
         tRow = nextRow;
     }
 }
 
-function updateRow( tRow, data, index ) {
+function updateRow( data, index ) {
 
-    let element = tRow.find( "#record_id_" + index );
+    let element = document.getElementById( "record_id_" + index);
     element.value = data.id;
-    element = tRow.find( "#name_" + index );
+    element = document.getElementById( "name_" + index);
     element.innerHTML = data.char.name;
-    element = tRow.find( "#s_dmg_" + index );
-    element.innerHTML = data.sDmg;
-    element = tRow.find( "#p_dmg_" + index );
-    element.innerHTML = data.pDmg;
-
-    element = tRow.find( "#ini_" + index );
+    element = document.getElementById( "s_dmg_" + index);
+    element.innerHTML = data.sdmg;
+    element = document.getElementById( "p_dmg_" + index);
+    element.innerHTML = data.pdmg;
+    element = document.getElementById( "ini_" + index);
     if ( parseInt( data.localIni ) > 0 ) {
         element.innerHTML = data.iniValue + "(" + data.localIni + ")";
     } else {
         element.innerHTML = data.iniValue;
     }
-    //$("#record_id_" + index).value = data.id;
-    //$("#name_id_" + index).innerHTML = data.char.name;
-    //$("#s_dmg_" + index).innerHTML = data.sDmg;
-    //$("#p_dmg_" + index).innerHTML = data.pDmg;
-    //if ( parseInt( data.localIni ) > 0 ) {
-    //    $("#ini_" + index).innerHTML = data.iniValue + "(" + data.localIni + ")";
-    //} else {
-    //    $("#ini_" + index).innerHTML = data.iniValue;
-    //}
 }
 
 function getIniList( combatId ){
+    let time = localStorage.getItem( "last_ini_update" );
     $.ajax({
-        type: "post",
+        type: "get",
         url: "/sr4/ini",
+        dataType: "json",
         data: {
-            combatId: combatId
+            combatId: combatId,
+            timestamp: time
         },
         success: function( data ) {
-            let json = JSON.parse( data );
-            if ( json.newValues == 'j' ) {
-                localStorage.setItem( "last_ini_update", json.time );
+            if ( data != null ) {
+                localStorage.setItem("last_ini_update", data.lastChanged );
+                refreshIni( data.charas );
             }
-            refreshIni( json.iniList );
         }
     });
 
@@ -212,9 +241,10 @@ function displayDiceRoll( data ) {
     let row = document.createElement( "tr" );
     let time = new Date( data.zeit );
     let options = { hour: "2-digit", minute: "2-digit" };
-    row.appendChild( createColumn( time.toLocaleDateString( 'de', options ) ) );
+    row.appendChild( createColumn( time.toLocaleTimeString( 'de', options ) ) );
     row.appendChild( createColumn( data.char ) );
     row.appendChild( createColumn( data.roll ) );
+    row.appendChild( createColumn( data.result ) );
 
     let tbody = document.getElementById( "rolls_table_tbody" );
     if ( data.roll != null ) {
@@ -224,12 +254,17 @@ function displayDiceRoll( data ) {
     }
 }
 
-function displayDiceRolls( data ) {
-    let json = JSON.parse( data );
-    let time = Date.parse( localStorage.getItem( 'last_roll') );
-    for ( let i in json ) {
-        if ( time < Date.parse( json[i].zeit ) ) {
-            displayDiceRoll( json[ i ]);
+function displayDiceRolls( json ) {
+    let time;
+    if ( localStorage.getItem( "last_roll ")!= null ) {
+        let time = Date.parse( localStorage.getItem( 'last_roll') );
+    } else {
+        time = null;
+    }
+    let rolls = json.rolls;
+    for ( let i in rolls ) {
+        if ( time == null || time < Date.parse( rolls[i].zeit ) ) {
+            displayDiceRoll( rolls[ i ] );
         }
     }
 }
@@ -245,10 +280,64 @@ function getDiceRolls( combatId, time ) {
     $.ajax({
       type: "get",
       url:  "/sr4/rolls",
+      dataType: "json",
       data: {
           id: combatId,
           timestamp: time
       },
-      success: displayDiceRolls
+      success: function( data ) {
+          displayDiceRolls( data );
+      }
+    });
+}
+
+function loadCharList_1( combatId ) {
+    $.ajax({
+        type: "get",
+        url: "/sr4/ini",
+        dataType: "json",
+        data: {
+            combatId: combatId,
+            timestamp: ''
+        },
+        success: function (data) {
+            let records = data.charas;
+            if (records != null) {
+                let select_1 = document.getElementById( "remove_char_s")
+                let select_2 = document.getElementById( "dice_roller_s")
+                for (let i in records) {
+                    let option_1 = document.createElement("option");
+                    let option_2 = document.createElement("option");
+                    option_1.value = records[i].id;
+                    option_2.value = records[i].id;
+                    option_1.innerHTML = records[i].char.name;
+                    option_2.innerHTML = records[i].char.name;
+                    select_1.appendChild(option_1);
+                    select_2.appendChild(option_2);
+                }
+            }
+        }
+    });
+}
+function loadCharList_2( combatId ) {
+    $.ajax({
+        type: "get",
+        url: "/sr4/getotherchars/" + combatId,
+        dataType: "json",
+        data: {
+        },
+        success: function (chara) {
+            if (chara != null) {
+                let select = document.getElementById("char_selection_s");
+                for( let i in chara ) {
+                    let option = document.createElement( "option" );
+                    option.value = chara[i].id;
+                    option.value = chara[i].id;
+                    option.innerHTML = chara[i].name;
+                    option.innerHTML = chara[i].name;
+                    select.appendChild( option );
+                }
+            }
+        }
     });
 }

@@ -8,20 +8,12 @@ import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 
-@Entity
-@Inheritance( strategy = InheritanceType.JOINED )
-@Table( name = "dice_roll" )
-public class DiceRoll {
+@MappedSuperclass
+abstract class DiceRoll {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
     private long id;
-
-    @ElementCollection( fetch = FetchType.EAGER )
-    @CollectionTable(
-        name = "dice",
-        joinColumns = @JoinColumn( name = "dice_roll_id", referencedColumnName = "id" ))
-    private List<Integer> roll;
 
     @Column( name = "eyes" )
     private int eyes;
@@ -36,11 +28,6 @@ public class DiceRoll {
     @Transient
     private final UniformIntegerDistribution dist;
 
-    public DiceRoll( ArrayList<Integer> roll ) {
-        this.roll = roll;
-        this.dist = null;
-    }
-
     public DiceRoll() {
         this(6);
     }
@@ -54,9 +41,9 @@ public class DiceRoll {
 
         StringBuilder ret = new StringBuilder("{");
         ret.append("\"zeit\": \"").append(getZeit().toString()).append("\"").append(",\"comment\": \"").append( comment ).append("\"").append(",\"roll\": [");
-        for (int i = 0; i < roll.size(); i++  ) {
-            ret.append("\"").append(roll.get(i).toString()).append("\"");
-            if ( i != roll.size() - 1 ) {
+        for (int i = 0; i < getRoll().size(); i++  ) {
+            ret.append("\"").append(getRoll().get(i).toString()).append("\"");
+            if ( i != getRoll().size() - 1 ) {
                 ret.append(",");
             }
         }
@@ -64,8 +51,8 @@ public class DiceRoll {
         return ret.toString();
     }
 
-    public void roll( int nbr, List<Integer> roll ) {
-        this.roll = roll;
+
+    public List<Integer> rollRet( int nbr, List<Integer> roll ) {
         int[] result;
         try {
             result = dist.sample(nbr);
@@ -73,42 +60,47 @@ public class DiceRoll {
             result = new int[]{};
         }
         for ( Integer r : result ) {
-            this.roll.add( r );
+            roll.add( r );
         }
         this.zeit = LocalDateTime.now();
+        return roll;
     }
 
-    public void roll( int nbr ) {
+    public List<Integer> rollRet( int nbr ) {
         List<Integer> roll = new ArrayList<>();
-        roll( nbr, roll );
+        return rollRet( nbr, roll );
     }
 
-    public void roll( int nbr, String comment ) {
-        roll( nbr );
+    public List<Integer> rollRet( int nbr, String comment ) {
         this.comment = comment;
+        return rollRet( nbr );
     }
 
+    abstract void roll( int nbr, List<Integer> roll );
+    abstract void roll( int nbr );
+    abstract void roll();
 
     public void explode( int nbr ) {
         int firstIndex = 0;
         int count = nbr;
-        this.roll = new ArrayList<Integer>();
+        List<Integer> roll = new ArrayList<Integer>();
         while ( count > 0 ) {
-            roll( count, this.roll );
+            roll( count, roll );
             count = 0;
-            for ( int i = firstIndex; i < this.roll.size(); i++ ) {
-                if ( this.roll.get( i ).equals( 6 ) ) {
+            for ( int i = firstIndex; i < roll.size(); i++ ) {
+                if ( roll.get( i ).equals( 6 ) ) {
                     count++;
                 }
             }
-            firstIndex = this.roll.size();
+            firstIndex = roll.size();
         }
+        setRoll( roll );
     }
 
 
     public int bigger_equal( int target ) {
         int ret = 0;
-        for( int die : roll) {
+        for( int die : getRoll() ) {
             if ( die >= target ) {
                 ret++;
             }
@@ -118,7 +110,7 @@ public class DiceRoll {
 
     public int sum() {
         int ret = 0;
-        for( int die : roll) {
+        for( int die : getRoll() ) {
             ret += die;
         }
         return ret;
@@ -128,9 +120,7 @@ public class DiceRoll {
         this.id = id;
     }
 
-    public void setRoll( List<Integer> roll ) {
-        this.roll = roll;
-    }
+    abstract void setRoll( List<Integer> roll ) ;
 
     public LocalDateTime getZeit() {
         return zeit;
@@ -148,9 +138,7 @@ public class DiceRoll {
         return id;
     }
 
-    public List<Integer> getRoll() {
-        return roll;
-    }
+    abstract List<Integer> getRoll();
 
 
     public int getEyes() {

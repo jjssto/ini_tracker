@@ -4,7 +4,7 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "sr4_char_record")
-public class SR4_CharRecord {
+public class SR4_CharRecord implements Comparable<SR4_CharRecord> {
 
     @Id
     @GeneratedValue(strategy=GenerationType.IDENTITY)
@@ -48,6 +48,19 @@ public class SR4_CharRecord {
         this.localIni = 0;
     }
 
+    @Override
+    public int compareTo( SR4_CharRecord otherRecord ) {
+        int compValue = iniValue.compareTo( otherRecord.getIniValue() );
+        if ( compValue  != 0 ) {
+            return compValue;
+        } else if ( chara.getReaction() != otherRecord.getChar().getReaction() ) {
+            return chara.getReaction().compareTo( otherRecord.getChar().getReaction() );
+        } else if ( chara.getIntuition() != otherRecord.getChar().getIntuition() ) {
+            return chara.getIntuition().compareTo( otherRecord.getChar().getIntuition() );
+        } else {
+            return 0;
+        }
+    }
 
 
 
@@ -94,6 +107,7 @@ public class SR4_CharRecord {
     public void setLocalIni( Integer localIni )
     {
         this.localIni = localIni;
+        combat.setLastChanged();
     }
 
     public Integer getIniValue()
@@ -104,6 +118,7 @@ public class SR4_CharRecord {
     public void setIniValue( Integer iniValue )
     {
         this.iniValue = iniValue;
+        combat.setLastChanged();
     }
 
     public Integer getSDmg()
@@ -114,6 +129,7 @@ public class SR4_CharRecord {
     public void setSDmg( Integer sDmg )
     {
         this.sDmg = sDmg;
+        combat.setLastChanged();
     }
 
     public Integer getPDmg()
@@ -124,6 +140,7 @@ public class SR4_CharRecord {
     public void setPDmg( Integer pDmg )
     {
         this.pDmg = pDmg;
+        combat.setLastChanged();
     }
 
     public void setChara ( SR4_Char chara ) {

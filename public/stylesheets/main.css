@@ -28,51 +28,29 @@ th {
 
 }
 
-
-main-lower-left table {
-    line-break: anywhere;
+.dice_results {
+   line-break: anywhere;
 }
-main-lower-left tbody, main-lower-left thead tr {
+.dice_results tbody, .dice_results thead tr {
     display: block;
 }
-main-lower-left thead {
-    display: block;
+.dice_results thead {
+    diplay: block;
 }
-main-lower-left tbody {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
+.dice_results tbody {
+     overflow-y: auto;
+     overflow-x: hidden;
+    height: 400px;
+ }
 
-main-lower-left td, main-lower-left th {
+.dice_results td, .dice_results th {
     width: 150px;
     max-width: 150px;
 }
 
-main-lower-left tbody {
-    height: 400px;
-}
-
-right table {
-    line-break: anywhere;
-}
-right tbody, right thead tr {
-    display: block;
-}
-right thead {
-    display: block;
-}
-right tbody {
-    overflow-y: auto;
-    overflow-x: hidden;
-}
-
-right td, right th {
-    width: 150px;
-    max-width: 150px;
-}
-
-right tbody {
-    height: 400px;
+#dice_results_sr4 td, #dice_results_sr4 th {
+    width: 100px;
+    max-width: 100px;
 }
 
 
