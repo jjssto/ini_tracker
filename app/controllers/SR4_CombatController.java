@@ -13,6 +13,7 @@ import play.mvc.Http;
 import play.mvc.Result;
 
 import javax.inject.Inject;
+import javax.persistence.EntityExistsException;
 import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeParseException;
@@ -62,8 +63,12 @@ public class SR4_CombatController extends Controller {
             messagesApi.preferred( request )));
     }
 
-    public Result index( Http.Request request ) {
-        return ok( views.html.sr4_overview.render() );
+    public CompletionStage<Result> index( Http.Request request ) {
+        return combatRepo.getAllCombats().thenApplyAsync(
+            list -> {
+                return ok( views.html.sr4_overview.render( list ) );
+            }
+        );
     }
 
 
@@ -110,7 +115,7 @@ public class SR4_CombatController extends Controller {
                     int ini = charRecord.getNbrIniDice();
                     diceRoll.roll(ini);
                     charRecord.setIniValue(ini + diceRoll.bigger_equal(5));
-                    diceRepo.insert(diceRoll);
+                    diceRepo.merge(diceRoll);
                 }
                 combat.setLastChanged();
                 return combat;
@@ -182,8 +187,14 @@ public class SR4_CombatController extends Controller {
         } catch ( PersistenceException e ) {
             return badRequest();
         }
-        combat.setLastChanged();
-        combatRepo.flush();
+        combatRepo.getCombat( combatId ).thenApplyAsync(
+            c -> {
+                c.setLastChanged();
+                combatRepo.merge( c );
+                return 1;
+            },
+            ec.current()
+        );
         return ok();
     }
 
@@ -192,15 +203,27 @@ public class SR4_CombatController extends Controller {
         int combatId = Integer.parseInt( form.get( "combatId" ) );
         int charRecordId = Integer.parseInt( form.get( "recordId" ) );
         recordRepo.remove( charRecordId );
+        combatRepo.getCombat( combatId ).thenApplyAsync(
+            combat -> {
+                combat.setLastChanged();
+                combatRepo.merge( combat );
+                return 1;
+                },
+            ec.current()
+        );
         return ok();
     }
 
     public Result addCombat(Http.Request request) {
-        JsonNode json = request.body().asJson();
-        String combat_desc = json.get("0").asText();
-        SR4_Combat combat = new SR4_Combat(combat_desc);
-        combatRepo.persist( combat );
-        return ok();
+        DynamicForm form = formF.form().bindFromRequest( request );
+        String desc = form.get( "bez" );
+        SR4_Combat combat = new SR4_Combat( desc );
+        try {
+            combatRepo.persist( combat );
+            return ok( "{\"id\":\"" + combat.getId() + "\",\"bez\":\"" + combat.getDescription() + "\"}");
+        } catch ( EntityExistsException e ) {
+            return badRequest( "Entity already exists!");
+        }
     }
 
     /**

@@ -28,6 +28,7 @@ libraryDependencies ++= Seq(
   "com.typesafe.play" %% "play-json" % "2.9.2",
   "com.google.code.gson" % "gson" % "2.8.9",
   "be.objectify" %% "deadbolt-java" % "2.8.1",
+  evolutions
 )
 
 PlayKeys.externalizeResourcesExcludes += baseDirectory.value / "conf" / "META-INF" / "persistence.xml"

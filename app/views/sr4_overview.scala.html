@@ -1,4 +1,4 @@
-@()
+@(list: List[SR4_CombatShort])
 <!DOCTYPE html>
 <html lang="en" xmlns="http://www.w3.org/1999/html">
     <head>
@@ -6,7 +6,7 @@
         <title>Kampf auswählen</title>
         <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
         <script src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" type="module"></script>
-        <script src="@routes.Assets.at("javascripts/index.js")" type="module"></script>
+        <script src="@routes.Assets.at("javascripts/sr4_overview.js")" type="module"></script>
     </head>
     <body>
         <div class="container">
@@ -15,14 +15,18 @@
             <main-left>
                 <h2>Kampf auswählen</h2>
 
-                <ol id = "combat_list">
-
+                <ol id="combat_list">
+                @for( value <- list ) {
+                   <li><a href="/sr4/combat/@value.getId">@value.getDescription</a></li>
+                }
                 </ol>
+
+
             </main-left>
 
             <right>
                 <h2>Kampf hinzufügen</h2>
-                <form id="new_combat_f">
+                <form id="new_combat_f" method="post" action="/sr4/combats">
                     <label for="bez"><input type="text" id="bez" name="bez"></label>
                     <button type="submit">Hinzufügen</button>
                 </form>
