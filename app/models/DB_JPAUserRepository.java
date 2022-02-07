@@ -3,6 +3,7 @@ package models;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
+import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
@@ -40,6 +41,20 @@ public class DB_JPAUserRepository implements DB_UserRepository {
     }
 
     @Override
+    public CompletionStage<SEC_User> get( int userId ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return jpaApi.withTransaction(
+                    entityManager -> {
+                        return entityManager.find( SEC_User.class, userId );
+                    });
+            },
+            ec
+        );
+    }
+
+
+    @Override
     public CompletionStage<SEC_User> findByUserName( String userName ) {
         return CompletableFuture.supplyAsync(
             () -> {
@@ -69,6 +84,37 @@ public class DB_JPAUserRepository implements DB_UserRepository {
                             .setParameter("token", token)
                             .getSingleResult();
                     });
+            },
+            ec
+        );
+    }
+
+    @Override
+    public CompletionStage<List<SEC_User>> getAll() {
+        return CompletableFuture.supplyAsync(
+            () -> { return jpaApi.withTransaction(
+                em -> {
+                    List<SEC_User> list = em.createQuery(
+                        "select u from SEC_User u"
+                    ).getResultList();
+                    return list;
+                });
+            },
+            ec
+        );
+    }
+
+    @Override
+    public void remove( int userId ) {
+        CompletableFuture.supplyAsync(
+            () -> { return jpaApi.withTransaction(
+                em -> {
+                   SEC_User user = em.find( SEC_User.class, userId );
+                   em.remove( user );
+                   em.flush();
+                   em.clear();
+                   return 1;
+                });
             },
             ec
         );

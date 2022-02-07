@@ -22,7 +22,6 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
-@SubjectPresent
 public class SR4_CombatController extends Controller {
 
     private final DB_CharRepository charRepo;
@@ -128,6 +127,7 @@ public class SR4_CombatController extends Controller {
         ));
     }
 
+    @SubjectPresent
     public Result rollInitiative( Http.Request request ) {
 
         DynamicForm form = formF.form().bindFromRequest(request);
@@ -189,6 +189,8 @@ public class SR4_CombatController extends Controller {
         return ok( diceRoll.toJson() );
     }
 
+
+    @SubjectPresent
     public Result addCharToCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int charId = Integer.parseInt( form.get( "charId" ) );
@@ -225,6 +227,7 @@ public class SR4_CombatController extends Controller {
         return ok();
     }
 
+    @SubjectPresent
     public Result removeCharFromCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int combatId = Integer.parseInt( form.get( "combatId" ) );
@@ -244,6 +247,7 @@ public class SR4_CombatController extends Controller {
         return ok();
     }
 
+    @SubjectPresent
     public Result addCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         String desc = form.get( "bez" );

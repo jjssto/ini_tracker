@@ -1,0 +1,75 @@
+@(list: List[SEC_User])
+<!DOCTYPE html>
+<html lang="de" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="UTF-8">
+        <title>Kampf auswählen</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" type="module"></script>
+        <script src="@routes.Assets.at("javascripts/adm_user.js")" type="module"></script>
+    </head>
+    <body>
+        <div class="container">
+            @el_header( "Initiativ-Tracker" )
+            @el_menu( 2 )
+            <main-left>
+                <h2>Benutzer*innen</h2>
+                <table>
+                    <thead>
+                        <tr>
+                            <th>Benutzername</th>
+                            <th>Neues Passwort</th>
+                            <th></th>
+                            <th></th>
+                            <th></th>
+                        </tr>
+                    </thead>
+
+                    <tbody>
+                        @for( user <- list ) {
+                            <tr>
+                                <td class="user_name">@user.getUserName()</td>
+                                <td class="td_password"><input type="text"></td>
+                                <td><button value="@user.getId()" class="b_new_password">Passwort aktualisieren</button></td>
+                                <td>
+                                    <button value="@user.getId()" class="b_delete_user">Löschen</button>
+                                </td>
+                                <td>
+                                    <button class="b_edit_user">Berechtigungen bearbeiten</button>
+                                </td>
+                                <td></td>
+                            </tr>
+                        }
+                    </tbody>
+                </table>
+                <h2>Neue Benutzer*in erstellen</h2>
+                <form id="f_new">
+                <table>
+                   <thead>
+                       <tr>
+                           <th>Name</th>
+                           <th>Passwort</th>
+                           <th>Admin</th>
+                           <th></th>
+                       </tr>
+                   </thead>
+                    <tbody>
+                        <td>
+                            <input id="i_f_new_name" type="text">
+                        </td>
+                        <td>
+                            <input id="i_f_new_password" type="text">
+                        </td>
+                        <td>
+                            <input id="i_f_new_admin" type="checkbox">
+                        </td>
+                        <td>
+                            <button type="submit">Hinzufügen</button>
+                        </td>
+                    </tbody>
+                </table>
+                </form>
+            </main-left>
+       </div>
+    </body>
+</html>

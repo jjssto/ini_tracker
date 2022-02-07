@@ -57,4 +57,24 @@ public class DB_JPATokenRepository implements DB_TokenRepository {
            ec
        );
     }
+
+    @Override
+    public void deleteToken( String token ){
+        CompletableFuture.supplyAsync(
+            () -> { return jpaApi.withTransaction(
+                entityManager -> {
+                    SEC_Token secToken = entityManager.createQuery(
+                        "from SEC_Token t where t.token = :token",
+                        SEC_Token.class
+                    ).setParameter( "token", token ).getSingleResult();
+                    entityManager.remove( secToken );
+                    entityManager.flush();
+                    entityManager.clear();
+                    return 1;
+                }
+            );
+            }
+        );
+    }
+
 }

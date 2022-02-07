@@ -43,7 +43,9 @@ public class SR4_CharController extends Controller {
         this.ec = ec;
         this.messagesApi = messagesApi;
     }
+
     /** Displays page that contains a list of available combats */
+    @SubjectPresent
     public Result chars( Http.Request request ) {
         return ok( views.html.sr4_chars.render(
             request,
@@ -51,6 +53,7 @@ public class SR4_CharController extends Controller {
         ) );
     }
 
+    @SubjectPresent
     public CompletionStage<Result> addChar(Http.Request request) {
         DynamicForm charForm = formF.form().bindFromRequest(request);
         SR4_Char chara = new SR4_Char();
@@ -92,6 +95,7 @@ public class SR4_CharController extends Controller {
     }
 
     /**
+     *
      * Answers a Request by sending a JSON that contains
      * all Characters
      */

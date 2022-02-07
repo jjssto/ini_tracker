@@ -11,6 +11,8 @@ GET /sr4/combat/:i          controllers.SR4_CombatController.combat(i: Integer, 
 GET /sr4/chars              controllers.SR4_CharController.chars(req: Request)
 GET /login              controllers.PageController.loginPage(req: Request)
 GET /createuser         controllers.PageController.createUserPage(req: Request)
+GET /users              controllers.PageController.userList(req: Request)
+GET /password           controllers.PageController.passwordPage
 GET /sr4/combats            controllers.SR4_CombatController.index(req: Request)
 
 GET /diceroller         controllers.GEN_Controller.index(req: Request)
@@ -28,9 +30,14 @@ POST /sr4/combat/removechar   controllers.SR4_CombatController.removeCharFromCom
 POST /sr4/addchar            controllers.SR4_CharController.addChar(req: Request)
 
 POST /login             controllers.PageController.login(req: Request)
+POST /logout             controllers.PageController.logout(req: Request)
 POST /createuser         controllers.PageController.createUser(req: Request)
+POST /newpassword    controllers.PageController.newPassword(req: Request)
+POST /deleteuser    controllers.PageController.removeUser(req: Request)
+POST /changepw      controllers.PageController.changePassword(req: Request)
 
 POST /diceroller        controllers.GEN_Controller.roll(req: Request)
+
 # JSON Controller
 
 # JSON
@@ -47,5 +54,11 @@ GET /sr4/ini               controllers.SR4_CombatController.getIniList(req: Requ
 GET /sr4/rolls              controllers.SR4_CombatController.getDiceRolls(req: Request)
 
 
+# Other Data
+###############
+
+GET /getuser            controllers.PageController.getUser( req: Request )
+
 # Assets
+###########
 GET     /assets/*file               controllers.Assets.at(path="/public", file)

@@ -53,6 +53,11 @@ th {
     max-width: 100px;
 }
 
+#dice_results_gen td, #dice_results_gen th {
+    width: 150px;
+    max-width: 150px;
+}
+
 
 
 .container {
@@ -64,14 +69,14 @@ th {
 }
 
 header {
-    grid-column: 1 / 19;
+    grid-column: 1 / 18;
     grid-row: 1 / 2;
     background-color: maroon;
 }
 
 main {
     padding: 2.5%;
-    grid-column: 2 / 19;
+    grid-column: 2 / 18;
     grid-row: 2 / 12;
 }
 
@@ -106,7 +111,7 @@ main-lower-left-2 {
 
 main-right {
     padding: 2.5%;
-    grid-column: 16 / 19;
+    grid-column: 16 / 18;
     grid-row: 2 / 12;
 }
 
@@ -121,8 +126,15 @@ left {
 }
 
 footer {
-    grid-column: 2 / 19;
+    grid-column: 2 / 18;
     grid-row: 13 / 13;
+    background-color: maroon;
+    color: white;
+}
+
+top-right {
+    grid-column: 18 / 18;
+    grid-row: 1/1;
     background-color: maroon;
     color: white;
 }

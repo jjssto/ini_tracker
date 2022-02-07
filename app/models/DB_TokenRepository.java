@@ -10,4 +10,6 @@ public interface DB_TokenRepository {
     CompletionStage<Integer> persist( SEC_Token token );
 
     CompletionStage<SEC_User> getUser( String token );
+
+    void deleteToken( String token );
 }

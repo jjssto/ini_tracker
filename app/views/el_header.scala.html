@@ -1,5 +1,10 @@
 @(arg: String)
-
+<script type="module" src="@routes.Assets.at("javascripts/el_header.js")"></script>
 <header>
     <h1>@arg</h1>
 </header>
+
+<top-right>
+    <p id="p_user_name"></p>
+    <button type="button" id="b_login">Login / Logout</button>
+</top-right>

@@ -131,7 +131,7 @@ create table user
 (
     id            int auto_increment
         primary key,
-    password_hash longblob     null,
+    password_hash varchar(256)   null,
     salt          varchar(255) null,
     user_name     varchar(255) null
 );
@@ -175,6 +175,19 @@ values
 
 insert into sr4_combat(combat_desc, last_changed )
 values ( 'Test', now() );
+
+insert into user (user_name, password_hash, salt )
+  select
+ 'admin', sha2( 'abc', 256 ), '';
+ 
+  insert into security_role ( role_name )
+ values ( 'admin' );
+ 
+ insert into user_security_role ( user_id, security_role_id )
+ select
+ id, 1
+from user where user_name = 'admin';
+ 
 
 -- !Downs
 drop table gen_dice_rolls;
