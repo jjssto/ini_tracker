@@ -8,6 +8,7 @@ import play.shaded.oauth.org.apache.commons.codec.digest.DigestUtils;
 
 import javax.persistence.*;
 import java.security.MessageDigest;
+import java.util.Arrays;
 import java.util.List;
 
 @Entity
@@ -40,7 +41,7 @@ public class SEC_User implements Subject {
 
     @Column( name = "password_hash")
     @Lob
-    private String passwordHash;
+    private byte[] passwordHash;
 
     @Column( name = "salt")
     private String salt;
@@ -83,16 +84,16 @@ public class SEC_User implements Subject {
 
 
     public void changePassword( String password ) {
-        this.passwordHash = DigestUtils.shaHex(
+        this.passwordHash = DigestUtils.sha(
             password + salt
         );
     }
 
     public boolean checkPassword( String password ) {
-        String hash = DigestUtils.shaHex(
+        byte[] hash = DigestUtils.sha(
             password + salt
         );
-        if ( this.passwordHash.equals( hash ) )
+        if ( Arrays.equals( this.passwordHash, hash ) )
             return true;
         else
             return false;

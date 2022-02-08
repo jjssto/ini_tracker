@@ -13,6 +13,8 @@ public interface DB_UserRepository {
 
     CompletionStage<SEC_User> findByUserName( String userName );
 
+    CompletionStage<Boolean> userExists( String userName );
+
     CompletionStage<String> userNameFromToken( String token);
 
     CompletionStage<List<SEC_User>> getAll();

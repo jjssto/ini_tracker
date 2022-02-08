@@ -1,6 +1,7 @@
 package controllers;
 
 import be.objectify.deadbolt.java.actions.SubjectPresent;
+import com.typesafe.config.Config;
 import models.DB_TokenRepository;
 import models.DB_UserRepository;
 import models.SEC_Token;
@@ -26,19 +27,22 @@ public class PageController extends Controller {
     private final DB_TokenRepository sessionTokenRepo;
     private final FormFactory formFactory;
     private final HttpExecutionContext ec;
+    private final Config config;
 
     @Inject
     public PageController(
         DB_UserRepository userRepo,
         DB_TokenRepository sessionTokenRepo,
         FormFactory formFactory,
-        HttpExecutionContext ec
+        HttpExecutionContext ec,
+        Config config
 
     ) {
         this.userRepo = userRepo;
         this.sessionTokenRepo = sessionTokenRepo;
         this.formFactory = formFactory;
         this.ec = ec;
+        this.config = config;
     }
 
 /** Displays page that contains a list of available combats */
@@ -55,13 +59,13 @@ public class PageController extends Controller {
         String userName = form.get( "userName" );
         String password = form.get( "password" );
         SEC_User user;
+        createAdmin();
         try {
             user = userRepo.findByUserName( userName ).toCompletableFuture().get();
         } catch ( EntityNotFoundException | ExecutionException | InterruptedException e ) {
             return badRequest();
         }
-
-        if ( user.checkPassword( password ) ) {
+        if ( user != null && user.checkPassword( password ) ) {
             String token;
             SEC_Token sessionToken;
             sessionToken = new SEC_Token( user );
@@ -70,6 +74,20 @@ public class PageController extends Controller {
         } else {
            return loginPage( request );
         }
+    }
+
+    private void createAdmin() {
+        String defaultPW = config.getString( "default_admin_pw" );
+        userRepo.userExists( "admin" ).thenApplyAsync(
+            exists -> {
+                if ( !exists ) {
+                    SEC_User admin = new SEC_User( "admin", defaultPW );
+                    userRepo.persist( admin );
+                }
+                return null;
+            },
+            ec.current()
+        );
     }
     public Result logout( Http.Request request ) {
         String token = request.session().get("LOGIN_TOKEN").toString();
@@ -167,7 +185,12 @@ public class PageController extends Controller {
         }
         return userRepo.findByToken( loginToken ).thenApplyAsync(
             user -> {
-                return ok(user.getUserName());
+                if ( user != null ) {
+                    return ok( user.getUserName() );
+                } else {
+                    return ok( "" );
+                }
+
             },
             ec.current()
         );

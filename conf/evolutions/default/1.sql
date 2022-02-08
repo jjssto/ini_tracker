@@ -131,8 +131,8 @@ create table user
 (
     id            int auto_increment
         primary key,
-    password_hash varchar(256)   null,
-    salt          varchar(255) null,
+    password_hash longblob   null,
+    salt          longtext null,
     user_name     varchar(255) null
 );
 

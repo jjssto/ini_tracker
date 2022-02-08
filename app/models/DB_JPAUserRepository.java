@@ -28,12 +28,17 @@ public class DB_JPAUserRepository implements DB_UserRepository {
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        return entityManager.createQuery(
+                        List<SEC_User> list = entityManager.createQuery(
                                 "select u " +
                                     "from SEC_Token t join t.user u " +
                                     "where t.token = :token ", SEC_User.class)
                             .setParameter("token", token)
-                            .getSingleResult();
+                            .getResultList();
+                        if ( list.size() > 0 ) {
+                            return list.get(0);
+                        } else {
+                            return null;
+                        }
                     });
             },
             ec
@@ -60,10 +65,36 @@ public class DB_JPAUserRepository implements DB_UserRepository {
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        return entityManager.createQuery(
+                        List<SEC_User> list = entityManager.createQuery(
                                     "from SEC_User u where u.userName = :userName ", SEC_User.class)
                             .setParameter("userName", userName )
-                            .getSingleResult();
+                            .getResultList();
+                        if ( list.size() > 0 ) {
+                            return list.get(0);
+                        } else {
+                            return null;
+                        }
+                    });
+            },
+            ec
+        );
+    }
+
+    @Override
+    public CompletionStage<Boolean> userExists( String userName ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return jpaApi.withTransaction(
+                    entityManager -> {
+                        List<SEC_User> list = entityManager.createQuery(
+                                "from SEC_User u where u.userName = :userName ", SEC_User.class)
+                            .setParameter("userName", userName )
+                            .getResultList();
+                        if ( list.size() > 0 ) {
+                            return true;
+                        } else {
+                            return false;
+                        }
                     });
             },
             ec
@@ -77,12 +108,17 @@ public class DB_JPAUserRepository implements DB_UserRepository {
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        return entityManager.createQuery(
+                        List<String> list = entityManager.createQuery(
                                 "select u.userName " +
                                     "from SEC_Token t join t.user u " +
                                     "where t.token = :token ", String.class)
                             .setParameter("token", token)
-                            .getSingleResult();
+                            .getResultList();
+                        if ( list.size() > 0 ) {
+                            return list.get( 0 );
+                        } else {
+                            return null;
+                        }
                     });
             },
             ec
