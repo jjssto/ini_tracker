@@ -1,3 +1,9 @@
+h1 {
+    margin: 0;
+    padding: 20px 50px;
+    color: white;
+    background: maroon;
+}
 body {
     color: black;
     font-family: Verdana, sans-serif;
@@ -20,24 +26,125 @@ th {
     color: white;
 
 
-}.column {
-     float: left;
-    padding: 5px;
+}
+
+.dice_results {
+   line-break: anywhere;
+}
+.dice_results tbody, .dice_results thead tr {
+    display: block;
+}
+.dice_results thead {
+    diplay: block;
+}
+.dice_results tbody {
+     overflow-y: auto;
+     overflow-x: hidden;
+    height: 400px;
  }
 
-/* Left and right column */
-.left {
-    width: 70%;
+.dice_results td, .dice_results th {
+    width: 150px;
+    max-width: 150px;
 }
 
-/* Right column */
-.right {
-    width: 30%;
+#dice_results_sr4 td, #dice_results_sr4 th {
+    width: 100px;
+    max-width: 100px;
 }
 
-/* Responsive layout - makes the three columns stack on top of each other instead of next to each other */
-@media screen and (max-width: 600px) {
-    .column.side, .column.middle {
-        width: 100%;
-    }
+#dice_results_gen td, #dice_results_gen th {
+    width: 150px;
+    max-width: 150px;
+}
+
+
+
+.container {
+    display: grid;
+    grid-template-columns: repeat(18,auto);
+    grid-template-rows: repeat(12, auto);
+    width: 100vw;
+    height: 100vh;
+}
+
+header {
+    grid-column: 1 / 18;
+    grid-row: 1 / 2;
+    background-color: maroon;
+}
+
+main {
+    padding: 2.5%;
+    grid-column: 2 / 18;
+    grid-row: 2 / 12;
+}
+
+main-left {
+    padding: 2.5%;
+    grid-column: 2 / 16;
+    grid-row: 2 / 12;
+}
+
+main-upper-left {
+    padding: 2.5%;
+    grid-column: 2 / 16;
+    grid-row:   2 / 10;
+}
+
+main-lower-left {
+    padding: 2.5%;
+    grid-column: 2 / 16;
+    grid-row: 10 / 12;
+}
+
+main-lower-left-1 {
+    padding: 2.5%;
+    grid-column: 2 / 8;
+    grid-row: 10 / 12;
+}
+main-lower-left-2 {
+    padding: 2.5%;
+    grid-column: 8 / 16;
+    grid-row: 10 / 12;
+}
+
+main-right {
+    padding: 2.5%;
+    grid-column: 16 / 18;
+    grid-row: 2 / 12;
+}
+
+
+
+left {
+    padding: 5%;
+    grid-column: 1 / 2;
+    grid-row: 2 / 14 ;
+    background-color: maroon;
+    color: white;
+}
+
+footer {
+    grid-column: 2 / 18;
+    grid-row: 13 / 13;
+    background-color: maroon;
+    color: white;
+}
+
+top-right {
+    grid-column: 18 / 18;
+    grid-row: 1/1;
+    background-color: maroon;
+    color: white;
+}
+
+left a {
+    outline: none;
+    text-decoration: none;
+    display: inline-block;
+    margin-right: 0.625%;
+    text-align: center;
+    line-height: 3;
+    color: white;
 }

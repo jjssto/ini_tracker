@@ -1,0 +1,84 @@
+@(combatId: Integer)(implicit request: Http.Request, messages: Messages)
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <title>Initiative</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" charset="UTF-8"></script>
+        <script type="module" src="@routes.Assets.at("javascripts/sr4_combat.js")" charset="UTF-8"></script>
+    </head>
+
+   <body>
+       <input type="hidden" id="combat_id" value="@combatId">
+       <input type="hidden" id="char_update_nbr_rows" value="0">
+       <div class="container">
+
+           @el_header( "Intiativ-Tracker" )
+           @el_menu( 0 )
+
+           <main-upper-left>
+           <h2>Initiativ-Tabelle</h2>
+                <form id="char_update_f">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>Reihenfolge</th>
+                                <th>Iniativwurf</th>
+                                <th>!</th>
+                                <th>Name</th>
+                                <th>Stun Damage</th>
+                                <th></th>
+                                <th>Physical Damage</th>
+                                <th></th>
+                                <th></th>
+                            </tr>
+                        </thead>
+                        <tbody id="char_update_tbody"></tbody>
+                    </table>
+                </form>
+                <button id="roll_ini_b">Initiative würfeln</button>
+       </main-upper-left>
+
+       <main-lower-left-1>
+            <h2>Charakter hinzufügen:</h2>
+            <form id="char_selection_f" method="post" action="/sr4/combat/1">
+                <select id="char_selection_s"></select>
+                <button type="submit" id="char_selection_b">Hinzufügen</button>
+            </form>
+           </main-lower-left-1>
+           <main-lower-left-2>
+                <h2>Charakter entfernen:</h2>
+                <form id="remove_char_f">
+                    <select id="remove_char_s"></select>
+                    <button type="submit" id="remove_char_b">Entfernen</button>
+                </form>
+        </main-lower-left-2>
+       <main-right>
+               <h2>Dice Roller</h2>
+           <form id="dice_roller_f" >
+              <select id="dice_roller_s" name="recordId" form="dice_roller_f">
+
+              </select>
+               <label for="dice_roller_n">Anz. Würfel:</label><input type="number" id="dice_roller_n" name="nbrOfDice" min="0" max="40">
+               <label for="dice_roller_ex">!<input type="checkbox" id="dice_roller_ex"></label>
+               <input type="hidden" id="dice_roller_token" name="csrfToken">
+               <input type="hidden" id="dice_roller_combat_id" name="combatId", value="@combatId">
+               <input type="submit" id="dice_roller_b" value="Würfeln">
+           </form>
+
+
+               <h2>Würfelergebnisse</h2>
+               <div id="results">
+           <table class="dice_results" id="dice_results_sr4">
+               <thead>
+                   <tr><th>Timestamp</th><th>Char.</th><th>Wurf</th><th>Resultat</th></tr>
+               </thead>
+               <tbody id="rolls_table_tbody">
+
+               </tbody>
+           </table>
+               </div>
+       </main-right>
+       </div>
+   </body>
+</html>

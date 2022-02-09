@@ -1,4 +1,14 @@
-export { get_token, create_cell, create_input_cell, create_hidden_input, get_value_from_id, get_inner_from_id, set_value_by_id, set_inner_by_id }
+export {
+    get_token,
+    create_cell,
+    create_input_cell,
+    create_hidden_input,
+    get_value_from_id,
+    get_inner_from_id,
+    set_value_by_id,
+    set_inner_by_id,
+    createColumn
+}
 
 function get_token() {
     let cookies_raw = decodeURIComponent(document.cookie);
@@ -60,4 +70,10 @@ function set_value_by_id( id, text ) {
     if ( el != null ) {
         el.value = text;
     }
+}
+
+function createColumn( arg ) {
+    let col = document.createElement( "td")
+    col.innerHTML = arg;
+    return col;
 }

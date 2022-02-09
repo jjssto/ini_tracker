@@ -1,0 +1,66 @@
+@()(implicit requestHeader: Http.RequestHeader )
+<!DOCTYPE html>
+<html lang="de">
+    <head>
+        <meta charset="UTF-8">
+        <title>Dice Roller</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" charset="UTF-8"></script>
+        <script type="module" src="@routes.Assets.at("javascripts/rtc_diceroller.js")"></script>
+</head>
+<body>
+<div class="container">
+@el_header( "Initiativ-Tracker" )
+@el_menu( 0 )
+
+<main-upper-left>
+    <h2>Würfel auswählen</h2>
+    <form id="f_dice_roller" class="dice_roll_form" method="post" action="/diceroller">
+        <div class="d_rtc_dice">
+            <label for="i_skill">Skill: </label>
+            <input name="skill" id="i_skill" type="range" min="-1" max="10" step="1" value="-1">
+            <p id="p_skill"></p>
+        </div>
+        <div class="d_rtc_dice">
+            <label for="i_attribute">Attribute: </label>
+            <input name="attribute" id="i_attribute" type="range" min="0" max="10" step="1" value="0">
+            <p id="p_attribute"></p>
+        </div>
+        <div class="d_rtc_dice">
+            <label for="i_no_tag">Kein Tag: </label>
+            <input name="noTag" id="i_no_tag" type="checkbox">
+        </div>
+
+        @helper.CSRF.formField
+        <button type="submit">Würfeln</button>
+        <button type="reset">Reset</button>
+    </form>
+</main-upper-left>
+
+<main-lower-left>
+    <h2>Würfelergebnisse</h2>
+    <table class="dice_results" id="dice_results_gen">
+       <thead>
+           <tr>
+           <th>Zeit</th>
+           <th>Attribute</th>
+           <th>Skill</th>
+           <th>Tag</th>
+           <th>d6</th>
+           <th>d8</th>
+           <th>d12</th>
+           <th>Erfolge</th>
+           </tr>
+       </thead>
+        <tbody id="tbody_result">
+        </tbody>
+    </table>
+</main-lower-left>
+
+
+
+
+
+</div>
+</body>
+</html>
