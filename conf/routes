@@ -16,6 +16,7 @@ GET /password           controllers.PageController.passwordPage
 GET /sr4/combats            controllers.SR4_CombatController.index(req: Request)
 
 GET /diceroller         controllers.GEN_Controller.index(req: Request)
+GET /rtc/diceroller         controllers.RTC_Controller.index(req: Request)
 
 # Forms
 ###########
@@ -37,6 +38,7 @@ POST /deleteuser    controllers.PageController.removeUser(req: Request)
 POST /changepw      controllers.PageController.changePassword(req: Request)
 
 POST /diceroller        controllers.GEN_Controller.roll(req: Request)
+POST /rtc/diceroller    controllers.RTC_Controller.roll(req: Request)
 
 # JSON Controller
 
