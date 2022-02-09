@@ -3,15 +3,11 @@ import {get_token} from "./functions.js";
 
 $( "#f_dice_roller").submit( function( event ) {
     event.preventDefault();
+})
 
+$( "#b_dice_roll").click(function(){
     let el = document.getElementById("i_no_tag");
-    let noTag;
-    if ( el.checked ) {
-       noTag = 'j';
-    } else {
-        noTag = 'n';
-    }
-
+    let noTag = 'n';
 
     $.ajax({
         type: "post",
@@ -21,6 +17,48 @@ $( "#f_dice_roller").submit( function( event ) {
         },
         data: {
             skill: $("#i_skill").val(),
+            attribute: $("#i_attribute").val(),
+            noTag: noTag
+        },
+        success: function( data ) {
+            displayResult( data );
+        }
+    });
+})
+
+$( "#b_no_tag").click(function(){
+    let el = document.getElementById("i_no_tag");
+    let noTag = 'j';
+
+    $.ajax({
+        type: "post",
+        url: "/rtc/diceroller",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            skill: $("#i_skill").val(),
+            attribute: $("#i_attribute").val(),
+            noTag: noTag
+        },
+        success: function( data ) {
+            displayResult( data );
+        }
+    });
+})
+
+$( "#b_only_attribut").click(function(){
+    let el = document.getElementById("i_no_tag");
+    let noTag = 'n';
+
+    $.ajax({
+        type: "post",
+        url: "/rtc/diceroller",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            skill: "0",
             attribute: $("#i_attribute").val(),
             noTag: noTag
         },
@@ -44,13 +82,14 @@ function displayResult( data ) {
     let zeit;
 
     row.appendChild( createColumn( json.attribute ));
-    row.appendChild( createColumn( json.skill ));
 
+    let skill;
     if ( json.noTag == 'j' ) {
-        row.appendChild( createColumn( "kein Tag") )
+        skill = '(' + json.skill + ')';
     } else {
-        row.appendChild( createColumn( "") )
+        skill = json.skill;
     }
+    row.appendChild( createColumn( skill ));
 
     let d6 = json.d6;
     if ( d6 != null ) {

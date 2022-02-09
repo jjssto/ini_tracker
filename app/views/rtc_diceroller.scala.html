@@ -26,13 +26,11 @@
             <input name="attribute" id="i_attribute" type="range" min="0" max="10" step="1" value="0">
             <p id="p_attribute"></p>
         </div>
-        <div class="d_rtc_dice">
-            <label for="i_no_tag">Kein Tag: </label>
-            <input name="noTag" id="i_no_tag" type="checkbox">
-        </div>
 
         @helper.CSRF.formField
-        <button type="submit">Würfeln</button>
+        <button type="submit" id="b_dice_roll">Würfeln</button>
+        <button type="submit" id="b_no_tag">Ohne Tag</button>
+        <button type="submit" id="b_only_attribut">Attributswurf</button>
         <button type="reset">Reset</button>
     </form>
 </main-upper-left>
@@ -45,7 +43,6 @@
            <th>Zeit</th>
            <th>Attribute</th>
            <th>Skill</th>
-           <th>Tag</th>
            <th>d6</th>
            <th>d8</th>
            <th>d12</th>
