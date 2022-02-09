@@ -1,6 +1,6 @@
 name := "ini_tracker"
 
-version := "1.1"
+version := "1.2"
 
 maintainer := "jjssto@posteo.de"
 
