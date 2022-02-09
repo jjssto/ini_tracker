@@ -45,6 +45,13 @@ public class RTC_Controller extends Controller {
         } catch ( NumberFormatException e ) {
             return badRequest();
         }
+        boolean noTag;
+        if ( form.get( "noTag").equals( "j" ) ) {
+            noTag = true;
+        } else {
+            noTag = false;
+        }
+        diceRolls.setNoTag( noTag );
         diceRolls.roll();
         return ok( diceRolls.toJson() );
     }

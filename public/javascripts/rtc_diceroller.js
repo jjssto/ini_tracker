@@ -4,6 +4,14 @@ import {get_token} from "./functions.js";
 $( "#f_dice_roller").submit( function( event ) {
     event.preventDefault();
 
+    let el = document.getElementById("i_no_tag");
+    let noTag;
+    if ( el.checked ) {
+       noTag = 'j';
+    } else {
+        noTag = 'n';
+    }
+
 
     $.ajax({
         type: "post",
@@ -14,6 +22,7 @@ $( "#f_dice_roller").submit( function( event ) {
         data: {
             skill: $("#i_skill").val(),
             attribute: $("#i_attribute").val(),
+            noTag: noTag
         },
         success: function( data ) {
             displayResult( data );
@@ -36,6 +45,12 @@ function displayResult( data ) {
 
     row.appendChild( createColumn( json.attribute ));
     row.appendChild( createColumn( json.skill ));
+
+    if ( json.noTag == 'j' ) {
+        row.appendChild( createColumn( "kein Tag") )
+    } else {
+        row.appendChild( createColumn( "") )
+    }
 
     let d6 = json.d6;
     if ( d6 != null ) {

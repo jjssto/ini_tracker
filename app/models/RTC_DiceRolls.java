@@ -33,6 +33,9 @@ public class RTC_DiceRolls {
     @Column( name = "attribute" )
     private int attribute = -1;
 
+    @Column( name = "no_tag")
+    private boolean noTag = false;
+
 
     /* Constructers */
 
@@ -58,11 +61,20 @@ public class RTC_DiceRolls {
 
         if ( skill > -1 ) {
             if ( attribute >= skill ) {
-                nbrD12 = skill;
-                nbrD8 = attribute - skill;
+                if ( noTag ) {
+                    nbrD8 = skill;
+                    nbrD6 = attribute - skill;
+                } else {
+                    nbrD12 = skill;
+                    nbrD8 = attribute - skill;
+                }
             } else {
-                nbrD12 = attribute;
                 nbrD6 = skill - attribute;
+                if ( noTag ) {
+                    nbrD8 = attribute;
+                } else {
+                    nbrD12 = attribute;
+                }
             }
         } else {
             nbrD6 = attribute;
@@ -92,6 +104,12 @@ public class RTC_DiceRolls {
             sb.append(skill);
         }
         sb.append("\",\"attribute\":\"").append(attribute);
+        sb.append("\",\"noTag\":\"");
+        if ( noTag ) {
+            sb.append("j");
+        } else {
+            sb.append("n");
+        }
         int success = d6.result() + d8.result() + d12.result();
         sb.append("\",\"success\":\"").append(success).append("\",");
         if ( d6.getRoll().size() > 0 ) {
@@ -154,5 +172,13 @@ public class RTC_DiceRolls {
 
     public void setAttribute( int attribute ) {
         this.attribute = attribute;
+    }
+
+    public boolean isNoTag() {
+        return noTag;
+    }
+
+    public void setNoTag( boolean noTag ) {
+        this.noTag = noTag;
     }
 }
