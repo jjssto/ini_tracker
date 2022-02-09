@@ -16,6 +16,14 @@ public class SEC_SecurityRole implements Role {
     @Column( name = "role_name" )
     private String roleName;
 
+    public SEC_SecurityRole() {
+        roleName = null;
+    }
+
+    public SEC_SecurityRole( String roleName ) {
+        this.roleName = roleName;
+    }
+
     public int getId() {
         return id;
     }

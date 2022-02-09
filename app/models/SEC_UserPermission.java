@@ -16,8 +16,22 @@ public class SEC_UserPermission implements Permission {
     @Column( name = "value" )
     private String value;
 
+
+    public SEC_UserPermission() {
+        this.value = null;
+    }
+    public SEC_UserPermission( String value ) {
+        this.value = value;
+    }
+
+
+
     @Override
     public String getValue() {
         return value;
+    }
+
+    public void setValue( String value ) {
+        this.value = value;
     }
 }

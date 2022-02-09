@@ -7,14 +7,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DB_JPAUserRepository implements DB_SEC_UserRepository {
+public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
 
     private JPAApi jpaApi;
     private final DB_DatabaseExecutionContext ec;
 
 
     @Inject
-    public DB_JPAUserRepository(
+    public DB_SEC_UserRepositoryImpl(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {
@@ -198,6 +198,64 @@ public class DB_JPAUserRepository implements DB_SEC_UserRepository {
                     entityManager -> {
                         entityManager.flush();
                         return 1;
+                    }
+                );
+            },
+            ec
+        );
+    }
+
+    @Override
+    public CompletionStage<Integer> persist( SEC_SecurityRole role ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return jpaApi.withTransaction(
+                    entityManager -> {
+                        entityManager.persist( role );
+                        return 1;
+                    }
+                );
+            },
+            ec
+        );
+    }
+
+    @Override
+    public CompletionStage<SEC_SecurityRole> merge( SEC_SecurityRole role ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return jpaApi.withTransaction(
+                    entityManager -> {
+                        return entityManager.merge( role );
+                    }
+                );
+            },
+            ec
+        );
+    }
+
+    @Override
+    public CompletionStage<Integer> persist( SEC_UserPermission permission ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return jpaApi.withTransaction(
+                    entityManager -> {
+                        entityManager.persist( permission );
+                        return 1;
+                    }
+                );
+            },
+            ec
+        );
+    }
+
+    @Override
+    public CompletionStage<SEC_UserPermission> merge( SEC_UserPermission permission ) {
+        return CompletableFuture.supplyAsync(
+            () -> {
+                return jpaApi.withTransaction(
+                    entityManager -> {
+                        return entityManager.merge( permission );
                     }
                 );
             },

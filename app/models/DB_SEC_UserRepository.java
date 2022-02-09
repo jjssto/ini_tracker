@@ -5,7 +5,7 @@ import com.google.inject.ImplementedBy;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-@ImplementedBy( DB_JPAUserRepository.class )
+@ImplementedBy( DB_SEC_UserRepositoryImpl.class )
 public interface DB_SEC_UserRepository {
     CompletionStage<SEC_User> findByToken( String token );
 
@@ -24,6 +24,18 @@ public interface DB_SEC_UserRepository {
     CompletionStage<Integer> persist( SEC_User user );
 
     CompletionStage<Integer> merge( SEC_User user );
+
+
+    CompletionStage<Integer> persist( SEC_SecurityRole role );
+
+    CompletionStage<SEC_SecurityRole> merge( SEC_SecurityRole role );
+
+    CompletionStage<Integer> persist( SEC_UserPermission permission );
+
+    CompletionStage<SEC_UserPermission> merge( SEC_UserPermission permission );
+
+
+
 
     CompletionStage<Integer> flush();
 }

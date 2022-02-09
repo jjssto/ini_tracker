@@ -9,6 +9,7 @@ import java.util.List;
 @Table( name = "sr4_dice_roll")
 public class SR4_DiceRoll extends DiceRoll {
 
+
     public SR4_DiceRoll () {
         this( 6 );
     }

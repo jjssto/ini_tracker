@@ -8,6 +8,7 @@ import play.shaded.oauth.org.apache.commons.codec.digest.DigestUtils;
 
 import javax.persistence.*;
 import java.security.MessageDigest;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
@@ -70,6 +71,8 @@ public class SEC_User implements Subject {
     }
 
     public SEC_User() {
+        securityRoles = new ArrayList<>();
+        permissions = new ArrayList<>();
     }
 
     public SEC_User(
@@ -125,5 +128,21 @@ public class SEC_User implements Subject {
     private void createSalt() {
         RandomString randomString = new RandomString( 32 );
         this.salt = randomString.nextString();
+    }
+
+    public void addRole( SEC_SecurityRole role ) {
+        securityRoles.add( role );
+    }
+
+    public void removeRole( SEC_SecurityRole role ) {
+        securityRoles.remove( role );
+    }
+
+    public void addPermission( SEC_UserPermission permission ) {
+        permissions.add( permission );
+    }
+
+    public void removePermission( SEC_UserPermission permission ) {
+        permissions.remove( permission );
     }
 }
