@@ -4,8 +4,8 @@ import com.google.inject.ImplementedBy;
 
 import java.util.concurrent.CompletionStage;
 
-@ImplementedBy( DB_JPATokenRepository.class )
-public interface DB_TokenRepository {
+@ImplementedBy( DB_SEC_TokenRepositoryImpl.class )
+public interface DB_SEC_TokenRepository {
 
     CompletionStage<Integer> persist( SEC_Token token );
 

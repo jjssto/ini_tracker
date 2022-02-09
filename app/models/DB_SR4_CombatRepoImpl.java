@@ -11,13 +11,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DBSR4_CombatRepoJPA implements DBSR4_CombatRepo {
+public class DB_SR4_CombatRepoImpl implements DB_SR4_CombatRepo {
 
     private JPAApi jpaApi;
     private DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DBSR4_CombatRepoJPA(
+    public DB_SR4_CombatRepoImpl(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {

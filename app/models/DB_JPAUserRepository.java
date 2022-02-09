@@ -7,7 +7,7 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DB_JPAUserRepository implements DB_UserRepository {
+public class DB_JPAUserRepository implements DB_SEC_UserRepository {
 
     private JPAApi jpaApi;
     private final DB_DatabaseExecutionContext ec;

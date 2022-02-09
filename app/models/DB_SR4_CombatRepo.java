@@ -8,8 +8,8 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-@ImplementedBy( DBSR4_CombatRepoJPA.class )
-public interface DBSR4_CombatRepo {
+@ImplementedBy( DB_SR4_CombatRepoImpl.class )
+public interface DB_SR4_CombatRepo {
 
     CompletionStage<SR4_Combat> getIniList(
         int combatId,

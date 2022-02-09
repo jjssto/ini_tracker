@@ -7,8 +7,8 @@ import java.time.LocalDateTime;
 import java.util.concurrent.CompletionStage;
 import java.util.List;
 
-@ImplementedBy( DBSR4_DiceRepositoryJPA.class )
-public interface DBSR4_DiceRepository {
+@ImplementedBy( DB_SR4_DiceRepositoryImpl.class )
+public interface DB_SR4_DiceRepository {
 
     CompletionStage<SR4_DiceRoll> insert( SR4_DiceRoll diceRoll );
 

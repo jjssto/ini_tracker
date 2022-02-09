@@ -11,7 +11,7 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
-public class DBSR4_DiceRepositoryJPA implements DBSR4_DiceRepository {
+public class DB_SR4_DiceRepositoryImpl implements DB_SR4_DiceRepository {
 
     private final JPAApi api;
     private final DB_DatabaseExecutionContext ec;
@@ -19,7 +19,7 @@ public class DBSR4_DiceRepositoryJPA implements DBSR4_DiceRepository {
     private final HibernateUtil hu;
 
     @Inject
-    public DBSR4_DiceRepositoryJPA(
+    public DB_SR4_DiceRepositoryImpl(
         JPAApi api,
         DB_DatabaseExecutionContext ec,
         HibernateUtil hu

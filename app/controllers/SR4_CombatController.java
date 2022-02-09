@@ -24,10 +24,10 @@ import java.util.concurrent.ExecutionException;
 
 public class SR4_CombatController extends Controller {
 
-    private final DB_CharRepository charRepo;
-    private final DBSR4_CharRecordRepo recordRepo;
-    private final DBSR4_CombatRepo combatRepo;
-    private final DBSR4_DiceRepository diceRepo;
+    private final DB_SR4_CharRepository charRepo;
+    private final DB_SR4_CharRecordRepo recordRepo;
+    private final DB_SR4_CombatRepo combatRepo;
+    private final DB_SR4_DiceRepository diceRepo;
     private final HttpExecutionContext ec;
     private final FormFactory formF;
     private final MessagesApi messagesApi;
@@ -35,10 +35,10 @@ public class SR4_CombatController extends Controller {
     @Inject
     public SR4_CombatController(
         FormFactory formF,
-        DB_CharRepository charRepo,
-        DBSR4_CharRecordRepo recordRepo,
-        DBSR4_CombatRepo combatRepo,
-        DBSR4_DiceRepository diceRepo,
+        DB_SR4_CharRepository charRepo,
+        DB_SR4_CharRecordRepo recordRepo,
+        DB_SR4_CombatRepo combatRepo,
+        DB_SR4_DiceRepository diceRepo,
         HttpExecutionContext ec,
         MessagesApi messagesApi
     ) {

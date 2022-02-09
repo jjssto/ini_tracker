@@ -2,8 +2,8 @@ package security;
 
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
 import be.objectify.deadbolt.java.models.Subject;
-import models.DB_TokenRepository;
-import models.DB_UserRepository;
+import models.DB_SEC_TokenRepository;
+import models.DB_SEC_UserRepository;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
@@ -16,14 +16,14 @@ import java.util.concurrent.CompletionStage;
 public class MyDeadboltHandler extends AbstractDeadboltHandler {
 
     private final AuthenticationSupport authenticator;
-    private final DB_UserRepository userRepo;
-    private final DB_TokenRepository sessionTokenRepo;
+    private final DB_SEC_UserRepository userRepo;
+    private final DB_SEC_TokenRepository sessionTokenRepo;
 
     @Inject
     public MyDeadboltHandler(
         final AuthenticationSupport authenticator,
-        final DB_UserRepository userRepo,
-        final DB_TokenRepository sessionTokenRepo
+        final DB_SEC_UserRepository userRepo,
+        final DB_SEC_TokenRepository sessionTokenRepo
     ) {
         this.authenticator = authenticator;
         this.userRepo = userRepo;

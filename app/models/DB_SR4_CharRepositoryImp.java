@@ -9,13 +9,13 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 import java.util.function.Function;
 
-public class DB_JPACharRepository implements DB_CharRepository {
+public class DB_SR4_CharRepositoryImp implements DB_SR4_CharRepository {
 
     private final JPAApi api;
     private final DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DB_JPACharRepository(
+    public DB_SR4_CharRepositoryImp(
         JPAApi api,
         DB_DatabaseExecutionContext ec
     ) {

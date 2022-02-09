@@ -5,8 +5,8 @@ import com.google.inject.ImplementedBy;
 import java.util.concurrent.CompletionStage;
 import java.util.List;
 
-@ImplementedBy( DB_JPACharRepository.class )
-public interface DB_CharRepository {
+@ImplementedBy( DB_SR4_CharRepositoryImp.class )
+public interface DB_SR4_CharRepository {
 
     /* add new instance to DB */
     CompletionStage<SR4_Char> persist( SR4_Char chara );

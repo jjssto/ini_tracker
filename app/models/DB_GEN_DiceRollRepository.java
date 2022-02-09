@@ -5,7 +5,7 @@ import com.google.inject.ImplementedBy;
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
-@ImplementedBy( DB_GEN_JPADiceRollRepository.class )
+@ImplementedBy( DB_GEN_DiceRollRepositoryImpl.class )
 public interface DB_GEN_DiceRollRepository {
 
     CompletionStage<Integer> persist( GEN_DiceRolls diceRoll );

@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DB_JPATokenRepository implements DB_TokenRepository {
+public class DB_SEC_TokenRepositoryImpl implements DB_SEC_TokenRepository {
 
     private final JPAApi jpaApi;
     private final DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DB_JPATokenRepository(
+    public DB_SEC_TokenRepositoryImpl(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {

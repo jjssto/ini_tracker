@@ -2,8 +2,8 @@ package controllers;
 
 import be.objectify.deadbolt.java.actions.SubjectPresent;
 import com.typesafe.config.Config;
-import models.DB_TokenRepository;
-import models.DB_UserRepository;
+import models.DB_SEC_TokenRepository;
+import models.DB_SEC_UserRepository;
 import models.SEC_Token;
 import models.SEC_User;
 import play.data.DynamicForm;
@@ -23,16 +23,16 @@ import java.util.concurrent.ExecutionException;
  */
 public class PageController extends Controller {
 
-    private final DB_UserRepository userRepo;
-    private final DB_TokenRepository sessionTokenRepo;
+    private final DB_SEC_UserRepository userRepo;
+    private final DB_SEC_TokenRepository sessionTokenRepo;
     private final FormFactory formFactory;
     private final HttpExecutionContext ec;
     private final Config config;
 
     @Inject
     public PageController(
-        DB_UserRepository userRepo,
-        DB_TokenRepository sessionTokenRepo,
+        DB_SEC_UserRepository userRepo,
+        DB_SEC_TokenRepository sessionTokenRepo,
         FormFactory formFactory,
         HttpExecutionContext ec,
         Config config

@@ -10,13 +10,13 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DBSR4_CharRecordRepoJPA implements DBSR4_CharRecordRepo {
+public class DB_SR4_CharRecordRepoImpl implements DB_SR4_CharRecordRepo {
 
     private JPAApi jpaApi;
     private DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DBSR4_CharRecordRepoJPA(
+    public DB_SR4_CharRecordRepoImpl(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {

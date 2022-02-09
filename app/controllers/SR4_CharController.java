@@ -1,9 +1,8 @@
 package controllers;
 
 import be.objectify.deadbolt.java.actions.SubjectPresent;
-import models.DB_CharRepository;
-import models.DB_CombatRepository;
-import models.DBSR4_DiceRepository;
+import models.DB_SR4_CharRepository;
+import models.DB_SR4_DiceRepository;
 import models.SR4_Char;
 import play.api.i18n.MessagesApi;
 import play.data.DynamicForm;
@@ -20,9 +19,8 @@ import java.util.concurrent.CompletionStage;
 @SubjectPresent
 public class SR4_CharController extends Controller {
 
-    private final DB_CharRepository charRepo;
-    private final DB_CombatRepository combatRepo;
-    private final DBSR4_DiceRepository diceRepo;
+    private final DB_SR4_CharRepository charRepo;
+    private final DB_SR4_DiceRepository diceRepo;
     private final HttpExecutionContext ec;
     private final FormFactory formF;
     private final MessagesApi messagesApi;
@@ -30,15 +28,13 @@ public class SR4_CharController extends Controller {
     @Inject
     public SR4_CharController(
         FormFactory formF,
-        DB_CharRepository charRepo,
-        DB_CombatRepository combatRepo,
-        DBSR4_DiceRepository diceRepo,
+        DB_SR4_CharRepository charRepo,
+        DB_SR4_DiceRepository diceRepo,
         HttpExecutionContext ec,
         MessagesApi messagesApi
     ) {
         this.formF = formF;
         this.charRepo = charRepo;
-        this.combatRepo = combatRepo;
         this.diceRepo = diceRepo;
         this.ec = ec;
         this.messagesApi = messagesApi;

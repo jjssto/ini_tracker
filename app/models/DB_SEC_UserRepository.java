@@ -6,7 +6,7 @@ import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @ImplementedBy( DB_JPAUserRepository.class )
-public interface DB_UserRepository {
+public interface DB_SEC_UserRepository {
     CompletionStage<SEC_User> findByToken( String token );
 
     CompletionStage<SEC_User> get( int userId );
