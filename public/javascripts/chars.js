@@ -37,7 +37,7 @@ function load_chars() {
             tbody.insertBefore(row, tr_form);
         }
     }
-    Http.open("GET", "/getchars");
+    Http.open("GET", "/sr4/getchars");
     Http.send();
 }
 
@@ -49,7 +49,7 @@ $("#char_update_f").submit( function( event ) {
     }
     $.ajax({
         type: "post",
-        url: "/addchar",
+        url: "/sr4/addchar",
         headers: {
             "Csrf-Token": get_token()
         },
