@@ -1,7 +1,7 @@
 package controllers;
 
-import models.DB_GEN_DiceRollRepository;
-import models.GEN_DiceRolls;
+import models.db.gen.DB_GEN_DiceRollRepository;
+import models.gen.GEN_DiceRolls;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;

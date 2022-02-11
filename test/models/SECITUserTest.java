@@ -1,5 +1,8 @@
 package models;
 
+import models.sec.SEC_SecurityRole;
+import models.sec.SEC_User;
+import models.sec.SEC_UserPermission;
 import org.junit.Before;
 import org.junit.Test;
 

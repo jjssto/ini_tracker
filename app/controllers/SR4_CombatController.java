@@ -1,7 +1,16 @@
 package controllers;
 
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
 import be.objectify.deadbolt.java.actions.SubjectPresent;
-import models.*;
+import models.db.sr4.DB_SR4_CharRecordRepo;
+import models.db.sr4.DB_SR4_CharRepository;
+import models.db.sr4.DB_SR4_CombatRepo;
+import models.db.sr4.DB_SR4_DiceRepository;
+import models.sr4.SR4_Char;
+import models.sr4.SR4_CharRecord;
+import models.sr4.SR4_Combat;
+import models.sr4.SR4_DiceRoll;
 import play.api.i18n.MessagesApi;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -51,6 +60,7 @@ public class SR4_CombatController extends Controller {
         this.messagesApi = messagesApi;
     }
 
+    @SubjectPresent
     public Result combat(
         Integer combatId,
         Http.Request request
@@ -61,6 +71,8 @@ public class SR4_CombatController extends Controller {
             messagesApi.preferred( request )));
     }
 
+
+    @SubjectPresent
     public CompletionStage<Result> index( Http.Request request ) {
         return combatRepo.getAllCombats().thenApplyAsync(
             list -> {
@@ -70,6 +82,7 @@ public class SR4_CombatController extends Controller {
     }
 
 
+    @SubjectPresent
     public Result updateCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int id;
@@ -127,7 +140,7 @@ public class SR4_CombatController extends Controller {
         ));
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result rollInitiative( Http.Request request ) {
 
         DynamicForm form = formF.form().bindFromRequest(request);
@@ -160,6 +173,7 @@ public class SR4_CombatController extends Controller {
         return ok("OK");
     }
 
+    @SubjectPresent
     public Result roll(Http.Request request) {
         DynamicForm recordForm = formF.form().bindFromRequest(request);
         int recordId = Integer.parseInt(recordForm.get("recordId"));
@@ -190,7 +204,7 @@ public class SR4_CombatController extends Controller {
     }
 
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result addCharToCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int charId = Integer.parseInt( form.get( "charId" ) );
@@ -227,7 +241,7 @@ public class SR4_CombatController extends Controller {
         return ok();
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result removeCharFromCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int combatId = Integer.parseInt( form.get( "combatId" ) );
@@ -247,7 +261,7 @@ public class SR4_CombatController extends Controller {
         return ok();
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result addCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         String desc = form.get( "bez" );

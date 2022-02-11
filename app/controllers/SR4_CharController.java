@@ -1,9 +1,11 @@
 package controllers;
 
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
 import be.objectify.deadbolt.java.actions.SubjectPresent;
-import models.DB_SR4_CharRepository;
-import models.DB_SR4_DiceRepository;
-import models.SR4_Char;
+import models.db.sr4.DB_SR4_CharRepository;
+import models.db.sr4.DB_SR4_DiceRepository;
+import models.sr4.SR4_Char;
 import play.api.i18n.MessagesApi;
 import play.data.DynamicForm;
 import play.data.FormFactory;
@@ -40,8 +42,7 @@ public class SR4_CharController extends Controller {
         this.messagesApi = messagesApi;
     }
 
-    /** Displays page that contains a list of available combats */
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result chars( Http.Request request ) {
         return ok( views.html.sr4_chars.render(
             request,
@@ -49,7 +50,7 @@ public class SR4_CharController extends Controller {
         ) );
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public CompletionStage<Result> addChar(Http.Request request) {
         DynamicForm charForm = formF.form().bindFromRequest(request);
         SR4_Char chara = new SR4_Char();

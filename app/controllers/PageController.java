@@ -1,11 +1,14 @@
 package controllers;
 
+import be.objectify.deadbolt.java.actions.Group;
+import be.objectify.deadbolt.java.actions.Restrict;
 import be.objectify.deadbolt.java.actions.SubjectPresent;
 import com.typesafe.config.Config;
-import models.DB_SEC_TokenRepository;
-import models.DB_SEC_UserRepository;
-import models.SEC_Token;
-import models.SEC_User;
+import models.db.sec.DB_SEC_TokenRepository;
+import models.db.sec.DB_SEC_UserRepository;
+import models.sec.SEC_SecurityRole;
+import models.sec.SEC_Token;
+import models.sec.SEC_User;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
@@ -78,11 +81,27 @@ public class PageController extends Controller {
 
     private void createAdmin() {
         String defaultPW = config.getString( "default_admin_pw" );
+        CompletionStage<SEC_SecurityRole> role = userRepo.roleExists( "admin" ).thenApplyAsync(
+            exists -> {
+                if ( !exists ) {
+                    SEC_SecurityRole sr = new SEC_SecurityRole( "admin" );
+                    userRepo.persist( sr );
+                }
+                return null;
+            },
+            ec.current()
+        );
         userRepo.userExists( "admin" ).thenApplyAsync(
             exists -> {
                 if ( !exists ) {
                     SEC_User admin = new SEC_User( "admin", defaultPW );
-                    userRepo.persist( admin );
+                    try {
+                        SEC_SecurityRole adminRole = userRepo.getSecurityRole( "admin" ).toCompletableFuture().get();
+                        admin.addRole( adminRole );
+                        userRepo.merge( admin );
+                    } catch ( ExecutionException | InterruptedException e ) {
+                        /* TODO */
+                    }
                 }
                 return null;
             },
@@ -95,11 +114,12 @@ public class PageController extends Controller {
         return ok( request.uri() ).removingFromSession( request, "LOGIN_TOKEN" );
     }
 
+    @Restrict( @Group("admin"))
     public Result createUserPage( Http.RequestHeader requestHeader ) {
         return ok( views.html.adm_createUser.render( requestHeader ));
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public CompletionStage<Result> userList( Http.RequestHeader requestHeader ) {
        return userRepo.getAll().thenApplyAsync(
             list -> ok( views.html.adm_user.render( list )),
@@ -107,7 +127,7 @@ public class PageController extends Controller {
         );
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result newPassword( Http.Request request ) {
         DynamicForm form = formFactory.form().bindFromRequest( request );
         int userId = Integer.parseInt( form.get( "userId") );
@@ -116,7 +136,7 @@ public class PageController extends Controller {
         return ok();
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result passwordPage( ) {
         return ok( views.html.adm_password.render() );
     }
@@ -143,6 +163,7 @@ public class PageController extends Controller {
         );
     }
 
+    @Restrict( @Group("admin"))
     private void newPassword( int userId, String password ) {
         userRepo.get( userId ).thenApplyAsync(
             user -> {
@@ -154,7 +175,7 @@ public class PageController extends Controller {
         );
     }
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result removeUser( Http.Request request ) {
         DynamicForm form = formFactory.form().bindFromRequest( request );
         int userId = Integer.parseInt( form.get( "userId") );
@@ -163,7 +184,7 @@ public class PageController extends Controller {
     }
 
 
-    @SubjectPresent
+    @Restrict( @Group("admin"))
     public Result createUser( Http.Request request ) {
         DynamicForm form = formFactory.form().bindFromRequest( request );
         String userName = form.get( "userName" );
@@ -194,5 +215,10 @@ public class PageController extends Controller {
             },
             ec.current()
         );
+    }
+
+    @Restrict( @Group("admin"))
+    public CompletionStage<Result> editUser( Http.Request request ) {
+        return null;
     }
 }

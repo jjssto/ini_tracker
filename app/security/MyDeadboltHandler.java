@@ -2,8 +2,8 @@ package security;
 
 import be.objectify.deadbolt.java.AbstractDeadboltHandler;
 import be.objectify.deadbolt.java.models.Subject;
-import models.DB_SEC_TokenRepository;
-import models.DB_SEC_UserRepository;
+import models.db.sec.DB_SEC_TokenRepository;
+import models.db.sec.DB_SEC_UserRepository;
 import play.mvc.Http;
 import play.mvc.Result;
 import play.mvc.Results;
@@ -33,7 +33,8 @@ public class MyDeadboltHandler extends AbstractDeadboltHandler {
     @Override
     public CompletionStage<Optional<Result>> beforeAuthCheck(Http.RequestHeader requestHeader, Optional<String> content) {
             return CompletableFuture.supplyAsync (
-                () -> Optional.of( Results.ok( views.html.login.render( requestHeader ) ))
+        //        () -> Optional.of( Results.ok( views.html.login.render( requestHeader ) ))
+                () -> Optional.empty()
             );
     }
 

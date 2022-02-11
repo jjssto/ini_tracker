@@ -1,6 +1,7 @@
 package models;
 
 import junit.framework.TestCase;
+import models.rtc.RTC_DiceRoll;
 import org.junit.Test;
 
 import java.util.ArrayList;

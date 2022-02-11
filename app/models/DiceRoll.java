@@ -9,7 +9,7 @@ import java.util.ArrayList;
 import java.util.List;
 
 @MappedSuperclass
-abstract class DiceRoll {
+public abstract class DiceRoll {
 
     @Id
     @GeneratedValue(strategy= GenerationType.IDENTITY)
@@ -76,9 +76,12 @@ abstract class DiceRoll {
         return rollRet( nbr );
     }
 
-    abstract void roll( int nbr, List<Integer> roll );
-    abstract void roll( int nbr );
-    abstract void roll();
+    public abstract void roll(
+        int nbr,
+        List<Integer> roll
+    );
+    public abstract void roll( int nbr );
+    public abstract void roll();
 
     public void explode( int nbr ) {
         int firstIndex = 0;
@@ -120,7 +123,7 @@ abstract class DiceRoll {
         this.id = id;
     }
 
-    abstract void setRoll( List<Integer> roll ) ;
+    public abstract void setRoll( List<Integer> roll ) ;
 
     public LocalDateTime getZeit() {
         return zeit;
@@ -138,7 +141,7 @@ abstract class DiceRoll {
         return id;
     }
 
-    abstract List<Integer> getRoll();
+    public abstract List<Integer> getRoll();
 
 
     public int getEyes() {

@@ -1,6 +1,6 @@
 package security;
 
-import models.DB_SEC_UserRepository;
+import models.db.sec.DB_SEC_UserRepository;
 import play.mvc.Http;
 import play.mvc.Security;
 

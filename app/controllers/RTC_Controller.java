@@ -1,7 +1,7 @@
 package controllers;
 
-import models.DB_RTC_DiceRollRepository;
-import models.RTC_DiceRolls;
+import models.db.rtc.DB_RTC_DiceRollRepository;
+import models.rtc.RTC_DiceRolls;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;

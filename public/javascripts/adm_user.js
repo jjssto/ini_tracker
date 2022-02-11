@@ -36,6 +36,29 @@ $(".b_new_password").click(function(){
         }
     })
 })
+
+$(".b_edit_user").click(function(){
+    let userId = $(this).val();
+    let password = $(this).parent().siblings("td.td_password").find("input").val();
+
+    $.ajax({
+        type: "post",
+        url: "/edituser",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            userId: userId,
+            password: password
+        },
+        success: function() {
+            /* reload */
+        }
+    })
+})
+
+
+
 $("#f_new").submit(function(event){
     event.preventDefault();
     let admin;
@@ -52,8 +75,8 @@ $("#f_new").submit(function(event){
             "Csrf-Token": get_token()
         },
         data: {
-            userName: $("#i_f_new_name"),
-            password: $("#i_f_new_password"),
+            userName: $("#i_f_new_name").val(),
+            password: $("#i_f_new_password").val(),
             admin: admin
         },
         success: function() {
