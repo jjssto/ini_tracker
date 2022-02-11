@@ -24,6 +24,7 @@ import javax.inject.Inject;
 import javax.persistence.EntityExistsException;
 import javax.persistence.PersistenceException;
 import java.time.LocalDateTime;
+
 import java.time.format.DateTimeParseException;
 import java.time.temporal.ChronoUnit;
 import java.util.List;
@@ -31,6 +32,7 @@ import java.util.concurrent.CancellationException;
 import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
+@SubjectPresent
 public class SR4_CombatController extends Controller {
 
     private final DB_SR4_CharRepository charRepo;
@@ -60,7 +62,6 @@ public class SR4_CombatController extends Controller {
         this.messagesApi = messagesApi;
     }
 
-    @SubjectPresent
     public Result combat(
         Integer combatId,
         Http.Request request
@@ -72,7 +73,6 @@ public class SR4_CombatController extends Controller {
     }
 
 
-    @SubjectPresent
     public CompletionStage<Result> index( Http.Request request ) {
         return combatRepo.getAllCombats().thenApplyAsync(
             list -> {
@@ -82,7 +82,6 @@ public class SR4_CombatController extends Controller {
     }
 
 
-    @SubjectPresent
     public Result updateCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int id;
@@ -140,7 +139,7 @@ public class SR4_CombatController extends Controller {
         ));
     }
 
-    @Restrict( @Group("admin"))
+    @Restrict( @Group( "admin" ) )
     public Result rollInitiative( Http.Request request ) {
 
         DynamicForm form = formF.form().bindFromRequest(request);
@@ -173,7 +172,6 @@ public class SR4_CombatController extends Controller {
         return ok("OK");
     }
 
-    @SubjectPresent
     public Result roll(Http.Request request) {
         DynamicForm recordForm = formF.form().bindFromRequest(request);
         int recordId = Integer.parseInt(recordForm.get("recordId"));
@@ -204,7 +202,7 @@ public class SR4_CombatController extends Controller {
     }
 
 
-    @Restrict( @Group("admin"))
+    @Restrict( @Group( "admin" ) )
     public Result addCharToCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int charId = Integer.parseInt( form.get( "charId" ) );
@@ -241,7 +239,7 @@ public class SR4_CombatController extends Controller {
         return ok();
     }
 
-    @Restrict( @Group("admin"))
+    @Restrict( @Group( "admin" ) )
     public Result removeCharFromCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         int combatId = Integer.parseInt( form.get( "combatId" ) );
@@ -261,7 +259,7 @@ public class SR4_CombatController extends Controller {
         return ok();
     }
 
-    @Restrict( @Group("admin"))
+    @Restrict( @Group( "admin" ) )
     public Result addCombat(Http.Request request) {
         DynamicForm form = formF.form().bindFromRequest( request );
         String desc = form.get( "bez" );
