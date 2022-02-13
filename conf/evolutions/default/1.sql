@@ -187,7 +187,62 @@ insert into user (user_name, password_hash, salt )
  select
  id, 1
 from user where user_name = 'admin';
- 
+
+create table rtc_combat
+(
+    id          int auto_increment
+        primary key,
+    combat_name varchar(255) null,
+    last_changed datetime(6) null
+);
+
+create table rtc_dice_roll
+(
+    id      bigint auto_increment
+        primary key,
+    comment varchar(255) null,
+    eyes    int          null,
+    zeit    datetime(6)  null
+);
+
+create table rtc_dice
+(
+    dice_roll_id bigint not null,
+    roll         int    null,
+    constraint FKknm5cy8emlmptbvqg2qufvaex2
+        foreign key (dice_roll_id) references rtc_dice_roll (id)
+            on delete cascade
+);
+
+create table rtc_dice_rolls
+(
+    id        bigint auto_increment
+        primary key,
+    combat_id int    null,
+    d12_id    bigint null,
+    d8_id     bigint null,
+    d4_id     bigint null,
+    constraint FK7ln5tv2fk1ph6fehe06b25rqt2
+        foreign key (d12_id) references rtc_dice_roll (id),
+    constraint FK8ugmt8oc69eg5sbt9qb6h3sp62
+        foreign key (d4_id) references rtc_dice_roll (id),
+    constraint FKn4pdyqpmmgycu9qidg8vxpp452
+        foreign key (combat_id) references rtc_combat (id),
+    constraint FKoe4dmy0vo62rwvyx5rgafngm42
+        foreign key (d8_id) references rtc_dice_roll (id)
+);
+
+create table rtc_combat_security_role (
+                                          combat_id integer,
+                                          role_id integer,
+                                          constraint FK_rtc_combat_security_role_combat_id foreign key ( combat_id )
+                                              references rtc_combat ( id )
+                                              on delete cascade,
+                                          constraint FK_rtc_combat_security_role_role_id foreign key ( role_id )
+                                              references rtc_combat ( id )
+                                              on delete cascade
+);
+
 
 -- !Downs
 drop table gen_dice_rolls;
@@ -205,4 +260,10 @@ drop table user_security_role;
 drop table security_role;
 drop table user;
 drop table permission;
+
+drop table rtc_dice;
+drop table rtc_dice_rolls;
+drop table rtc_combat_security_role;
+drop table rtc_combat;
+drop table rtc_dice_roll;
 

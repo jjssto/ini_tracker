@@ -1,19 +1,19 @@
 package models.db.rtc;
 
 import com.google.inject.ImplementedBy;
-import models.rtc.RTC_Combat;
-import models.rtc.RTC_DiceRolls;
+import models.rtc.RtcCombat;
+import models.rtc.RtcDiceRolls;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
 
 @ImplementedBy( DB_RTC_DiceRollRepositoryImpl.class )
 public interface DB_RTC_DiceRollRepository {
-    CompletionStage<Integer> persist( RTC_DiceRolls diceRoll );
+    CompletionStage<Integer> persist( RtcDiceRolls diceRoll );
 
-    CompletionStage<Integer> persist( RTC_Combat combat );
+    CompletionStage<Integer> persist( RtcCombat combat );
 
-    CompletionStage<List<RTC_DiceRolls>> getRolls( int combat_id );
+    CompletionStage<List<RtcDiceRolls>> getRolls( int combat_id );
 
-    CompletionStage<List<RTC_Combat>> getCombats();
+    CompletionStage<List<RtcCombat>> getCombats();
 }

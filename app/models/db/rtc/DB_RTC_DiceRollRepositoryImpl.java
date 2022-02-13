@@ -1,8 +1,8 @@
 package models.db.rtc;
 
 import models.db.DB_DatabaseExecutionContext;
-import models.rtc.RTC_Combat;
-import models.rtc.RTC_DiceRolls;
+import models.rtc.RtcCombat;
+import models.rtc.RtcDiceRolls;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -24,22 +24,22 @@ public class DB_RTC_DiceRollRepositoryImpl implements DB_RTC_DiceRollRepository 
     }
 
     @Override
-    public CompletionStage<Integer> persist( RTC_DiceRolls diceRoll ) {
+    public CompletionStage<Integer> persist( RtcDiceRolls diceRoll ) {
         return null;
     }
 
     @Override
-    public CompletionStage<Integer> persist( RTC_Combat combat ) {
+    public CompletionStage<Integer> persist( RtcCombat combat ) {
         return null;
     }
 
     @Override
-    public CompletionStage<List<RTC_DiceRolls>> getRolls( int combat_id ) {
+    public CompletionStage<List<RtcDiceRolls>> getRolls( int combat_id ) {
         return null;
     }
 
     @Override
-    public CompletionStage<List<RTC_Combat>> getCombats() {
+    public CompletionStage<List<RtcCombat>> getCombats() {
         return null;
     }
 

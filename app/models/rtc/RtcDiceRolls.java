@@ -1,10 +1,12 @@
 package models.rtc;
 
+import models.sec.SEC_User;
+
 import javax.persistence.*;
 
 @Entity
 @Table( name = "gen_dice_rolls" )
-public class RTC_DiceRolls {
+public class RtcDiceRolls {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -12,20 +14,23 @@ public class RTC_DiceRolls {
 
     @ManyToOne
     @JoinColumn( name = "combat_id")
-    private final RTC_Combat combat;
+    private final RtcCombat combat;
 
+    @ManyToOne
+    @JoinColumn( name = "user_id" )
+    private final SEC_User user;
 
     @OneToOne
     @JoinColumn( name = "d6_id" )
-    private final RTC_DiceRoll d6;
+    private final RtcDiceRoll d6;
 
     @OneToOne
     @JoinColumn( name = "d8_id" )
-    private final RTC_DiceRoll d8;
+    private final RtcDiceRoll d8;
 
     @OneToOne
     @JoinColumn( name = "d12_id" )
-    private final RTC_DiceRoll d12;
+    private final RtcDiceRoll d12;
 
     @Column( name = "skill" )
     private int skill = -1;
@@ -39,16 +44,23 @@ public class RTC_DiceRolls {
 
     /* Constructers */
 
-    public RTC_DiceRolls(
-        RTC_Combat combat
+
+    public RtcDiceRolls(
+        RtcCombat combat,
+        SEC_User user
     ) {
+        this.user = user;
         this.combat = combat;
-        d6 = new RTC_DiceRoll( 6  );
-        d8 = new RTC_DiceRoll( 8  );
-        d12 = new RTC_DiceRoll( 12  );
+        d6 = new RtcDiceRoll( 6  );
+        d8 = new RtcDiceRoll( 8  );
+        d12 = new RtcDiceRoll( 12  );
     }
 
-    public RTC_DiceRolls() {
+    public RtcDiceRolls( RtcCombat combat ) {
+        this( combat, null );
+    }
+
+    public RtcDiceRolls() {
         this( null );
     }
 
@@ -140,20 +152,20 @@ public class RTC_DiceRolls {
         this.id = id;
     }
 
-    public RTC_Combat getCombat() {
+    public RtcCombat getCombat() {
         return combat;
     }
 
 
-    public RTC_DiceRoll getD6() {
+    public RtcDiceRoll getD6() {
         return d6;
     }
 
-    public RTC_DiceRoll getD8() {
+    public RtcDiceRoll getD8() {
         return d8;
     }
 
-    public RTC_DiceRoll getD12() {
+    public RtcDiceRoll getD12() {
         return d12;
     }
 
