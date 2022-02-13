@@ -60,7 +60,7 @@ public class RTC_DiceRolls {
         int nbrD12 = 0;
 
         if ( skill > -1 ) {
-            if ( attribute >= skill ) {
+            if ( attribute > skill ) {
                 if ( noTag ) {
                     nbrD8 = skill;
                     nbrD6 = attribute - skill;
@@ -113,7 +113,6 @@ public class RTC_DiceRolls {
         int success = d6.result() + d8.result() + d12.result();
         sb.append("\",\"success\":\"").append(success).append("\",");
         if ( d6.getRoll().size() > 0 ) {
-            if ( commaNeeded ) sb.append(",");
             sb.append("\"d6\":");
             sb.append( d6.toJson() );
             commaNeeded = true;
