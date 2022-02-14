@@ -81,11 +81,15 @@ public class RtcDiceRolls {
                     nbrD8 = attribute - skill;
                 }
             } else {
-                nbrD6 = skill - attribute;
-                if ( noTag ) {
-                    nbrD8 = attribute;
+                if ( skill == 0 ) {
+                    nbrD6 = 1;
                 } else {
-                    nbrD12 = attribute;
+                    nbrD6 = skill - attribute;
+                    if ( noTag ) {
+                        nbrD8 = attribute;
+                    } else {
+                        nbrD12 = attribute;
+                    }
                 }
             }
         } else {
