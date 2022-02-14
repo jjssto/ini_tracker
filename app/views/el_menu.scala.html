@@ -5,20 +5,16 @@
         <ul>
             <li><a href="@routes.GenController.index()">Dice Roller</a></li>
             <li><a href="@routes.SR4CombatController.index()">Shadowrun 4</a></li>
+            <ul>
+                <li><a href="@routes.SR4CombatController.index()">Übersicht</a></li>
+                <li><a href="@routes.SR4CharController.chars()">(NP-) Charakter bearbeiten</a></li>
+            </ul>
             <li><a href="@routes.RtcController.index()">RTC</a></li>
-            @if( arg == 1 || arg == 2  ) {
-                <ul>
-                    <li><a href="@routes.SR4CombatController.index()">Übersicht</a></li>
-                    <li><a href="@routes.SR4CharController.chars()">(NP-) Charakter bearbeiten</a></li>
-                    <li><a href="">Charakter-Blatt</a></li>
-                </ul>
-            }
-            @if( arg == 1 || arg == 2 ) {
-                <li>Admin</li>
-                <ul>
-                    <li><a href="@routes.PageController.passwordPage">Passwort ändern</a></li>
-                    <li><a href="@routes.PageController.userList()">Benutzer bearbeiten</a></li>
-                </ul>
-            }
+
+            <li>Admin</li>
+            <ul>
+                <li><a href="@routes.PageController.passwordPage">Passwort ändern</a></li>
+                <li><a href="@routes.PageController.userList()">Benutzer bearbeiten</a></li>
+            </ul>
         </ul>
     </left>

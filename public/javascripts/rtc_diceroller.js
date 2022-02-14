@@ -14,7 +14,8 @@ $( "#b_dice_roll").click(function(){
 
     $.ajax({
         type: "post",
-        url: "/rtc/diceroller",
+        url: "/rtc/roll",
+        dataType: "Json",
         headers: {
             "Csrf-Token": get_token()
         },
@@ -35,7 +36,7 @@ $( "#b_no_tag").click(function(){
 
     $.ajax({
         type: "post",
-        url: "/rtc/diceroller",
+        url: "/rtc/roll",
         headers: {
             "Csrf-Token": get_token()
         },
@@ -56,7 +57,7 @@ $( "#b_only_attribut").click(function(){
 
     $.ajax({
         type: "post",
-        url: "/rtc/diceroller",
+        url: "/rtc/roll",
         headers: {
             "Csrf-Token": get_token()
         },
@@ -77,9 +78,8 @@ function createColumn( roll ) {
     return col;
 }
 
-function displayResult( data ) {
+function displayResult( json ) {
 
-    let json = JSON.parse( data );
     let row = document.createElement( "tr" );
 
     let zeit;

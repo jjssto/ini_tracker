@@ -238,7 +238,7 @@ create table rtc_combat_security_role (
 insert into rtc_combat( combat_name )
 values ( 'Raum 1' );
 insert into security_role( role_name )
-values ( 'rtc' );
+values ( 'admin'), ( 'rtc' );
 
 insert into rtc_combat_security_role( combat_id, role_id )
 select 1, id from security_role where role_name = 'rtc';

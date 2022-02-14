@@ -56,8 +56,13 @@ public class RtcController
     }
 
     @Restrict( @Group( "rtc") )
-    public Result getCombat( Integer combatId, Http.Request request ) {
-        return ok( views.html.rtc_diceroller_i.render( request ));
+    public CompletionStage<Result> getCombat( Integer combatId, Http.Request request ) {
+        return combatRepo.getById( combatId ).thenApplyAsync(
+            combat -> ok(
+                views.html.rtc_diceroller_i.render( combat.getName(), request )
+            ),
+            ec.current()
+        );
     }
 
     public Result roll( Http.Request request ) {

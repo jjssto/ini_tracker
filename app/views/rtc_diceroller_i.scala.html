@@ -1,4 +1,4 @@
-@()(implicit requestHeader: Http.RequestHeader )
+@(name: String)(implicit requestHeader: Http.RequestHeader )
 <!DOCTYPE html>
 <html lang="de">
     <head>
@@ -14,7 +14,7 @@
 @el_menu( 0 )
 
 <main-upper-left>
-    <h2>Würfel auswählen</h2>
+    <h2>@name: Würfel auswählen</h2>
     <form id="f_dice_roller" class="dice_roll_form" method="post" action="/diceroller">
         <div class="d_rtc_dice">
             <label for="i_skill">Skill: </label>
@@ -36,7 +36,7 @@
 </main-upper-left>
 
 <main-lower-left>
-    <h2>Würfelergebnisse</h2>
+    <h2>@name: Würfelergebnisse</h2>
     <table class="dice_results" id="dice_results_gen">
        <thead>
            <tr>
