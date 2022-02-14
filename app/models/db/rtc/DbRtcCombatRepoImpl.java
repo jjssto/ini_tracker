@@ -7,6 +7,7 @@ import models.sec.SEC_User;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
+import javax.persistence.Query;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
@@ -67,11 +68,21 @@ public class DbRtcCombatRepoImpl implements DbRtcCombatRepo {
         return CompletableFuture.supplyAsync(
             () -> jpaApi.withTransaction(
                 em -> {
-                    return em.createQuery(
-                        "select c from RtcCombat c " +
-                            "join c.securityRole r" +
-                            "where r in :roles"
-                    ).setParameter( "roles", user.getRoles() ).getResultList();
+                    List<SEC_SecurityRole> list = em.createQuery(
+                        "select r from SEC_User u join u.securityRoles r " +
+                            "where u = :user and r.roleName = 'rtc'")
+                        .setParameter( "user", user ).getResultList();
+                    SEC_SecurityRole rtc;
+                    if ( list.size() > 0 ) {
+                       rtc = list.get(0);
+                    } else {
+                        return null;
+                    }
+                    Query query = em.createQuery(
+                        "from RtcCombat c where c.securityRole = :role"
+                    ).setParameter( "role", rtc );
+                    List<RtcCombat> combatList = query.getResultList();
+                    return combatList;
                 }),
             ec
         );

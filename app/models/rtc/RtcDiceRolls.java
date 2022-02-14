@@ -5,7 +5,7 @@ import models.sec.SEC_User;
 import javax.persistence.*;
 
 @Entity
-@Table( name = "gen_dice_rolls" )
+@Table( name = "rtc_dice_rolls" )
 public class RtcDiceRolls {
 
     @Id
@@ -16,19 +16,19 @@ public class RtcDiceRolls {
     @JoinColumn( name = "combat_id")
     private final RtcCombat combat;
 
-    @ManyToOne
+    @ManyToOne ( fetch = FetchType.EAGER )
     @JoinColumn( name = "user_id" )
     private final SEC_User user;
 
-    @OneToOne
+    @OneToOne( fetch = FetchType.EAGER )
     @JoinColumn( name = "d6_id" )
     private final RtcDiceRoll d6;
 
-    @OneToOne
+    @OneToOne( fetch = FetchType.EAGER )
     @JoinColumn( name = "d8_id" )
     private final RtcDiceRoll d8;
 
-    @OneToOne
+    @OneToOne( fetch = FetchType.EAGER )
     @JoinColumn( name = "d12_id" )
     private final RtcDiceRoll d12;
 
@@ -122,6 +122,10 @@ public class RtcDiceRolls {
         } else {
             sb.append("n");
         }
+        sb.append("\",\"user\":\"");
+        if ( this.user != null ) {
+            sb.append( user.getUserName() );
+        }
         int success = d6.result() + d8.result() + d12.result();
         sb.append("\",\"success\":\"").append(success).append("\",");
         if ( d6.getRoll().size() > 0 ) {
@@ -191,5 +195,9 @@ public class RtcDiceRolls {
 
     public void setNoTag( boolean noTag ) {
         this.noTag = noTag;
+    }
+
+    public SEC_User getUser() {
+        return user;
     }
 }

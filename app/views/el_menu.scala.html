@@ -3,13 +3,13 @@
     <left>
         <h2>Menü</h2>
         <ul>
-            <li><a href="@routes.GEN_Controller.index()">Dice Roller</a></li>
-            <li><a href="@routes.SR4_CombatController.index()">Shadowrun 4</a></li>
-            <li><a href="@routes.RTC_Controller.index()">RTC</a></li>
+            <li><a href="@routes.GenController.index()">Dice Roller</a></li>
+            <li><a href="@routes.SR4CombatController.index()">Shadowrun 4</a></li>
+            <li><a href="@routes.RtcController.index()">RTC</a></li>
             @if( arg == 1 || arg == 2  ) {
                 <ul>
-                    <li><a href="@routes.SR4_CombatController.index()">Übersicht</a></li>
-                    <li><a href="@routes.SR4_CharController.chars()">(NP-) Charakter bearbeiten</a></li>
+                    <li><a href="@routes.SR4CombatController.index()">Übersicht</a></li>
+                    <li><a href="@routes.SR4CharController.chars()">(NP-) Charakter bearbeiten</a></li>
                     <li><a href="">Charakter-Blatt</a></li>
                 </ul>
             }

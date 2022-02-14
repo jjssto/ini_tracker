@@ -24,7 +24,7 @@ public class SEC_User implements Subject {
     @Column( name = "user_name" )
     private String userName;
 
-    @ManyToMany
+    @ManyToMany()
     @JoinTable(
         name = "user_permission",
         joinColumns = @JoinColumn( name = "user_id" ),
@@ -115,9 +115,20 @@ public class SEC_User implements Subject {
         return securityRoles;
     }
 
+    public List<Integer> getRolesId() {
+        List<Integer> list = new ArrayList<>();
+        this.securityRoles.forEach(
+            role -> list.add( role.getId() )
+        );
+        return list;
+    }
+
+
+
     @Override
     public List<SEC_UserPermission> getPermissions() {
-        return permissions;
+        //return permissions;
+        return null;
     }
 
     @Override

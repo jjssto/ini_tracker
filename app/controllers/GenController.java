@@ -11,14 +11,15 @@ import play.mvc.Result;
 
 import javax.inject.Inject;
 
-public class GEN_Controller extends Controller {
+public class GenController
+    extends Controller {
 
     private final FormFactory formFactory;
     private final HttpExecutionContext ec;
     private final DB_GEN_DiceRollRepository diceRollRepo;
 
     @Inject
-    public GEN_Controller(
+    public GenController(
         FormFactory formFactory,
         HttpExecutionContext ec,
         DB_GEN_DiceRollRepository diceRollRepo

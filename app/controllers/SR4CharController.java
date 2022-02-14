@@ -19,7 +19,8 @@ import javax.inject.Inject;
 import java.util.concurrent.CompletionStage;
 
 @SubjectPresent
-public class SR4_CharController extends Controller {
+public class SR4CharController
+    extends Controller {
 
     private final DB_SR4_CharRepository charRepo;
     private final DB_SR4_DiceRepository diceRepo;
@@ -28,7 +29,7 @@ public class SR4_CharController extends Controller {
     private final MessagesApi messagesApi;
 
     @Inject
-    public SR4_CharController(
+    public SR4CharController(
         FormFactory formF,
         DB_SR4_CharRepository charRepo,
         DB_SR4_DiceRepository diceRepo,

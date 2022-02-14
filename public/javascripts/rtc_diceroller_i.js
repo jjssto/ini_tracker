@@ -1,8 +1,64 @@
 import {get_token} from "./functions.js";
 
 $().ready( function(){
+    localStorage.removeItem("rtc_timestamp" );
+    let combatId = document.URL.match( /(?<=diceroller\/)[0-9]+$/ )[0];
+    localStorage.setItem( "rtc_combat_id", combatId )
     getCombats();
 })
+
+window.setInterval( function(){
+
+    let combatId = localStorage.getItem( "rtc_combat_id" )
+    let timestamp = localStorage.getItem( "rtc_timestamp" )
+    if ( timestamp == null ) {
+        timestamp = "";
+    }
+
+    $.ajax({
+        type: "post",
+        url: "/rtc/diceroller/" + combatId,
+        dataType: "Json",
+        headers: {
+            "Csrf-Token": get_token()
+        },
+        data: {
+            timestamp: timestamp
+        },
+        success: function( data ) {
+
+            for ( let i in data ) {
+                let zeit6 = null;
+                let zeit8 = null;
+                let zeit12 = null;
+                try {
+                    zeit6 = data[i].d6.zeit;
+                } catch (e) {}
+                try {
+                    zeit8 = data[i].d8.zeit;
+                } catch (e) {}
+                try {
+                    zeit12 = data[i].d12.zeit;
+                } catch (e) {
+                }
+
+                let zeit;
+                if ( zeit12 != null ) {
+                   zeit = zeit12;
+                } else if ( zeit8 != null ) {
+                    zeit = zeit8;
+                } else if ( zeit6 != null ) {
+                    zeit = zeit6;
+                }
+                if (
+                    zeit > timestamp
+                ) {
+                    displayResult( data[i] );
+                }
+            }
+        }
+    })
+}, 1000)
 
 $( "#f_dice_roller").submit( function( event ) {
     event.preventDefault();
@@ -11,16 +67,19 @@ $( "#f_dice_roller").submit( function( event ) {
 $( "#b_dice_roll").click(function(){
     let el = document.getElementById("i_no_tag");
     let noTag = 'n';
+    let combatId = localStorage.getItem( "rtc_combat_id");
 
     $.ajax({
         type: "post",
-        url: "/rtc/diceroller",
+        url: "/rtc/roll",
+        dataType: "Json",
         headers: {
             "Csrf-Token": get_token()
         },
         data: {
             skill: $("#i_skill").val(),
             attribute: $("#i_attribute").val(),
+            combatId: combatId,
             noTag: noTag
         },
         success: function( data ) {
@@ -32,16 +91,19 @@ $( "#b_dice_roll").click(function(){
 $( "#b_no_tag").click(function(){
     let el = document.getElementById("i_no_tag");
     let noTag = 'j';
+    let combatId = localStorage.getItem( "rtc_combat_id");
 
     $.ajax({
         type: "post",
-        url: "/rtc/diceroller",
+        url: "/rtc/roll",
+        dataType: "Json",
         headers: {
             "Csrf-Token": get_token()
         },
         data: {
             skill: $("#i_skill").val(),
             attribute: $("#i_attribute").val(),
+            combatId: combatId,
             noTag: noTag
         },
         success: function( data ) {
@@ -53,16 +115,19 @@ $( "#b_no_tag").click(function(){
 $( "#b_only_attribut").click(function(){
     let el = document.getElementById("i_no_tag");
     let noTag = 'n';
+    let combatId = localStorage.getItem( "rtc_combat_id");
 
     $.ajax({
         type: "post",
-        url: "/rtc/diceroller",
+        url: "/rtc/roll",
+        dataType: "Json",
         headers: {
             "Csrf-Token": get_token()
         },
         data: {
             skill: "0",
             attribute: $("#i_attribute").val(),
+            combatId: combatId,
             noTag: noTag
         },
         success: function( data ) {
@@ -77,12 +142,13 @@ function createColumn( roll ) {
     return col;
 }
 
-function displayResult( data ) {
+function displayResult( json ) {
 
-    let json = JSON.parse( data );
     let row = document.createElement( "tr" );
 
     let zeit;
+
+    row.appendChild( createColumn( json.user ));
 
     row.appendChild( createColumn( json.attribute ));
 
@@ -125,6 +191,8 @@ function displayResult( data ) {
         row.insertBefore(col, row.firstChild);
         let tbody = document.getElementById( "tbody_result" );
         tbody.appendChild( row );
+
+        localStorage.setItem( "rtc_timestamp", zeit);
 
         tbody.scrollTop = tbody.scrollHeight;
     }

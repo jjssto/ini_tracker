@@ -5,6 +5,7 @@ import models.sec.SEC_SecurityRole;
 import models.sec.SEC_User;
 import models.sec.SEC_UserPermission;
 import play.db.jpa.JPAApi;
+import play.mvc.Http;
 
 import javax.inject.Inject;
 import java.util.List;
@@ -48,6 +49,18 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
             ec
         );
     }
+
+    @Override
+    public CompletionStage<SEC_User> findByRequest( Http.RequestHeader requestHeader) {
+        String loginToken;
+        try {
+            loginToken = requestHeader.session().get( "LOGIN_TOKEN" ).map( token -> { return token; } ).get();
+        } catch ( Exception e ) {
+            loginToken = "";
+        }
+        return findByToken( loginToken );
+    }
+
 
     @Override
     public CompletionStage<SEC_User> get( int userId ) {

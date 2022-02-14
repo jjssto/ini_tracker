@@ -176,18 +176,6 @@ values
 insert into sr4_combat(combat_desc, last_changed )
 values ( 'Test', now() );
 
-insert into user (user_name, password_hash, salt )
-  select
- 'admin', sha2( 'abc', 256 ), '';
- 
-  insert into security_role ( role_name )
- values ( 'admin' );
- 
- insert into user_security_role ( user_id, security_role_id )
- select
- id, 1
-from user where user_name = 'admin';
-
 create table rtc_combat
 (
     id          int auto_increment
@@ -219,6 +207,7 @@ create table rtc_dice_rolls
     id        bigint auto_increment
         primary key,
     combat_id int    null,
+    user_id int null,
     d12_id    bigint null,
     d8_id     bigint null,
     d4_id     bigint null,
@@ -229,7 +218,9 @@ create table rtc_dice_rolls
     constraint FKn4pdyqpmmgycu9qidg8vxpp452
         foreign key (combat_id) references rtc_combat (id),
     constraint FKoe4dmy0vo62rwvyx5rgafngm42
-        foreign key (d8_id) references rtc_dice_roll (id)
+        foreign key (d8_id) references rtc_dice_roll (id),
+    constraint FKoe4dmy0vo62rwvyx5rgafngm98
+        foreign key (user_id) references user (id)
 );
 
 create table rtc_combat_security_role (
@@ -239,9 +230,20 @@ create table rtc_combat_security_role (
                                               references rtc_combat ( id )
                                               on delete cascade,
                                           constraint FK_rtc_combat_security_role_role_id foreign key ( role_id )
-                                              references rtc_combat ( id )
+                                              references security_role ( id )
                                               on delete cascade
 );
+
+
+insert into rtc_combat( combat_name )
+values ( 'Raum 1' );
+insert into security_role( role_name )
+values ( 'rtc' );
+
+insert into rtc_combat_security_role( combat_id, role_id )
+select 1, id from security_role where role_name = 'rtc';
+
+
 
 
 -- !Downs
@@ -257,13 +259,13 @@ drop table sr4_combat;
 drop table sr4_char;
 drop table user_permission;
 drop table user_security_role;
+drop table rtc_combat_security_role;
 drop table security_role;
 drop table user;
 drop table permission;
 
 drop table rtc_dice;
 drop table rtc_dice_rolls;
-drop table rtc_combat_security_role;
 drop table rtc_combat;
 drop table rtc_dice_roll;
 

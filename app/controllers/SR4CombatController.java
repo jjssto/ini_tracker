@@ -33,7 +33,8 @@ import java.util.concurrent.CompletionStage;
 import java.util.concurrent.ExecutionException;
 
 @SubjectPresent
-public class SR4_CombatController extends Controller {
+public class SR4CombatController
+    extends Controller {
 
     private final DB_SR4_CharRepository charRepo;
     private final DB_SR4_CharRecordRepo recordRepo;
@@ -44,7 +45,7 @@ public class SR4_CombatController extends Controller {
     private final MessagesApi messagesApi;
 
     @Inject
-    public SR4_CombatController(
+    public SR4CombatController(
         FormFactory formF,
         DB_SR4_CharRepository charRepo,
         DB_SR4_CharRecordRepo recordRepo,

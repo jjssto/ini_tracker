@@ -4,6 +4,7 @@ import com.google.inject.ImplementedBy;
 import models.sec.SEC_SecurityRole;
 import models.sec.SEC_User;
 import models.sec.SEC_UserPermission;
+import play.mvc.Http;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -11,6 +12,8 @@ import java.util.concurrent.CompletionStage;
 @ImplementedBy( DB_SEC_UserRepositoryImpl.class )
 public interface DB_SEC_UserRepository {
     CompletionStage<SEC_User> findByToken( String token );
+
+    CompletionStage<SEC_User> findByRequest( Http.RequestHeader requestHeader );
 
     CompletionStage<SEC_User> get( int userId );
 
