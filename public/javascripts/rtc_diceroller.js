@@ -37,6 +37,7 @@ $( "#b_no_tag").click(function(){
     $.ajax({
         type: "post",
         url: "/rtc/roll",
+        dataType: "Json",
         headers: {
             "Csrf-Token": get_token()
         },
@@ -58,6 +59,7 @@ $( "#b_only_attribut").click(function(){
     $.ajax({
         type: "post",
         url: "/rtc/roll",
+        dataType: "Json",
         headers: {
             "Csrf-Token": get_token()
         },
