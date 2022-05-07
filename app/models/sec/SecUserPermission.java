@@ -6,7 +6,8 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "permission" )
-public class SEC_UserPermission implements Permission {
+public class SecUserPermission
+    implements Permission {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -17,10 +18,10 @@ public class SEC_UserPermission implements Permission {
     private String value;
 
 
-    public SEC_UserPermission() {
+    public SecUserPermission() {
         this.value = null;
     }
-    public SEC_UserPermission( String value ) {
+    public SecUserPermission( String value ) {
         this.value = value;
     }
 

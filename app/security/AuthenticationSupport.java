@@ -1,6 +1,6 @@
 package security;
 
-import models.db.sec.DB_SEC_UserRepository;
+import models.db.sec.DbSecUserRepository;
 import play.mvc.Http;
 import play.mvc.Security;
 
@@ -9,10 +9,10 @@ import java.util.Optional;
 
 public class AuthenticationSupport extends Security.Authenticator {
 
-    private final DB_SEC_UserRepository userRepo;
+    private final DbSecUserRepository userRepo;
 
     @Inject
-    public AuthenticationSupport( final DB_SEC_UserRepository userRepository) {
+    public AuthenticationSupport( final DbSecUserRepository userRepository) {
         this.userRepo = userRepository;
     }
 

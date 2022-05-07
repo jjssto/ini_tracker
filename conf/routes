@@ -21,6 +21,9 @@ POST /rtc/diceroller        controllers.RtcController.getCombats(req: Request)
 GET /rtc/diceroller/:i        controllers.RtcController.getCombat(i: Integer, req: Request)
 POST /rtc/diceroller/:i     controllers.RtcController.getRolls(i: Integer, req: Request)
 
+GET /coc            controllers.CocController.index(req: Request)
+GET /coc/charsheet controllers.CocController.charSheet()
+
 # Forms
 ###########
 
@@ -39,9 +42,14 @@ POST /createuser         controllers.PageController.createUser(req: Request)
 POST /newpassword    controllers.PageController.newPassword(req: Request)
 POST /deleteuser    controllers.PageController.removeUser(req: Request)
 POST /changepw      controllers.PageController.changePassword(req: Request)
+POST /edituser      controllers.PageController.editUser(req: Request)
+POST /addrole      controllers.PageController.addRole(req: Request)
+POST /removerole    controllers.PageController.removeRole(req: Request)
 
 POST /diceroller        controllers.GenController.roll(req: Request)
 POST /rtc/roll    controllers.RtcController.roll(req: Request)
+POST /coc/roll      controllers.CocController.roll(req: Request)
+POST /coc/newcombat    controllers.CocController.addCombat(req: Request)
 
 # JSON Controller
 

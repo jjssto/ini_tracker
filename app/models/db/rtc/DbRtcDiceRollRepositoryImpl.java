@@ -1,13 +1,10 @@
 package models.db.rtc;
 
-import com.fasterxml.jackson.databind.JsonNode;
-import com.fasterxml.jackson.databind.node.ObjectNode;
 import models.db.DB_DatabaseExecutionContext;
 import models.rtc.RtcCombat;
 import models.rtc.RtcDiceRoll;
 import models.rtc.RtcDiceRolls;
 import play.db.jpa.JPAApi;
-import play.libs.Json;
 
 import javax.inject.Inject;
 import javax.persistence.EntityManager;

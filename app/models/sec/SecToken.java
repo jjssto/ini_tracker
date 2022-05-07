@@ -8,7 +8,7 @@ import java.util.UUID;
 
 @Entity
 @Table( name = "session_token" )
-public class SEC_Token {
+public class SecToken {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -17,7 +17,7 @@ public class SEC_Token {
 
     @OneToOne
     @JoinColumn( name = "user_id" )
-    private SEC_User user;
+    private SecUser user;
 
     @Column( name = "token" )
     private String token;
@@ -30,14 +30,14 @@ public class SEC_Token {
 
 
 
-    public SEC_Token(){}
+    public SecToken(){}
 
-    public SEC_Token( SEC_User user ) {
+    public SecToken( SecUser user ) {
         this.user = user;
         this.token = createToken();
     }
 
-    public SEC_Token( SEC_User user, String token ) {
+    public SecToken( SecUser user, String token ) {
         this.user = user;
         this.token = token;
     }
@@ -54,11 +54,11 @@ public class SEC_Token {
         this.id = id;
     }
 
-    public SEC_User getUser() {
+    public SecUser getUser() {
         return user;
     }
 
-    public void setUser( SEC_User user) {
+    public void setUser( SecUser user) {
         this.user = user;
     }
 

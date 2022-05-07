@@ -1,0 +1,145 @@
+@import models.coc.CocCharSheet
+@(cha: CocCharSheet, combatId: Integer)
+<!DOCTYPE html>
+<html lang="en">
+    <head>
+        <meta charset="UTF-8">
+        <title>Char Sheet</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" charset="UTF-8"></script>
+        <script type="module" src="@routes.Assets.at("javascripts/coc_charsheet.js")"></script>
+    </head>
+    <body>
+
+        <div class="container">
+        @el_header( "Iniativ-Tracker" )
+        @el_menu( 0 )
+
+        <main-upper-half>
+               <table class="dice_results">
+                   <thead>
+                       <tr>
+                           <th>Zeit</th>
+                           <th>User</th>
+                           <th>Char</th>
+                           <th>Comment</th>
+                           <th>10er</th>
+                           <th>1er</th>
+                           <th>Resultat</th>
+                       </tr>
+                   </thead>
+                   <tbody id="tbody_results">
+                   </tbody>
+               </table>
+        </main-upper-half>
+        <main-lower-half-1>
+
+            <ol>
+                <input type="hidden" id="i_charsheet_id" value="@cha.getId">
+                <input type="hidden" id="i_combat_id" value="@combatId">
+                <li>Accounting <button class="b_charsheet" id="accounting" type="button">@cha.getAccounting()</button><input type="number" id="i_accounting"></li>
+                <li>Animal Handling <button class="b_charsheet "id="animal" type="button">@cha.getAnimalHandling()</button><input type="number" id="i_animal"></li>
+                <li>Appraise <button class="b_charsheet "id="animal" type="button">@cha.getAnimalHandling()</button><input type="number" id="i_animal"></li>
+                <li>Arts and Craft</li>
+                <ol>
+                    <li>Acting <button class="b_charsheet "id="acting" type="button">@cha.getActing()</button><input type="number" id="i_acting"></li>
+                    <li>Fine Arts <button class="b_charsheet "id="fineArts" type="button">@cha.getFineArts</button><input type="number" id="i_fineArts"></li>
+                    <li>Forgery <button class="b_charsheet "id="forgery" type="button">@cha.getForgery()</button><input type="number" id="i_forgery"></li>
+                    <li>Photography <button class="b_charsheet "id="photography" type="button">@cha.getPhotography()</button><input type="number" id="i_photography"></li>
+                </ol>
+                <li>Artillery <button class="b_charsheet "id="artillery" type="button">@cha.getArtillery()</button><input type="number" id="i_artillery"></li>
+                <li>Charm <button class="b_charsheet "id="charm" type="button">@cha.getCharm()</button><input type="number" id="i_charm"></li>
+                <li>Climb <button class="b_charsheet "id="climb" type="button">@cha.getClimb()</button><input type="number" id="i_climb"></li>
+                <li>Computer Use <button class="b_charsheet "id="computer" type="button">@cha.getComputerUse()</button><input type="number" id="i_computer"></li>
+                <li>Credit Rating <button class="b_charsheet "id="credit" type="button">@cha.getCreditRating()</button><input type="number" id="i_credit"></li>
+                <li>Cthulhu Mythos <button class="b_charsheet "id="cthulhu" type="button">@cha.getCthulhuMythos()</button><input type="number" id="i_cthulhu"></li>
+                <li>Demolitions <button class="b_charsheet "id="demolitions" type="button">@cha.getDemolitions()</button><input type="number" id="i_demolitions"></li>
+                <li>Disguise <button class="b_charsheet "id="disguise" type="button">@cha.getDisguise()</button><input type="number" id="i_disguise"></li>
+                <li>Dive <button class="b_charsheet "id="dive" type="button">@cha.getDiving()</button><input type="number" id="i_diving"></li>
+                <li>Dodge <button class="b_charsheet "id="dodge" type="button">@cha.getDodge()</button><input type="number" id="i_dodge"></li>
+                <li>Drive Auto<button class="b_charsheet "id="driveAuto" type="button">@cha.getDriveAuto()</button><input type="number" id="i_driveAuto"></li>
+                <li>Electrical Repair <button class="b_charsheet "id="electricalRepair" type="button">@cha.getElectricalRepair()</button><input type="number" id="i_electricalRepair"></li>
+                <li>Engineering <button class="b_charsheet "id="engineering" type="button">@cha.getEngineering()</button><input type="number" id="i_engineering"></li>
+                <li>Fast Talk <button class="b_charsheet "id="fastTalk" type="button">@cha.getFastTalk()</button><input type="number" id="i_fastTalk"></li>
+                <li>Fighting</li>
+                <ol>
+                    <li>Axe <button class="b_charsheet "id="axe" type="button">@cha.getAxe()</button><input type="number" id="i_axe"></li>
+                    <li>Brawl <button class="b_charsheet "id="brawl" type="button">@cha.getBrawl()</button><input type="number" id="i_brawl"></li>
+                    <li>Chainsaw <button class="b_charsheet "id="chainsaw" type="button">@cha.getChainsaw()</button><input type="number" id="i_chainsaw"></li>
+                    <li>Flail <button class="b_charsheet "id="flail" type="button">@cha.getFlail()</button><input type="number" id="i_flail"></li>
+                    <li>Garrote <button class="b_charsheet "id="garrote" type="button">@cha.getGarrote()</button><input type="number" id="i_garrote"></li>
+                    <li>Spear <button class="b_charsheet "id="spear" type="button">@cha.getSpear()</button><input type="number" id="i_spear"></li>
+                    <li>Sword <button class="b_charsheet "id="sword" type="button">@cha.getSword()</button><input type="number" id="i_sword"></li>
+                    <li>Whip <button class="b_charsheet "id="whip" type="button">@cha.getWhip()</button><input type="number" id="i_whip"></li>
+                </ol>
+            </ol>
+        </main-lower-half-1>
+
+        <main-lower-half-2>
+            <ol>
+                <li>Firearms</li>
+                <ol>
+                    <li>Bow <button class="b_charsheet "id="bow" type="button">@cha.getBow()</button><input type="number" id="i_bow"></li>
+                    <li>Flamethrower <button class="b_charsheet "id="flamethrower" type="button">@cha.getFlamethrower()</button><input type="number" id="i_flamethrower"></li>
+                    <li>Handgun <button class="b_charsheet "id="handgun" type="button">@cha.getHandgun()</button><input type="number" id="i_handgun"></li>
+                    <li>Heavy Weapons <button class="b_charsheet "id="heavyWeapons" type="button">@cha.getHeavyWeapons()</button><input type="number" id="i_heavyWeapons"></li>
+                    <li>Machine Gun <button class="b_charsheet "id="machineGun" type="button">@cha.getMachineGun()</button><input type="number" id="i_machineGun"></li>
+                    <li>Rifle / Shotgun <button class="b_charsheet "id="rifle" type="button">@cha.getRifle()</button><input type="number" id="i_rifle"></li>
+                    <li>Submachine Gun <button class="b_charsheet "id="smg" type="button">@cha.getSubmachineGun()</button><input type="number" id="i_smg"></li>
+                </ol>
+                <li>First Aid <button class="b_charsheet "id="firstAid" type="button">@cha.getFirstAid()</button><input type="number" id="i_firstAid"></li>
+                <li>History <button class="b_charsheet "id="history" type="button">@cha.getHistory()</button><input type="number" id="i_history"></li>
+                <li>Hypnosis <button class="b_charsheet "id="hypnosis" type="button">@cha.getHypnosis()</button><input type="number" id="i_hypnosis"></li>
+                <li>Intimidate <button class="b_charsheet "id="intimidate" type="button">@cha.getIntimidate()</button><input type="number" id="i_intimidate"></li>
+                <li>Jump <button class="b_charsheet "id="jump" type="button">@cha.getJump()</button><input type="number" id="i_jump"></li>
+                <li>Language (Own) <button class="b_charsheet "id="ownLanguage" type="button">@cha.getOwnLanguage()</button><input type="number" id="i_ownLanguage"></li>
+                <li>Law <button class="b_charsheet "id="law" type="button">@cha.getLaw()</button><input type="number" id="i_law"></li>
+                <li>Library Use <button class="b_charsheet "id="libraryUse" type="button">@cha.getLibraryUse()</button><input type="number" id="i_libraryUse"></li>
+                <li>Listen <button class="b_charsheet "id="listen" type="button">@cha.getListen()</button><input type="number" id="i_listen"></li>
+                <li>Locksmith <button class="b_charsheet "id="locksmith" type="button">@cha.getLocksmith()</button><input type="number" id="i_locksmith"></li>
+                <li>Mechanical Repair <button class="b_charsheet "id="mechanicalRepair" type="button">@cha.getMechanicalRepair()</button><input type="number" id="i_mechanicalRepair"></li>
+                <li>Medicine <button class="b_charsheet "id="medicine" type="button">@cha.getMedicine()</button><input type="number" id="i_medicine"></li>
+                <li>Natural World <button class="b_charsheet "id="naturalWorld" type="button">@cha.getNaturalWorld()</button><input type="number" id="i_naturalWorld"></li>
+                <li>Navigate <button class="b_charsheet "id="navigate" type="button">@cha.getNavigate()</button><input type="number" id="i_navigate"></li>
+                <li>Occult <button class="b_charsheet "id="occult" type="button">@cha.getOccult()</button><input type="number" id="i_occult"></li>
+                <li>Operate Heavy Machinery <button class="b_charsheet "id="operateHeavyMachinery" type="button">@cha.getOperateHeavyMachinery()</button><input type="number" id="i_operateHeavyMachinery"></li>
+                <li>Persuade <button class="b_charsheet "id="persuade" type="button">@cha.getPersuade()</button><input type="number" id="i_persuade"></li>
+                <li>Pilot <button class="b_charsheet "id="pilot" type="button">@cha.getPilot()</button><input type="number" id="i_pilot"></li>
+                <li>Psychoanalysis <button class="b_charsheet "id="psychoanalysis" type="button">@cha.getPsychoanalysis()</button><input type="number" id="i_psychoanalysis"></li>
+                <li>Psychology <button class="b_charsheet "id="psychology" type="button">@cha.getPsychology()</button><input type="number" id="i_psychology"></li>
+                <li>Read Lips <button class="b_charsheet "id="readLips" type="button">@cha.getReadLips()</button><input type="number" id="i_readLips"></li>
+                <li>Ride <button class="b_charsheet "id="ride" type="button">@cha.getRide()</button><input type="number" id="i_ride"></li>
+            </ol>
+        </main-lower-half-2>
+
+        <main-lower-half-3>
+            <ol>
+                <li>Science</li>
+                <ol>
+                    <li>Astronomy <button class="b_charsheet "id="astronomy" type="button">@cha.getAstronomy()</button><input type="number" id="i_astronomy"></li>
+                    <li>Biology <button class="b_charsheet "id="biology" type="button">@cha.getBiology()</button><input type="number" id="i_biology"></li>
+                    <li>Biology <button class="b_charsheet "id="biology" type="button">@cha.getBiology()</button><input type="number" id="i_biology"></li>
+                    <li>Botany <button class="b_charsheet "id="botany" type="button">@cha.getBotany()</button><input type="number" id="i_biology"></li>
+                    <li>Chemistry <button class="b_charsheet "id="chemistry" type="button">@cha.getChemistry()</button><input type="number" id="i_chemistry"></li>
+                    <li>Engineering <button class="b_charsheet "id="engineering" type="button">@cha.getEngineering()</button><input type="number" id="i_engineering"></li>
+                    <li>Forensics <button class="b_charsheet "id="forensics" type="button">@cha.getForensics()</button><input type="number" id="i_forensics"></li>
+                    <li>Geology <button class="b_charsheet "id="geology" type="button">@cha.getGeology()</button><input type="number" id="i_geology"></li>
+                    <li>Mathematics <button class="b_charsheet "id="mathematics" type="button">@cha.getMathematics()</button><input type="number" id="i_mathematics"></li>
+                    <li>Meteorology <button class="b_charsheet "id="meteorology" type="button">@cha.getMeteorology()</button><input type="number" id="i_meteorology"></li>
+                    <li>Pharmacy <button class="b_charsheet "id="pharmacy" type="button">@cha.getPharmacy()</button><input type="number" id="i_pharmacy"></li>
+                    <li>Physics <button class="b_charsheet "id="physics" type="button">@cha.getPhysics()</button><input type="number" id="i_physics"></li>
+                    <li>Zoology <button class="b_charsheet "id="zoology" type="button">@cha.getZoology()</button><input type="number" id="i_zoology"></li>
+                </ol>
+                <li>Sleigth of Hand <button class="b_charsheet "id="sleightOfHand" type="button">@cha.getSleightOfHand()</button><input type="number" id="i_sleightOfHand"></li>
+                <li>Spot Hidden <button class="b_charsheet "id="spotHidden" type="button">@cha.getSpotHidden()</button><input type="number" id="i_spotHidden"></li>
+                <li>Stealth <button class="b_charsheet "id="stealth" type="button">@cha.getStealth()</button><input type="number" id="i_stealth"></li>
+                <li>Surival <button class="b_charsheet "id="surival" type="button">@cha.getSurival()</button><input type="number" id="i_surival"></li>
+                <li>Swim <button class="b_charsheet "id="swim" type="button">@cha.getSwim()</button><input type="number" id="i_swim"></li>
+                <li>Throw <button class="b_charsheet "id="throw" type="button">@cha.getThrowing()</button><input type="number" id="i_throw"></li>
+                <li>Track <button class="b_charsheet "id="track" type="button">@cha.getTrack()</button><input type="number" id="i_track"></li>
+            </ol>
+
+        </main-lower-half-3>
+        </div>
+</body>
+</html>

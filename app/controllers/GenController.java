@@ -30,7 +30,7 @@ public class GenController
     }
 
     public Result index( Http.RequestHeader requestHeader ) {
-        return ok( views.html.gen_diceroller.render( requestHeader ) );
+        return ok( views.html.gen.gen_diceroller.render( requestHeader ) );
     }
 
     public Result roll( Http.Request request ) {

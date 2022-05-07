@@ -1,0 +1,80 @@
+@(list: List[models.coc.CocCombat])(implicit requestHeader: Http.RequestHeader )
+<!DOCTYPE html>
+<html lang="de">
+<head>
+        <meta charset="UTF-8">
+        <title>Dice Roller</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script type="text/javascript" src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" charset="UTF-8"></script>
+        <script type="module" src="@routes.Assets.at("javascripts/coc_index.js")"></script>
+</head>
+<body>
+<div class="container">
+@el_header( "Initiativ-Tracker" )
+@el_menu( 0 )
+
+<main-upper-left>
+
+    <form id="f_roll" method="post" action="/coc/roll">
+
+        <label for="i_skill">Skill</label>
+        <input type="number" id="i_skill">
+        <fieldset>
+            <legend>Vorteils- / Nachteilswürfel</legend>
+            <div>
+            <label for="i_adv_m2">2 Dis.</label>
+            <input type="radio" name="adv" id="i_adv_m2" value="-2">
+            </div>
+            <div>
+            <label for="i_adv_m1">1 Dis.</label>
+            <input type="radio" name="adv" id="i_adv_m1" value="-1">
+            </div>
+            <div>
+            <label for="i_adv_0">Norm.</label>
+            <input type="radio" name="adv" id="i_adv_0" value="0" checked >
+            </div>
+            <div>
+            <label for="i_adv_p1">1 Adv.</label>
+            <input type="radio" name="adv" id="i_adv_p1" value="1">
+            </div>
+            <div>
+            <label for="i_adv_p2">2 Adv.</label>
+            <input type="radio" name="adv" id="i_adv_p1" value="2">
+            </div>
+        </fieldset>
+
+        <button type="submit">Würfeln</button>
+    </form>
+</main-upper-left>
+
+<main-lower-left>
+    <table class="dice_results">
+        <thead>
+           <th>Zeit</th>
+            <th>10er-Würfel</th>
+            <th>1er-Würfel</th>
+            <th>Resultat</th>
+        </thead>
+        <tbody id="tbody_result">
+
+        </tbody>
+    </table>
+</main-lower-left>
+
+<right>
+    <ol>
+    @for( combat <- list ) {
+        <li><a href="@combat.getId()">@combat.getName()</a></li>
+    }
+    </ol>
+    <form id="f_new_combat">
+        <label for="i_new_combat_name">Neu</label>
+       <input type="text" id="i_new_combat_name">
+        <button type="submit">Erstellen</button>
+    </form>
+
+</right>
+
+</div>
+</body>
+</html>

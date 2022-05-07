@@ -1,8 +1,8 @@
 package models;
 
-import models.sec.SEC_SecurityRole;
-import models.sec.SEC_User;
-import models.sec.SEC_UserPermission;
+import models.sec.SecSecurityRole;
+import models.sec.SecUser;
+import models.sec.SecUserPermission;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -12,17 +12,17 @@ import static org.junit.Assert.assertTrue;
 
 public class SECITUserTest {
 
-    private SEC_User user;
-    private SEC_UserPermission permission;
-    private SEC_SecurityRole role;
+    private SecUser user;
+    private SecUserPermission permission;
+    private SecSecurityRole role;
     private final String userName = "test_user";
     private final String pw = "dfasfda";
 
     @Before
     public void setup() {
-       permission = new SEC_UserPermission( "test_permission" );
-       role = new SEC_SecurityRole( "test_role" );
-       user = new SEC_User( userName, pw );
+       permission = new SecUserPermission( "test_permission" );
+       role = new SecSecurityRole( "test_role" );
+       user = new SecUser( userName, pw );
        user.addPermission( permission );
        user.addRole( role );
     }

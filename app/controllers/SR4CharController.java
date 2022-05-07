@@ -45,7 +45,7 @@ public class SR4CharController
 
     @Restrict( @Group("admin"))
     public Result chars( Http.Request request ) {
-        return ok( views.html.sr4_chars.render(
+        return ok( views.html.sr4.sr4_chars.render(
             request,
             messagesApi.preferred(request)
         ) );

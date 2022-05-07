@@ -67,7 +67,7 @@ public class SR4CombatController
         Integer combatId,
         Http.Request request
     ) {
-        return ok(views.html.sr4_combat.render(
+        return ok(views.html.sr4.sr4_combat.render(
             combatId,
             request,
             messagesApi.preferred( request )));
@@ -77,7 +77,7 @@ public class SR4CombatController
     public CompletionStage<Result> index( Http.Request request ) {
         return combatRepo.getAllCombats().thenApplyAsync(
             list -> {
-                return ok( views.html.sr4_overview.render( list ) );
+                return ok( views.html.sr4.sr4_overview.render( list ) );
             }
         );
     }
@@ -133,7 +133,7 @@ public class SR4CombatController
             },
             ec.current()
         );
-        return ok(views.html.sr4_combat.render(
+        return ok(views.html.sr4.sr4_combat.render(
             record.getCombatId(),
             request,
             messagesApi.preferred(request)

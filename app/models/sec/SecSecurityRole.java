@@ -6,7 +6,8 @@ import javax.persistence.*;
 
 @Entity
 @Table( name = "security_role" )
-public class SEC_SecurityRole implements Role {
+public class SecSecurityRole
+    implements Role {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -16,11 +17,11 @@ public class SEC_SecurityRole implements Role {
     @Column( name = "role_name" )
     private String roleName;
 
-    public SEC_SecurityRole() {
+    public SecSecurityRole() {
         roleName = null;
     }
 
-    public SEC_SecurityRole( String roleName ) {
+    public SecSecurityRole( String roleName ) {
         this.roleName = roleName;
     }
 

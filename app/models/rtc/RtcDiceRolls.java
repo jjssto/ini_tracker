@@ -1,6 +1,6 @@
 package models.rtc;
 
-import models.sec.SEC_User;
+import models.sec.SecUser;
 
 import javax.persistence.*;
 
@@ -18,7 +18,7 @@ public class RtcDiceRolls {
 
     @ManyToOne ( fetch = FetchType.EAGER )
     @JoinColumn( name = "user_id" )
-    private final SEC_User user;
+    private final SecUser user;
 
     @OneToOne( fetch = FetchType.EAGER )
     @JoinColumn( name = "d6_id" )
@@ -47,7 +47,7 @@ public class RtcDiceRolls {
 
     public RtcDiceRolls(
         RtcCombat combat,
-        SEC_User user
+        SecUser user
     ) {
         this.user = user;
         this.combat = combat;
@@ -201,7 +201,7 @@ public class RtcDiceRolls {
         this.noTag = noTag;
     }
 
-    public SEC_User getUser() {
+    public SecUser getUser() {
         return user;
     }
 }

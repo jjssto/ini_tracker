@@ -2,13 +2,14 @@ package controllers;
 
 import be.objectify.deadbolt.java.actions.Group;
 import be.objectify.deadbolt.java.actions.Restrict;
-import be.objectify.deadbolt.java.actions.SubjectPresent;
 import com.typesafe.config.Config;
-import models.db.sec.DB_SEC_TokenRepository;
-import models.db.sec.DB_SEC_UserRepository;
-import models.sec.SEC_SecurityRole;
-import models.sec.SEC_Token;
-import models.sec.SEC_User;
+import models.db.sec.DbSecException;
+import models.db.sec.DbSecTokenRepository;
+import models.db.sec.DbSecUserRepository;
+import models.db.sec.DbSecSecurityRoleRepository;
+import models.sec.SecSecurityRole;
+import models.sec.SecToken;
+import models.sec.SecUser;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.concurrent.HttpExecutionContext;
@@ -26,16 +27,18 @@ import java.util.concurrent.ExecutionException;
  */
 public class PageController extends Controller {
 
-    private final DB_SEC_UserRepository userRepo;
-    private final DB_SEC_TokenRepository sessionTokenRepo;
+    private final DbSecUserRepository userRepo;
+    private final DbSecTokenRepository sessionTokenRepo;
+    private final DbSecSecurityRoleRepository roleRepo;
     private final FormFactory formFactory;
     private final HttpExecutionContext ec;
     private final Config config;
 
     @Inject
     public PageController(
-        DB_SEC_UserRepository userRepo,
-        DB_SEC_TokenRepository sessionTokenRepo,
+        DbSecUserRepository userRepo,
+        DbSecTokenRepository sessionTokenRepo,
+        DbSecSecurityRoleRepository roleRepo,
         FormFactory formFactory,
         HttpExecutionContext ec,
         Config config
@@ -43,6 +46,7 @@ public class PageController extends Controller {
     ) {
         this.userRepo = userRepo;
         this.sessionTokenRepo = sessionTokenRepo;
+        this.roleRepo = roleRepo;
         this.formFactory = formFactory;
         this.ec = ec;
         this.config = config;
@@ -61,7 +65,7 @@ public class PageController extends Controller {
         DynamicForm form = formFactory.form().bindFromRequest( request );
         String userName = form.get( "userName" );
         String password = form.get( "password" );
-        SEC_User user;
+        SecUser user;
         createAdmin();
         try {
             user = userRepo.findByUserName( userName ).toCompletableFuture().get();
@@ -70,8 +74,8 @@ public class PageController extends Controller {
         }
         if ( user != null && user.checkPassword( password ) ) {
             String token;
-            SEC_Token sessionToken;
-            sessionToken = new SEC_Token( user );
+            SecToken sessionToken;
+            sessionToken = new SecToken( user );
             sessionTokenRepo.persist( sessionToken );
             return ok( views.html.index.render() ).addingToSession( request, "LOGIN_TOKEN", sessionToken.getToken() );
         } else {
@@ -81,11 +85,11 @@ public class PageController extends Controller {
 
     private void createAdmin() {
         String defaultPW = config.getString( "default_admin_pw" );
-        CompletionStage<SEC_SecurityRole> role = userRepo.roleExists( "admin" ).thenApplyAsync(
+        CompletionStage<SecSecurityRole> role = roleRepo.roleExists( "admin" ).thenApplyAsync(
             exists -> {
                 if ( !exists ) {
-                    SEC_SecurityRole sr = new SEC_SecurityRole( "admin" );
-                    userRepo.persist( sr );
+                    SecSecurityRole sr = new SecSecurityRole( "admin" );
+                    roleRepo.persist( sr );
                 }
                 return null;
             },
@@ -94,9 +98,9 @@ public class PageController extends Controller {
         userRepo.userExists( "admin" ).thenApplyAsync(
             exists -> {
                 if ( !exists ) {
-                    SEC_User admin = new SEC_User( "admin", defaultPW );
+                    SecUser admin = new SecUser( "admin", defaultPW );
                     try {
-                        SEC_SecurityRole adminRole = userRepo.getSecurityRole( "admin" ).toCompletableFuture().get();
+                        SecSecurityRole adminRole = roleRepo.getSecurityRole( "admin" ).toCompletableFuture().get();
                         admin.addRole( adminRole );
                         userRepo.merge( admin );
                     } catch ( ExecutionException | InterruptedException e ) {
@@ -116,13 +120,13 @@ public class PageController extends Controller {
 
     @Restrict( @Group("admin"))
     public Result createUserPage( Http.RequestHeader requestHeader ) {
-        return ok( views.html.adm_createUser.render( requestHeader ));
+        return ok( views.html.adm.adm_createUser.render( requestHeader ));
     }
 
     @Restrict( @Group("admin"))
     public CompletionStage<Result> userList( Http.RequestHeader requestHeader ) {
        return userRepo.getAll().thenApplyAsync(
-            list -> ok( views.html.adm_user.render( list )),
+            list -> ok( views.html.adm.adm_user.render( list )),
             ec.current()
         );
     }
@@ -138,19 +142,13 @@ public class PageController extends Controller {
 
     @Restrict( @Group("admin"))
     public Result passwordPage( ) {
-        return ok( views.html.adm_password.render() );
+        return ok( views.html.adm.adm_password.render() );
     }
     public CompletionStage<Result> changePassword( Http.Request request ) {
         DynamicForm form = formFactory.form().bindFromRequest( request );
         String oldPW = form.get( "oldPW" );
         String newPW = form.get( "newPW" );
-        String loginToken;
-        try {
-            loginToken = request.session().get( "LOGIN_TOKEN" ).map( token -> { return token; } ).get();
-        } catch ( Exception e ) {
-            loginToken = "";
-        }
-        return userRepo.findByToken( loginToken ).thenApplyAsync(
+        return userRepo.findByToken( getLoginToken( request ) ).thenApplyAsync(
             user -> {
                 if ( user.checkPassword( oldPW ) ) {
                     newPassword( user.getId(), newPW );
@@ -177,7 +175,7 @@ public class PageController extends Controller {
 
     @Restrict( @Group("admin"))
     public Result removeUser( Http.Request request ) {
-        DynamicForm form = formFactory.form().bindFromRequest( request );
+        DynamicForm form = getForm( request );
         int userId = Integer.parseInt( form.get( "userId") );
         userRepo.remove( userId );
         return ok();
@@ -186,10 +184,10 @@ public class PageController extends Controller {
 
     @Restrict( @Group("admin"))
     public Result createUser( Http.Request request ) {
-        DynamicForm form = formFactory.form().bindFromRequest( request );
+        DynamicForm form = getForm( request );
         String userName = form.get( "userName" );
         String password = form.get( "password" );
-        SEC_User newUser = new SEC_User( userName, password );
+        SecUser newUser = new SecUser( userName, password );
         if ( userRepo.persist( newUser ).toCompletableFuture().join() == 1 ) {
             return index( request );
         } else {
@@ -198,13 +196,7 @@ public class PageController extends Controller {
     }
 
     public CompletionStage<Result> getUser( Http.Request request ) {
-        String loginToken;
-        try {
-            loginToken = request.session().get( "LOGIN_TOKEN" ).map( token -> { return token; } ).get();
-        } catch ( Exception e ) {
-            loginToken = "";
-        }
-        return userRepo.findByToken( loginToken ).thenApplyAsync(
+        return userRepo.findByToken( getLoginToken( request ) ).thenApplyAsync(
             user -> {
                 if ( user != null ) {
                     return ok( user.getUserName() );
@@ -219,6 +211,62 @@ public class PageController extends Controller {
 
     @Restrict( @Group("admin"))
     public CompletionStage<Result> editUser( Http.Request request ) {
-        return null;
+        DynamicForm form = getForm( request );
+        int userId = parseInt( "userId", form );
+        return roleRepo.roles( userId );
     }
+
+
+    @Restrict( @Group("admin"))
+    public Result addRole( Http.Request request ) {
+        DynamicForm form = getForm( request );
+        int roleId = parseInt( "role", form );
+        int userId = parseInt( "user", form );
+        try {
+            userRepo.addRole( userId, roleId );
+            return ok("Role added");
+        } catch ( DbSecException e ) {
+            return badRequest( e.getMessage() );
+        }
+    }
+
+    @Restrict( @Group("admin"))
+    public Result removeRole( Http.Request request ) {
+        DynamicForm form = getForm( request );
+        int roleId = parseInt( "role", form );
+        int userId = parseInt( "user", form );
+        try {
+            userRepo.removeRole( userId, roleId );
+            return ok("Role added");
+        } catch ( DbSecException e ) {
+            return badRequest( e.getMessage() );
+        }
+    }
+
+    private String getLoginToken( Http.RequestHeader requestHeader ) {
+        try {
+            String loginToken = requestHeader.session().get( "LOGIN_TOKEN" ).map( token -> { return token; } ).get();
+            return loginToken;
+        } catch ( Exception e ) {
+            return "";
+        }
+    }
+
+    private int parseInt(
+        String key,
+        DynamicForm form
+    ) {
+        try {
+            return Integer.parseInt( form.get( key ) );
+        } catch ( Exception e ) {
+            return 0;
+        }
+    }
+
+    private DynamicForm getForm(
+        Http.Request request
+    ) {
+        return formFactory.form().bindFromRequest( request );
+    }
+
 }

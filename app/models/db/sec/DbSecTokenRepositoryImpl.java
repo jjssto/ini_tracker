@@ -1,8 +1,8 @@
 package models.db.sec;
 
 import models.db.DB_DatabaseExecutionContext;
-import models.sec.SEC_Token;
-import models.sec.SEC_User;
+import models.sec.SecToken;
+import models.sec.SecUser;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -10,13 +10,14 @@ import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
 
-public class DB_SEC_TokenRepositoryImpl implements DB_SEC_TokenRepository {
+public class DbSecTokenRepositoryImpl
+    implements DbSecTokenRepository {
 
     private final JPAApi jpaApi;
     private final DB_DatabaseExecutionContext ec;
 
     @Inject
-    public DB_SEC_TokenRepositoryImpl(
+    public DbSecTokenRepositoryImpl(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {
@@ -25,7 +26,7 @@ public class DB_SEC_TokenRepositoryImpl implements DB_SEC_TokenRepository {
     }
 
     @Override
-    public CompletionStage<Integer> persist( SEC_Token token ) {
+    public CompletionStage<Integer> persist( SecToken token ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
@@ -40,15 +41,15 @@ public class DB_SEC_TokenRepositoryImpl implements DB_SEC_TokenRepository {
     }
 
     @Override
-    public CompletionStage<SEC_User> getUser( String token ) {
+    public CompletionStage<SecUser> getUser( String token ) {
        return CompletableFuture.supplyAsync(
        () -> {
            return jpaApi.withTransaction(
                entityManager -> {
-                   List<SEC_User> list = entityManager.createQuery(
-                           "select u from SEC_Token s join s.user u " +
+                   List<SecUser> list = entityManager.createQuery(
+                           "select u from SecToken s join s.user u " +
                                "where s.token = :token",
-                           SEC_User.class
+                           SecUser.class
                        ).setParameter( "token", token ).getResultList();
                    if ( list.size() > 0 ) {
                        return list.get( 0 );
@@ -66,9 +67,9 @@ public class DB_SEC_TokenRepositoryImpl implements DB_SEC_TokenRepository {
         CompletableFuture.supplyAsync(
             () -> { return jpaApi.withTransaction(
                 entityManager -> {
-                    SEC_Token secToken = entityManager.createQuery(
-                        "from SEC_Token t where t.token = :token",
-                        SEC_Token.class
+                    SecToken secToken = entityManager.createQuery(
+                        "from SecToken t where t.token = :token",
+                        SecToken.class
                     ).setParameter( "token", token ).getSingleResult();
                     entityManager.remove( secToken );
                     entityManager.flush();

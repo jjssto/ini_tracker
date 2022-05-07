@@ -1,6 +1,5 @@
 package models.db.rtc;
 
-import com.fasterxml.jackson.databind.JsonNode;
 import com.google.inject.ImplementedBy;
 import models.rtc.RtcCombat;
 import models.rtc.RtcDiceRoll;

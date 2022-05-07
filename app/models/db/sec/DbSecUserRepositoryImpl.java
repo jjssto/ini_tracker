@@ -1,25 +1,28 @@
 package models.db.sec;
 
 import models.db.DB_DatabaseExecutionContext;
-import models.sec.SEC_SecurityRole;
-import models.sec.SEC_User;
-import models.sec.SEC_UserPermission;
+import models.sec.SecSecurityRole;
+import models.sec.SecUser;
+import models.sec.SecUserPermission;
 import play.db.jpa.JPAApi;
 import play.mvc.Http;
 
 import javax.inject.Inject;
+import javax.persistence.EntityManager;
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CompletionStage;
+import java.util.concurrent.ExecutionException;
 
-public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
+public class DbSecUserRepositoryImpl
+    implements DbSecUserRepository {
 
     private JPAApi jpaApi;
     private final DB_DatabaseExecutionContext ec;
 
 
     @Inject
-    public DB_SEC_UserRepositoryImpl(
+    public DbSecUserRepositoryImpl(
         JPAApi jpaApi,
         DB_DatabaseExecutionContext ec
     ) {
@@ -28,22 +31,12 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<SEC_User> findByToken( String token) {
+    public CompletionStage<SecUser> findByToken( String token) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        List<SEC_User> list = entityManager.createQuery(
-                                "select u " +
-                                    "from SEC_Token t join t.user u " +
-                                    "where t.token = :token ", SEC_User.class)
-                            .setParameter("token", token)
-                            .getResultList();
-                        if ( list.size() > 0 ) {
-                            return list.get(0);
-                        } else {
-                            return null;
-                        }
+                        return findByToken( token, entityManager );
                     });
             },
             ec
@@ -51,7 +44,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<SEC_User> findByRequest( Http.RequestHeader requestHeader) {
+    public CompletionStage<SecUser> findByRequest( Http.RequestHeader requestHeader) {
         String loginToken;
         try {
             loginToken = requestHeader.session().get( "LOGIN_TOKEN" ).map( token -> { return token; } ).get();
@@ -62,13 +55,14 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
 
+
     @Override
-    public CompletionStage<SEC_User> get( int userId ) {
+    public CompletionStage<SecUser> get( int userId ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        return entityManager.find( SEC_User.class, userId );
+                        return entityManager.find( SecUser.class, userId );
                     });
             },
             ec
@@ -77,13 +71,13 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
 
 
     @Override
-    public CompletionStage<SEC_User> findByUserName( String userName ) {
+    public CompletionStage<SecUser> findByUserName( String userName ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        List<SEC_User> list = entityManager.createQuery(
-                                    "from SEC_User u where u.userName = :userName ", SEC_User.class)
+                        List<SecUser> list = entityManager.createQuery(
+                                    "from SecUser u where u.userName = :userName ", SecUser.class)
                             .setParameter("userName", userName )
                             .getResultList();
                         if ( list.size() > 0 ) {
@@ -104,8 +98,8 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        List<SEC_User> list = entityManager.createQuery(
-                                "from SEC_User u where u.userName = :userName ", SEC_User.class)
+                        List<SecUser> list = entityManager.createQuery(
+                                "from SecUser u where u.userName = :userName ", SecUser.class)
                             .setParameter("userName", userName )
                             .getResultList();
                         if ( list.size() > 0 ) {
@@ -120,54 +114,13 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<Boolean> roleExists( String role ) {
+    public CompletionStage<SecUserPermission> getUserPermission ( String permission ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        List<SEC_SecurityRole> list = entityManager.createQuery(
-                                "from SEC_SecurityRole r where r.roleName = :role ", SEC_SecurityRole.class)
-                            .setParameter("role", role )
-                            .getResultList();
-                        if ( list.size() > 0 ) {
-                            return true;
-                        } else {
-                            return false;
-                        }
-                    });
-            },
-            ec
-        );
-    }
-
-    @Override
-    public CompletionStage<SEC_SecurityRole> getSecurityRole ( String role ) {
-        return CompletableFuture.supplyAsync(
-            () -> {
-                return jpaApi.withTransaction(
-                    entityManager -> {
-                        List<SEC_SecurityRole> list = entityManager.createQuery(
-                            "from SEC_SecurityRole r where r.roleName = :role "
-                        ).setParameter( "role", role ).getResultList();
-                        if ( list.size() > 0 ) {
-                            return list.get( 0 );
-                        } else {
-                            return null;
-                        }
-                    });
-            },
-            ec
-        );
-    }
-
-    @Override
-    public CompletionStage<SEC_UserPermission> getUserPermission ( String permission ) {
-        return CompletableFuture.supplyAsync(
-            () -> {
-                return jpaApi.withTransaction(
-                    entityManager -> {
-                        List<SEC_UserPermission> list = entityManager.createQuery(
-                            "from SEC_UserPermission p where p.value = :perm "
+                        List<SecUserPermission> list = entityManager.createQuery(
+                            "from SecUserPermission p where p.value = :perm "
                         ).setParameter( "perm", permission ).getResultList();
                         if ( list.size() > 0 ) {
                             return list.get( 0 );
@@ -187,8 +140,8 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
             () -> {
                 return jpaApi.withTransaction(
                     entityManager -> {
-                        List<SEC_UserPermission> list = entityManager.createQuery(
-                                "from SEC_UserPermission p where p.value = :permission ", SEC_UserPermission.class)
+                        List<SecUserPermission> list = entityManager.createQuery(
+                                "from SecUserPermission p where p.value = :permission ", SecUserPermission.class)
                             .setParameter("permission", permission )
                             .getResultList();
                         if ( list.size() > 0 ) {
@@ -211,7 +164,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
                     entityManager -> {
                         List<String> list = entityManager.createQuery(
                                 "select u.userName " +
-                                    "from SEC_Token t join t.user u " +
+                                    "from SecToken t join t.user u " +
                                     "where t.token = :token ", String.class)
                             .setParameter("token", token)
                             .getResultList();
@@ -227,12 +180,12 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<List<SEC_User>> getAll() {
+    public CompletionStage<List<SecUser>> getAll() {
         return CompletableFuture.supplyAsync(
             () -> { return jpaApi.withTransaction(
                 em -> {
-                    List<SEC_User> list = em.createQuery(
-                        "select u from SEC_User u"
+                    List<SecUser> list = em.createQuery(
+                        "select u from SecUser u"
                     ).getResultList();
                     return list;
                 });
@@ -246,7 +199,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
         CompletableFuture.supplyAsync(
             () -> { return jpaApi.withTransaction(
                 em -> {
-                   SEC_User user = em.find( SEC_User.class, userId );
+                   SecUser user = em.find( SecUser.class, userId );
                    em.remove( user );
                    em.flush();
                    em.clear();
@@ -258,7 +211,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<Integer> persist( SEC_User user ) {
+    public CompletionStage<Integer> persist( SecUser user ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 try {
@@ -277,7 +230,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<Integer> merge( SEC_User user ) {
+    public CompletionStage<Integer> merge( SecUser user ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
@@ -307,36 +260,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<Integer> persist( SEC_SecurityRole role ) {
-        return CompletableFuture.supplyAsync(
-            () -> {
-                return jpaApi.withTransaction(
-                    entityManager -> {
-                        entityManager.persist( role );
-                        return 1;
-                    }
-                );
-            },
-            ec
-        );
-    }
-
-    @Override
-    public CompletionStage<SEC_SecurityRole> merge( SEC_SecurityRole role ) {
-        return CompletableFuture.supplyAsync(
-            () -> {
-                return jpaApi.withTransaction(
-                    entityManager -> {
-                        return entityManager.merge( role );
-                    }
-                );
-            },
-            ec
-        );
-    }
-
-    @Override
-    public CompletionStage<Integer> persist( SEC_UserPermission permission ) {
+    public CompletionStage<Integer> persist( SecUserPermission permission ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
@@ -351,7 +275,7 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
     }
 
     @Override
-    public CompletionStage<SEC_UserPermission> merge( SEC_UserPermission permission ) {
+    public CompletionStage<SecUserPermission> merge( SecUserPermission permission ) {
         return CompletableFuture.supplyAsync(
             () -> {
                 return jpaApi.withTransaction(
@@ -363,4 +287,89 @@ public class DB_SEC_UserRepositoryImpl implements DB_SEC_UserRepository {
             ec
         );
     }
+
+    @Override
+    public void removeRole(
+        int userId,
+        int roleId
+    ) throws DbSecException {
+        if ( userId == 0 || roleId == 0 ) {
+            throw new DbSecException( "Bad arguments" );
+        } else {
+            CompletableFuture.supplyAsync(
+                () -> {
+                    return jpaApi.withTransaction(
+                        entityManager -> {
+                            SecUser user = entityManager.find(
+                                SecUser.class,
+                                userId
+                            );
+                            SecSecurityRole role = entityManager.find(
+                                SecSecurityRole.class,
+                                roleId
+                            );
+                            user.removeRole( role );
+                            entityManager.flush();
+                            entityManager.clear();
+                            return 0;
+                        }
+                    );
+                },
+                ec
+            );
+        }
+    }
+
+
+    @Override
+    public void addRole(
+        int userId,
+        int roleId
+    ) throws DbSecException {
+        if ( userId == 0 || roleId == 0 ) {
+            throw new DbSecException( "Bad arguments" );
+        } else {
+            jpaApi.withTransaction(
+                entityManager -> {
+                    SecUser user = entityManager.find(
+                        SecUser.class,
+                        userId
+                    );
+                    SecSecurityRole role = entityManager.find(
+                        SecSecurityRole.class,
+                        roleId
+                    );
+                    user.addRole( role );
+                    entityManager.flush();
+                    entityManager.clear();
+                    return 0;
+                }
+            );
+        }
+    }
+
+    private SecUser findByToken(
+        String token,
+        EntityManager entityManager
+    ) {
+        List<SecUser> list = entityManager.createQuery(
+                "select u " +
+                    "from SecToken t join t.user u " +
+                    "where t.token = :token ", SecUser.class)
+            .setParameter("token", token)
+            .getResultList();
+        if ( list.size() > 0 ) {
+            return list.get(0);
+        } else {
+            return null;
+        }
+    }
+
+    public class UserDoesNotExist extends Exception{
+
+    }
+    public class RoleDoesNotExist extends Exception{
+
+    }
+
 }

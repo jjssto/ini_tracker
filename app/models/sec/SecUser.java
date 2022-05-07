@@ -1,7 +1,5 @@
 package models.sec;
 
-import be.objectify.deadbolt.java.models.Permission;
-import be.objectify.deadbolt.java.models.Role;
 import be.objectify.deadbolt.java.models.Subject;
 import net.bytebuddy.utility.RandomString;
 import play.shaded.oauth.org.apache.commons.codec.digest.DigestUtils;
@@ -14,7 +12,8 @@ import java.util.List;
 
 @Entity
 @Table( name = "user" )
-public class SEC_User implements Subject {
+public class SecUser
+    implements Subject {
 
     @Id
     @GeneratedValue( strategy = GenerationType.IDENTITY )
@@ -30,7 +29,7 @@ public class SEC_User implements Subject {
         joinColumns = @JoinColumn( name = "user_id" ),
         inverseJoinColumns = @JoinColumn( name = "permission_id")
     )
-    private List<SEC_UserPermission> permissions;
+    private List<SecUserPermission> permissions;
 
     @ManyToMany( fetch = FetchType.EAGER )
     @JoinTable(
@@ -38,7 +37,7 @@ public class SEC_User implements Subject {
         joinColumns = @JoinColumn( name = "user_id" ),
         inverseJoinColumns = @JoinColumn( name = "security_role_id")
     )
-    private List<SEC_SecurityRole> securityRoles;
+    private List<SecSecurityRole> securityRoles;
 
     @Column( name = "password_hash")
     @Lob
@@ -66,16 +65,16 @@ public class SEC_User implements Subject {
         this.userName = userName;
     }
 
-    public void setPermissions(List<SEC_UserPermission> permissions) {
+    public void setPermissions(List<SecUserPermission> permissions) {
         this.permissions = permissions;
     }
 
-    public SEC_User() {
+    public SecUser() {
         securityRoles = new ArrayList<>();
         permissions = new ArrayList<>();
     }
 
-    public SEC_User(
+    public SecUser(
         String userName,
         String password
     ) {
@@ -102,16 +101,16 @@ public class SEC_User implements Subject {
             return false;
     }
 
-    public List<SEC_SecurityRole> getSecurityRoles() {
+    public List<SecSecurityRole> getSecurityRoles() {
         return securityRoles;
     }
 
-    public void setSecurityRoles(List<SEC_SecurityRole> securityRoles) {
+    public void setSecurityRoles(List<SecSecurityRole> securityRoles) {
         this.securityRoles = securityRoles;
     }
 
     @Override
-    public List<SEC_SecurityRole> getRoles() {
+    public List<SecSecurityRole> getRoles() {
         return securityRoles;
     }
 
@@ -126,7 +125,7 @@ public class SEC_User implements Subject {
 
 
     @Override
-    public List<SEC_UserPermission> getPermissions() {
+    public List<SecUserPermission> getPermissions() {
         //return permissions;
         return null;
     }
@@ -141,19 +140,19 @@ public class SEC_User implements Subject {
         this.salt = randomString.nextString();
     }
 
-    public void addRole( SEC_SecurityRole role ) {
+    public void addRole( SecSecurityRole role ) {
         securityRoles.add( role );
     }
 
-    public void removeRole( SEC_SecurityRole role ) {
+    public void removeRole( SecSecurityRole role ) {
         securityRoles.remove( role );
     }
 
-    public void addPermission( SEC_UserPermission permission ) {
+    public void addPermission( SecUserPermission permission ) {
         permissions.add( permission );
     }
 
-    public void removePermission( SEC_UserPermission permission ) {
+    public void removePermission( SecUserPermission permission ) {
         permissions.remove( permission );
     }
 }

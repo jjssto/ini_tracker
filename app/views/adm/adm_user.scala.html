@@ -1,5 +1,5 @@
-@import models.sec.SEC_User
-@(list: List[SEC_User])
+@import models.sec.SecUser
+@(list: List[SecUser])
 <!DOCTYPE html>
 <html lang="de" xmlns="http://www.w3.org/1999/html">
     <head>
@@ -33,7 +33,7 @@
                                 <td class="td_roles">@user.getRoles()</td>
                                 <td><button value="@user.getId()" class="b_new_password">Passwort aktualisieren</button>
                                     <button value="@user.getId()" class="b_delete_user">Löschen</button>
-                                    <button class="b_edit_user">Berechtigungen bearbeiten</button>
+                                    <button value="@user.getId()" class="b_edit_user">Berechtigungen bearbeiten</button>
                                 </td>
                             </tr>
                         }

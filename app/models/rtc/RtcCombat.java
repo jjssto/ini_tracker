@@ -1,7 +1,6 @@
 package models.rtc;
 
-import models.sec.SEC_SecurityRole;
-import org.hibernate.annotations.CreationTimestamp;
+import models.sec.SecSecurityRole;
 import org.hibernate.annotations.UpdateTimestamp;
 
 import javax.persistence.*;
@@ -29,11 +28,11 @@ public class RtcCombat {
         joinColumns = @JoinColumn( name = "combat_id"),
         inverseJoinColumns = @JoinColumn( name = "role_id")
     )
-    private SEC_SecurityRole securityRole;
+    private SecSecurityRole securityRole;
 
     public RtcCombat(
         String name,
-        SEC_SecurityRole securityRole
+        SecSecurityRole securityRole
     ){
         this.name = name;
         this.securityRole = securityRole;

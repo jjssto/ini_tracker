@@ -1,0 +1,39 @@
+@import models.sec.SecSecurityRole
+@(name: String, userId: Int, userRoles: List[SecSecurityRole], allRoles: List[SecSecurityRole])
+<!DOCTYPE html>
+<html lang="de" xmlns="http://www.w3.org/1999/html">
+    <head>
+        <meta charset="UTF-8">
+        <title>Kampf auswählen</title>
+        <link rel="stylesheet" media="screen" href="@routes.Assets.at("stylesheets/main.css")">
+        <script src="@routes.Assets.at("javascripts/jquery-3.6.0.js")" type="module"></script>
+        <script src="@routes.Assets.at("javascripts/adm_roles.js")" type="module"></script>
+    </head>
+    <body>
+        <div class="container">
+            @el_header( "Initiativ-Tracker" )
+            @el_menu( 2 )
+            <main-left>
+                <h2>@name</h2>
+
+                <form id="f_remove_role">
+                    <input type="hidden" id="i_remove_role_user_id" value="@userId">
+                @for( role <- userRoles) {
+                    <label for="r_@role.getId()">@role.getName</label>
+                    <input type="radio" id="r_@role.getId()" value="@role.getId()" name="remove_role">
+                }
+                    <button type="submit">Rolle entfernen</button>
+                </form>
+
+                <form id="f_add_role">
+                    <input type="hidden" id="i_add_role_user_id" value="@userId">
+                    @for( role <- allRoles) {
+                        <label for="a_@role.getId()">@role.getName</label>
+                        <input type="radio" id="a_@role.getId()" value="@role.getId()" name="add_role">
+                    }
+                    <button type="submit">Rolle hinzufügen</button>
+                </form>
+            </main-left>
+       </div>
+    </body>
+</html>

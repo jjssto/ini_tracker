@@ -2,8 +2,8 @@ package models.db.rtc;
 
 import com.google.inject.ImplementedBy;
 import models.rtc.RtcCombat;
-import models.sec.SEC_SecurityRole;
-import models.sec.SEC_User;
+import models.sec.SecSecurityRole;
+import models.sec.SecUser;
 
 import java.util.List;
 import java.util.concurrent.CompletionStage;
@@ -13,9 +13,9 @@ public interface DbRtcCombatRepo {
 
     CompletionStage<RtcCombat> getById( int id );
 
-    CompletionStage<List<RtcCombat>> getAllByAccess( SEC_SecurityRole securityRole );
+    CompletionStage<List<RtcCombat>> getAllByAccess( SecSecurityRole securityRole );
 
-    CompletionStage<List<SEC_SecurityRole>> getAccessRoles();
+    CompletionStage<List<SecSecurityRole>> getAccessRoles();
 
-    CompletionStage<List<RtcCombat>> getByUser( SEC_User user );
+    CompletionStage<List<RtcCombat>> getByUser( SecUser user );
 }

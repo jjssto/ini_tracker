@@ -5,10 +5,10 @@ import be.objectify.deadbolt.java.actions.Restrict;
 import com.fasterxml.jackson.databind.JsonNode;
 import models.db.rtc.DbRtcDiceRollRepository;
 import models.db.rtc.DbRtcCombatRepo;
-import models.db.sec.DB_SEC_UserRepository;
+import models.db.sec.DbSecUserRepository;
 import models.rtc.RtcCombat;
 import models.rtc.RtcDiceRolls;
-import models.sec.SEC_User;
+import models.sec.SecUser;
 import play.data.DynamicForm;
 import play.data.FormFactory;
 import play.libs.Json;
@@ -32,7 +32,7 @@ public class RtcController
     private final MyDeadboltHandler dh;
     private final DbRtcDiceRollRepository diceRollRepo;
     private final DbRtcCombatRepo combatRepo;
-    private final DB_SEC_UserRepository userRepo;
+    private final DbSecUserRepository userRepo;
 
     @Inject
     public RtcController(
@@ -40,7 +40,7 @@ public class RtcController
         HttpExecutionContext ec,
         MyDeadboltHandler dh,
         DbRtcDiceRollRepository diceRollRepo,
-        DB_SEC_UserRepository userRpo,
+        DbSecUserRepository userRpo,
         DbRtcCombatRepo combatRepo
     ) {
         this.formFactory = formFactory;
@@ -52,21 +52,21 @@ public class RtcController
     }
 
     public Result index( Http.RequestHeader requestHeader ) {
-        return ok( views.html.rtc_diceroller.render( requestHeader ) );
+        return ok( views.html.rtc.rtc_diceroller.render( requestHeader ) );
     }
 
     @Restrict( @Group( "rtc") )
     public CompletionStage<Result> getCombat( Integer combatId, Http.Request request ) {
         return combatRepo.getById( combatId ).thenApplyAsync(
             combat -> ok(
-                views.html.rtc_diceroller_i.render( combat.getName(), request )
+                views.html.rtc.rtc_diceroller_i.render( combat.getName(), request )
             ),
             ec.current()
         );
     }
 
     public Result roll( Http.Request request ) {
-        SEC_User user;
+        SecUser user;
         DynamicForm form = formFactory.form().bindFromRequest( request );
         RtcDiceRolls diceRolls = null;
         int combatId;
@@ -121,7 +121,7 @@ public class RtcController
             loginToken = "";
         }
 
-        SEC_User user;
+        SecUser user;
         try {
             user = userRepo.findByToken( loginToken ).toCompletableFuture().get();
         } catch ( InterruptedException | ExecutionException e ) {

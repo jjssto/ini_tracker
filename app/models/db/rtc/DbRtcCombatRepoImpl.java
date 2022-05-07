@@ -2,8 +2,8 @@ package models.db.rtc;
 
 import models.db.DB_DatabaseExecutionContext;
 import models.rtc.RtcCombat;
-import models.sec.SEC_SecurityRole;
-import models.sec.SEC_User;
+import models.sec.SecSecurityRole;
+import models.sec.SecUser;
 import play.db.jpa.JPAApi;
 
 import javax.inject.Inject;
@@ -38,7 +38,7 @@ public class DbRtcCombatRepoImpl implements DbRtcCombatRepo {
     }
 
     @Override
-    public CompletionStage<List<RtcCombat>> getAllByAccess( SEC_SecurityRole securityRole ) {
+    public CompletionStage<List<RtcCombat>> getAllByAccess( SecSecurityRole securityRole ) {
         return CompletableFuture.supplyAsync(
             () -> jpaApi.withTransaction(
                 em -> {
@@ -51,7 +51,7 @@ public class DbRtcCombatRepoImpl implements DbRtcCombatRepo {
     }
 
     @Override
-    public CompletionStage<List<SEC_SecurityRole>> getAccessRoles() {
+    public CompletionStage<List<SecSecurityRole>> getAccessRoles() {
         return CompletableFuture.supplyAsync(
             () -> jpaApi.withTransaction(
                 em -> {
@@ -64,15 +64,15 @@ public class DbRtcCombatRepoImpl implements DbRtcCombatRepo {
     }
 
     @Override
-    public CompletionStage<List<RtcCombat>> getByUser( SEC_User user ) {
+    public CompletionStage<List<RtcCombat>> getByUser( SecUser user ) {
         return CompletableFuture.supplyAsync(
             () -> jpaApi.withTransaction(
                 em -> {
-                    List<SEC_SecurityRole> list = em.createQuery(
-                        "select r from SEC_User u join u.securityRoles r " +
+                    List<SecSecurityRole> list = em.createQuery(
+                        "select r from SecUser u join u.securityRoles r " +
                             "where u = :user and r.roleName = 'rtc'")
                         .setParameter( "user", user ).getResultList();
-                    SEC_SecurityRole rtc;
+                    SecSecurityRole rtc;
                     if ( list.size() > 0 ) {
                        rtc = list.get(0);
                     } else {

@@ -39,7 +39,6 @@ $(".b_new_password").click(function(){
 
 $(".b_edit_user").click(function(){
     let userId = $(this).val();
-    let password = $(this).parent().siblings("td.td_password").find("input").val();
 
     $.ajax({
         type: "post",
@@ -48,11 +47,14 @@ $(".b_edit_user").click(function(){
             "Csrf-Token": get_token()
         },
         data: {
-            userId: userId,
-            password: password
+            userId: userId
         },
-        success: function() {
-            /* reload */
+        success: function(data) {
+            /* open in new window */
+            let w = window.open('about:blank', 'popup' , "width=960,height=320");
+            w.document.open();
+            w.document.write(data);
+            w.document.close();
         }
     })
 })
